@@ -1,369 +1,135 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { AlertCircle, Bell, Check, ChevronDown, Key, Lock, LogOut, Mail, Shield, Smartphone, User } from "lucide-react-native";
-import { useCallback, useMemo, useState } from "react";
+import { ArrowLeft, Bell, Shield, Lock, AlertCircle, Mail, Smartphone, User, Key, LogOut } from "lucide-react-native";
+import { useState } from "react";
 import {
-  Animated,
   Platform,
-  Pressable,
-  SafeAreaView,
   ScrollView,
   StatusBar,
   Switch,
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
+  View,
 } from "react-native";
 
 const COLORS = {
-  bg: "#F6F7FB",
-  surface: "#FFFFFF",
-  text: "#0F172A",
-  textMuted: "#64748B",
-  border: "#E2E8F0",
-  divider: "#F1F5F9",
-  purple: "#7b2ff7",
-  pink: "#f107a3",
-  purpleLight: "#F3E8FF",
-  purpleSoft: "#EDE9FE",
-  blue: "#0EA5E9",
-  blueLight: "#E0F2FE",
+  gradient1: "#00FF87",
+  gradient2: "#016B3A",
+  gradient3: "#013B1F",
+  gradient4: "#012B17",
+  bg: "#FFFFFF",
+  surface: "#F9FAFB",
+  text: "#1A1A1A",
+  textMuted: "#666666",
+  border: "#E5E7EB",
+  primary: "#016B3A",
+  primaryLight: "#10B981",
   danger: "#EF4444",
   dangerLight: "#FEE2E2",
-  success: "#10B981",
-  successLight: "#D1FAE5",
-  warning: "#F59E0B",
-  cardBg: "#F8FAFC",
 };
 
 function useScale() {
-  const { width } = useWindowDimensions();
-  const base = Math.min(Math.max(width, 320), 480);
+  const { width, height } = useWindowDimensions();
+  const base = Math.min(width, 480);
   const sw = (n) => Math.round((base / 390) * n);
-  return { sw };
+  return { sw, width, height };
 }
 
-const Card = ({ children, sw, style }) => (
-  <View
-    style={[
-      {
-        backgroundColor: COLORS.surface,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        borderRadius: sw(20),
-        padding: sw(20),
-        ...Platform.select({
-          ios: {
-            shadowColor: "#000",
-            shadowOpacity: 0.08,
-            shadowRadius: 12,
-            shadowOffset: { width: 0, height: 4 },
-          },
-          android: {
-            elevation: 3,
-          },
-        }),
-      },
-      style,
-    ]}
+const TabButton = ({ label, icon: Icon, active, onPress, sw }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={{
+      flex: 1,
+      paddingVertical: sw(12),
+      alignItems: "center",
+      borderRadius: sw(12),
+      backgroundColor: active ? "#FFFFFF" : "transparent",
+    }}
   >
-    {children}
-  </View>
+    <Icon size={sw(18)} color={active ? COLORS.primary : "rgba(255,255,255,0.8)"} strokeWidth={2.5} />
+    <Text style={{
+      fontSize: sw(10),
+      fontWeight: active ? "700" : "600",
+      color: active ? COLORS.primary : "rgba(255,255,255,0.8)",
+      marginTop: sw(4),
+    }}>
+      {label}
+    </Text>
+  </TouchableOpacity>
 );
 
 const RowSwitch = ({ icon: Icon, title, subtitle, value, onValueChange, sw }) => (
-  <View
-    style={{
-      backgroundColor: COLORS.cardBg,
-      borderRadius: sw(16),
-      padding: sw(16),
-      marginBottom: sw(12),
-      flexDirection: "row",
-      alignItems: "center",
-      borderWidth: 1,
-      borderColor: value ? COLORS.purpleLight : COLORS.border,
-    }}
-  >
+  <View style={{
+    backgroundColor: COLORS.surface,
+    borderRadius: sw(14),
+    padding: sw(14),
+    marginBottom: sw(10),
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: value ? `${COLORS.primaryLight}40` : COLORS.border,
+  }}>
     {Icon && (
-      <View
-        style={{
-          width: sw(40),
-          height: sw(40),
-          borderRadius: sw(12),
-          backgroundColor: value ? COLORS.purpleLight : COLORS.divider,
-          alignItems: "center",
-          justifyContent: "center",
-          marginRight: sw(12),
-        }}
-      >
-        <Icon size={sw(20)} color={value ? COLORS.purple : COLORS.textMuted} strokeWidth={2.5} />
+      <View style={{
+        width: sw(38),
+        height: sw(38),
+        borderRadius: sw(10),
+        backgroundColor: value ? `${COLORS.primaryLight}20` : "#E5E7EB",
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: sw(12),
+      }}>
+        <Icon size={sw(18)} color={value ? COLORS.primary : COLORS.textMuted} strokeWidth={2.5} />
       </View>
     )}
     <View style={{ flex: 1 }}>
-      <Text style={{ color: COLORS.text, fontWeight: "600", fontSize: sw(15), marginBottom: sw(2) }}>
+      <Text style={{ color: COLORS.text, fontWeight: "600", fontSize: sw(14), marginBottom: sw(2) }}>
         {title}
       </Text>
-      {subtitle ? (
-        <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
+      {subtitle && (
+        <Text style={{ color: COLORS.textMuted, fontSize: sw(12), lineHeight: sw(16) }}>
           {subtitle}
         </Text>
-      ) : null}
+      )}
     </View>
     <Switch
       value={value}
       onValueChange={onValueChange}
       thumbColor="#FFFFFF"
-      trackColor={{ false: "#CBD5E1", true: COLORS.purple }}
-      ios_backgroundColor="#CBD5E1"
+      trackColor={{ false: "#9CA3AF", true: COLORS.primaryLight }}
+      ios_backgroundColor="#9CA3AF"
     />
   </View>
 );
 
-const ActionButton = ({ label, icon: Icon, color = COLORS.blue, bgColor, onPress, sw, variant = "outline", useGradient = false }) => (
-  <Pressable
+const ActionButton = ({ label, icon: Icon, color, bgColor, onPress, sw }) => (
+  <TouchableOpacity
     onPress={onPress}
-    style={({ pressed }) => [
-      {
-        borderWidth: variant === "outline" ? 1.5 : 0,
-        borderColor: color,
-        backgroundColor: variant === "solid" && !useGradient ? color : bgColor || COLORS.surface,
-        borderRadius: sw(14),
-        paddingVertical: sw(14),
-        paddingHorizontal: sw(16),
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "row",
-        opacity: pressed ? 0.7 : 1,
-        overflow: "hidden",
-        ...Platform.select({
-          ios: {
-            shadowColor: variant === "solid" ? color : "#000",
-            shadowOpacity: variant === "solid" ? 0.2 : 0.05,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 2 },
-          },
-          android: {
-            elevation: variant === "solid" ? 4 : 1,
-          },
-        }),
-      },
-    ]}
+    style={{
+      borderWidth: 1.5,
+      borderColor: color,
+      backgroundColor: bgColor || COLORS.surface,
+      borderRadius: sw(14),
+      paddingVertical: sw(14),
+      paddingHorizontal: sw(16),
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "center",
+    }}
   >
-    {variant === "solid" && useGradient && (
-      <LinearGradient
-        colors={[COLORS.purple, COLORS.pink]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      />
-    )}
-    {Icon && (
-      <Icon
-        size={sw(18)}
-        color={variant === "solid" ? "#FFFFFF" : color}
-        strokeWidth={2.5}
-        style={{ marginRight: sw(8) }}
-      />
-    )}
-    <Text
-      style={{
-        color: variant === "solid" ? "#FFFFFF" : color,
-        fontWeight: "700",
-        fontSize: sw(15),
-      }}
-    >
-      {label}
-    </Text>
-  </Pressable>
+    {Icon && <Icon size={sw(18)} color={color} strokeWidth={2.5} style={{ marginRight: sw(8) }} />}
+    <Text style={{ color, fontWeight: "700", fontSize: sw(14) }}>{label}</Text>
+  </TouchableOpacity>
 );
 
-const SegTab = ({ label, icon: Icon, active, onPress, sw }) => {
-  const [scaleAnim] = useState(new Animated.Value(1));
-
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  return (
-    <Pressable
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={{ flex: 1 }}
-    >
-      <Animated.View
-        style={[
-          {
-            paddingVertical: sw(12),
-            paddingHorizontal: sw(8),
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: sw(12),
-            overflow: "hidden",
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
-        {active && (
-          <LinearGradient
-            colors={[COLORS.purple, COLORS.pink]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-          />
-        )}
-        <Icon size={sw(22)} color={active ? "#FFFFFF" : COLORS.textMuted} strokeWidth={2.5} />
-        <Text
-          style={{
-            fontSize: sw(12),
-            fontWeight: active ? "700" : "600",
-            color: active ? "#FFFFFF" : COLORS.textMuted,
-            marginTop: sw(4),
-          }}
-        >
-          {label}
-        </Text>
-      </Animated.View>
-    </Pressable>
-  );
-};
-
-function PrivacyPicker({ value, onChange, options, sw }) {
-  const [open, setOpen] = useState(false);
-  const current = options.find((o) => o.value === value);
-
-  const pick = (v) => {
-    setOpen(false);
-    if (v !== value) onChange(v);
-  };
-
-  return (
-    <View style={{ position: "relative", zIndex: 1000 }}>
-      <Pressable
-        onPress={() => setOpen(!open)}
-        style={({ pressed }) => [
-          {
-            borderWidth: 2,
-            borderColor: open ? COLORS.purple : COLORS.border,
-            borderRadius: sw(14),
-            paddingVertical: sw(14),
-            paddingHorizontal: sw(16),
-            backgroundColor: COLORS.surface,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            opacity: pressed ? 0.9 : 1,
-          },
-        ]}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-          <User size={sw(18)} color={COLORS.purple} strokeWidth={2.5} style={{ marginRight: sw(10) }} />
-          <Text style={{ color: COLORS.text, fontSize: sw(15), fontWeight: "600" }}>
-            {current?.label ?? "Select"}
-          </Text>
-        </View>
-        <Animated.View
-          style={{
-            transform: [{ rotate: open ? "180deg" : "0deg" }],
-          }}
-        >
-          <ChevronDown size={sw(20)} color={COLORS.purple} strokeWidth={2.5} />
-        </Animated.View>
-      </Pressable>
-
-      {open && (
-        <View
-          style={{
-            position: "absolute",
-            top: sw(60),
-            left: 0,
-            right: 0,
-            backgroundColor: COLORS.surface,
-            borderRadius: sw(14),
-            borderWidth: 2,
-            borderColor: COLORS.purple,
-            overflow: "hidden",
-            ...Platform.select({
-              ios: {
-                shadowColor: "#000",
-                shadowOpacity: 0.15,
-                shadowRadius: 20,
-                shadowOffset: { width: 0, height: 8 },
-              },
-              android: {
-                elevation: 8,
-              },
-            }),
-          }}
-        >
-          {options.map((opt, idx) => (
-            <TouchableOpacity
-              key={opt.value}
-              onPress={() => pick(opt.value)}
-              style={{
-                paddingVertical: sw(14),
-                paddingHorizontal: sw(16),
-                backgroundColor: opt.value === value ? `${COLORS.purple}15` : "transparent",
-                borderBottomWidth: idx < options.length - 1 ? 1 : 0,
-                borderBottomColor: COLORS.border,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: sw(15),
-                  color: opt.value === value ? COLORS.purple : COLORS.text,
-                  fontWeight: opt.value === value ? "700" : "400",
-                }}
-              >
-                {opt.label}
-              </Text>
-              {opt.value === value ? (
-                <Check size={sw(18)} color={COLORS.purple} strokeWidth={3} />
-              ) : null}
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </View>
-  );
-}
-
-export default function systemSetting({
-  onBack,
-  onEnable2FA,
-  onChangePassword,
-  onLogout,
-  onChangePrivacy,
-}) {
-  const { sw } = useScale();
+export default function SystemSetting({ onBack, onEnable2FA, onChangePassword, onLogout }) {
+  const { sw, width, height } = useScale();
   const [tab, setTab] = useState("notifications");
   const navigation = useNavigation();
+
+  const headerHeight = height * 0.333;
+  const contentHeight = height * 0.667;
 
   const [notifState, setNotifState] = useState({
     newAssignments: true,
@@ -374,242 +140,265 @@ export default function systemSetting({
   });
 
   const [loginAlerts, setLoginAlerts] = useState(true);
-  const [privacy, setPrivacy] = useState("org");
-
-  const privacyOptions = useMemo(
-    () => [
-      { label: "My Team Only", value: "team" },
-      { label: "Organization Only", value: "org" },
-      { label: "Private", value: "private" },
-    ],
-    []
-  );
-
-  const handlePrivacy = useCallback(
-    (v) => {
-      setPrivacy(v);
-      onChangePrivacy && onChangePrivacy(v);
-    },
-    [onChangePrivacy]
-  );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.bg }}>
-      <StatusBar barStyle="dark-content" />
+    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor={COLORS.gradient2}
+        translucent={false}
+      />
 
-      <View style={{ paddingHorizontal: sw(16), paddingTop: sw(12), }}>
-        <View style={{ flexDirection: "row", alignItems: "center",justifyContent:'center', marginBottom: sw(16) }}>
-          <Pressable
-            onPress={()=>navigation.goBack()}
-            hitSlop={12}
-         
-          >
-            <Text style={{ color: COLORS.purple, fontSize: sw(15), fontWeight: "600" }}>← Back</Text>
-          </Pressable>
-          <Text
+      <LinearGradient 
+        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} 
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: headerHeight,
+          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(20),
+          paddingHorizontal: sw(20),
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
+          <TouchableOpacity
+            onPress={() => (onBack ? onBack() : navigation.goBack())}
             style={{
-              flex: 1,
-              textAlign: "center",
-              fontSize: sw(20),
-              fontWeight: "800",
-              color: COLORS.text,
-              marginRight: sw(60),
-              marginTop:50
+              width: sw(42),
+              height: sw(42),
+              borderRadius: sw(21),
+              backgroundColor: "rgba(255,255,255,0.2)",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            Settings
-          </Text>
+            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
+          </TouchableOpacity>
+          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42),marginTop:sw(50)  }}>
+            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800" }}>Settings</Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
+              Manage your preferences
+            </Text>
+          </View>
         </View>
 
-        <Card sw={sw} style={{ paddingVertical: sw(16), paddingHorizontal: sw(8), marginBottom: sw(16) }}>
-          <View style={{ flexDirection: "row", gap: sw(8) }}>
-            <SegTab label="Notifications" icon={Bell} active={tab === "notifications"} onPress={() => setTab("notifications")} sw={sw} />
-            <SegTab label="Privacy" icon={Shield} active={tab === "privacy"} onPress={() => setTab("privacy")} sw={sw} />
-            <SegTab label="Security" icon={Lock} active={tab === "security"} onPress={() => setTab("security")} sw={sw} />
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{
+            backgroundColor: "rgba(255,255,255,0.2)",
+            borderRadius: sw(14),
+            padding: sw(6),
+            flexDirection: "row",
+            gap: sw(6),
+          }}>
+            <TabButton label="Notifications" icon={Bell} active={tab === "notifications"} onPress={() => setTab("notifications")} sw={sw} />
+            <TabButton label="Privacy" icon={Shield} active={tab === "privacy"} onPress={() => setTab("privacy")} sw={sw} />
+            <TabButton label="Security" icon={Lock} active={tab === "security"} onPress={() => setTab("security")} sw={sw} />
           </View>
-        </Card>
-      </View>
+        </View>
+      </LinearGradient>
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: sw(16), paddingBottom: sw(30) }}
-        showsVerticalScrollIndicator={false}
-      >
-        {tab === "notifications" && (
-          <View>
-            <View style={{ marginBottom: sw(20) }}>
-              <Text style={{ color: COLORS.text, fontSize: sw(22), fontWeight: "800", marginBottom: sw(6) }}>
-                Notification Preferences
+      <View style={{ 
+        height: contentHeight,
+        backgroundColor: COLORS.bg,
+        borderTopLeftRadius: sw(30),
+        borderTopRightRadius: sw(30),
+      }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }}
+          showsVerticalScrollIndicator={false}
+        >
+          {tab === "notifications" && (
+            <View>
+              <View style={{ marginBottom: sw(18) }}>
+                <Text style={{ color: COLORS.text, fontSize: sw(18), fontWeight: "700", marginBottom: sw(6) }}>
+                  Notification Preferences
+                </Text>
+                <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
+                  Manage how you receive notifications
+                </Text>
+              </View>
+
+              <RowSwitch
+                sw={sw}
+                icon={Bell}
+                title="New Assignments"
+                subtitle="Get notified when you receive new tasks"
+                value={notifState.newAssignments}
+                onValueChange={(v) => setNotifState((s) => ({ ...s, newAssignments: v }))}
+              />
+              <RowSwitch
+                sw={sw}
+                icon={AlertCircle}
+                title="Approval Requests"
+                subtitle="Get notified of pending approvals"
+                value={notifState.approvals}
+                onValueChange={(v) => setNotifState((s) => ({ ...s, approvals: v }))}
+              />
+              <RowSwitch
+                sw={sw}
+                icon={Bell}
+                title="System Alerts"
+                subtitle="Receive important system notifications"
+                value={notifState.systemAlerts}
+                onValueChange={(v) => setNotifState((s) => ({ ...s, systemAlerts: v }))}
+              />
+
+              <View style={{ height: sw(10), backgroundColor: COLORS.border, marginVertical: sw(16), borderRadius: 2 }} />
+
+              <Text style={{ color: COLORS.text, fontSize: sw(15), fontWeight: "700", marginBottom: sw(12) }}>
+                Notification Channels
               </Text>
-              <Text style={{ color: COLORS.textMuted, fontSize: sw(14), lineHeight: sw(20) }}>
-                Manage how you receive notifications
-              </Text>
+
+              <RowSwitch
+                sw={sw}
+                icon={Mail}
+                title="Email Notifications"
+                subtitle="Receive notifications via email"
+                value={notifState.email}
+                onValueChange={(v) => setNotifState((s) => ({ ...s, email: v }))}
+              />
+              <RowSwitch
+                sw={sw}
+                icon={Smartphone}
+                title="Push Notifications"
+                subtitle="Receive notifications on your device"
+                value={notifState.push}
+                onValueChange={(v) => setNotifState((s) => ({ ...s, push: v }))}
+              />
             </View>
+          )}
 
-            <RowSwitch
-              sw={sw}
-              icon={Bell}
-              title="New Assignments"
-              subtitle="Get notified when you receive new tasks"
-              value={notifState.newAssignments}
-              onValueChange={(v) => setNotifState((s) => ({ ...s, newAssignments: v }))}
-            />
-            <RowSwitch
-              sw={sw}
-              icon={AlertCircle}
-              title="Approval Requests"
-              subtitle="Get notified of pending approvals"
-              value={notifState.approvals}
-              onValueChange={(v) => setNotifState((s) => ({ ...s, approvals: v }))}
-            />
-            <RowSwitch
-              sw={sw}
-              icon={Bell}
-              title="System Alerts"
-              subtitle="Receive important system notifications"
-              value={notifState.systemAlerts}
-              onValueChange={(v) => setNotifState((s) => ({ ...s, systemAlerts: v }))}
-            />
+          {tab === "privacy" && (
+            <View>
+              <View style={{ marginBottom: sw(18) }}>
+                <Text style={{ color: COLORS.text, fontSize: sw(18), fontWeight: "700", marginBottom: sw(6) }}>
+                  Privacy Settings
+                </Text>
+                <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
+                  Control who can see your information
+                </Text>
+              </View>
 
-            <View style={{ height: sw(12), backgroundColor: COLORS.border, marginVertical: sw(20), borderRadius: sw(2) }} />
-
-            <Text style={{ color: COLORS.text, fontSize: sw(16), fontWeight: "700", marginBottom: sw(12) }}>
-              Notification Channels
-            </Text>
-
-            <RowSwitch
-              sw={sw}
-              icon={Mail}
-              title="Email Notifications"
-              subtitle="Receive notifications via email"
-              value={notifState.email}
-              onValueChange={(v) => setNotifState((s) => ({ ...s, email: v }))}
-            />
-            <RowSwitch
-              sw={sw}
-              icon={Smartphone}
-              title="Push Notifications"
-              subtitle="Receive notifications on your device"
-              value={notifState.push}
-              onValueChange={(v) => setNotifState((s) => ({ ...s, push: v }))}
-            />
-          </View>
-        )}
-
-        {tab === "privacy" && (
-          <View>
-            <View style={{ marginBottom: sw(20) }}>
-              <Text style={{ color: COLORS.text, fontSize: sw(22), fontWeight: "800", marginBottom: sw(6) }}>
-                Privacy Settings
-              </Text>
-              <Text style={{ color: COLORS.textMuted, fontSize: sw(14), lineHeight: sw(20) }}>
-                Control who can see your information
-              </Text>
-            </View>
-
-            <Card sw={sw} style={{ backgroundColor: COLORS.cardBg, borderColor: COLORS.border }}>
-              <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: sw(16) }}>
-                <View
-                  style={{
-                    width: sw(40),
-                    height: sw(40),
-                    borderRadius: sw(12),
-                    backgroundColor: COLORS.purpleLight,
+              <View style={{
+                backgroundColor: COLORS.surface,
+                borderRadius: sw(14),
+                padding: sw(16),
+                borderWidth: 1,
+                borderColor: COLORS.border,
+              }}>
+                <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: sw(14) }}>
+                  <View style={{
+                    width: sw(38),
+                    height: sw(38),
+                    borderRadius: sw(10),
+                    backgroundColor: `${COLORS.primaryLight}20`,
                     alignItems: "center",
                     justifyContent: "center",
                     marginRight: sw(12),
-                  }}
-                >
-                  <User size={sw(20)} color={COLORS.purple} strokeWidth={2.5} />
+                  }}>
+                    <User size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: COLORS.text, fontWeight: "700", fontSize: sw(15), marginBottom: sw(4) }}>
+                      Profile Visibility
+                    </Text>
+                    <Text style={{ color: COLORS.textMuted, fontSize: sw(12), lineHeight: sw(16) }}>
+                      Control who can see your profile and activity
+                    </Text>
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: COLORS.text, fontWeight: "700", fontSize: sw(16), marginBottom: sw(4) }}>
-                    Profile Visibility
-                  </Text>
-                  <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
-                    Control who can see your profile and activity
-                  </Text>
-                </View>
+
+                <Text style={{ color: COLORS.text, fontSize: sw(13), fontWeight: "600", marginTop: sw(8) }}>
+                  Currently: Organization Only
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {tab === "security" && (
+            <View>
+              <View style={{ marginBottom: sw(18) }}>
+                <Text style={{ color: COLORS.text, fontSize: sw(18), fontWeight: "700", marginBottom: sw(6) }}>
+                  Security Settings
+                </Text>
+                <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
+                  Keep your account safe and secure
+                </Text>
               </View>
 
-              <PrivacyPicker value={privacy} onChange={handlePrivacy} options={privacyOptions} sw={sw} />
-            </Card>
-          </View>
-        )}
-
-        {tab === "security" && (
-          <View>
-            <View style={{ marginBottom: sw(20) }}>
-              <Text style={{ color: COLORS.text, fontSize: sw(22), fontWeight: "800", marginBottom: sw(6) }}>
-                Security Settings
-              </Text>
-              <Text style={{ color: COLORS.textMuted, fontSize: sw(14), lineHeight: sw(20) }}>
-                Keep your account safe and secure
-              </Text>
-            </View>
-
-            <Card sw={sw} style={{ backgroundColor: COLORS.purpleLight, borderColor: COLORS.purple, marginBottom: sw(16) }}>
-              <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: sw(16) }}>
-                <View
-                  style={{
-                    width: sw(40),
-                    height: sw(40),
-                    borderRadius: sw(12),
+              <View style={{
+                backgroundColor: `${COLORS.primaryLight}15`,
+                borderRadius: sw(14),
+                padding: sw(16),
+                borderWidth: 1,
+                borderColor: `${COLORS.primaryLight}40`,
+                marginBottom: sw(14),
+              }}>
+                <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: sw(14) }}>
+                  <View style={{
+                    width: sw(38),
+                    height: sw(38),
+                    borderRadius: sw(10),
                     backgroundColor: COLORS.surface,
                     alignItems: "center",
                     justifyContent: "center",
                     marginRight: sw(12),
-                  }}
-                >
-                  <Lock size={sw(20)} color={COLORS.purple} strokeWidth={2.5} />
+                  }}>
+                    <Lock size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: COLORS.text, fontWeight: "700", fontSize: sw(15), marginBottom: sw(4) }}>
+                      Two-Factor Authentication
+                    </Text>
+                    <Text style={{ color: COLORS.text, fontSize: sw(12), lineHeight: sw(16), opacity: 0.8 }}>
+                      Add an extra layer of security to your account
+                    </Text>
+                  </View>
                 </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ color: COLORS.text, fontWeight: "700", fontSize: sw(16), marginBottom: sw(4) }}>
-                    Two-Factor Authentication
-                  </Text>
-                  <Text style={{ color: COLORS.text, fontSize: sw(13), lineHeight: sw(18), opacity: 0.8 }}>
-                    Add an extra layer of security to your account
-                  </Text>
-                </View>
+                <ActionButton 
+                  label="Enable 2FA" 
+                  icon={Lock} 
+                  color={COLORS.primary} 
+                  bgColor="#FFFFFF"
+                  onPress={onEnable2FA} 
+                  sw={sw} 
+                />
               </View>
-              <ActionButton label="Enable 2FA" icon={Lock} color={COLORS.purple} onPress={onEnable2FA} sw={sw} variant="solid" useGradient={true} />
-            </Card>
 
-            <RowSwitch
-              sw={sw}
-              icon={AlertCircle}
-              title="Login Alerts"
-              subtitle="Get notified of new login attempts"
-              value={loginAlerts}
-              onValueChange={setLoginAlerts}
-            />
+              <RowSwitch
+                sw={sw}
+                icon={AlertCircle}
+                title="Login Alerts"
+                subtitle="Get notified of new login attempts"
+                value={loginAlerts}
+                onValueChange={setLoginAlerts}
+              />
 
-            <View style={{ height: sw(20) }} />
+              <View style={{ height: sw(20) }} />
 
-            <ActionButton
-              label="Change Password"
-              icon={Key}
-              color={COLORS.purple}
-              bgColor={COLORS.purpleSoft}
-              onPress={onChangePassword}
-              sw={sw}
-            />
+              <ActionButton
+                label="Change Password"
+                icon={Key}
+                color={COLORS.primary}
+                bgColor={`${COLORS.primary}10`}
+                onPress={onChangePassword}
+                sw={sw}
+              />
 
-            <View style={{ height: sw(28) }} />
-            <View style={{ height: 1, backgroundColor: COLORS.border, marginVertical: sw(4) }} />
-            <View style={{ height: sw(28) }} />
+              <View style={{ height: sw(24), borderBottomWidth: 1, borderBottomColor: COLORS.border, marginVertical: sw(16) }} />
 
-            <ActionButton
-              label="Logout"
-              icon={LogOut}
-              color={COLORS.danger}
-              bgColor={COLORS.dangerLight}
-              onPress={onLogout}
-              sw={sw}
-            />
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+              <ActionButton
+                label="Logout"
+                icon={LogOut}
+                color={COLORS.danger}
+                bgColor={COLORS.dangerLight}
+                onPress={onLogout}
+                sw={sw}
+              />
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </View>
   );
 }

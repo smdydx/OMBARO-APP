@@ -21,10 +21,13 @@ const COLORS = {
 const AppLogo = () => {
   return (
     <View style={styles.logoContainer}>
-      <Image
-        source={require('..//assets/Spa/logo.png')}
-        style={styles.logoGradient}
-      />
+      <View style={styles.logoCircleBorder}>
+        <Image
+          source={require('..//assets/Spa/logo.png')}
+          style={styles.logoGradient}
+          resizeMode="contain"
+        />
+      </View>
     </View>
   );
 };
@@ -91,10 +94,9 @@ export default function WelcomeScreen() {
             />
             <View style={styles.topContent}>
               <AppLogo />
-              <Text style={styles.brandName}>OMBARO</Text>
               <Text style={styles.tagline}>Beauty & Wellness Hub</Text>
-              <Text style={styles.heading}>Welcome to Your Beauty Journey</Text>
-              <Text style={styles.subheading}>Premium spa & wellness services</Text>
+              <Text style={styles.heading}>Welcome to Your{'\n'}Spa Journey</Text>
+              
             </View>
           </View>
 
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
   circle: {
     position: 'absolute',
     borderRadius: 9999,
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(141, 89, 10, 0.08)',
   },
   circle1: {
     width: width * 0.6,
@@ -292,59 +294,72 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   logoContainer: {
-    marginBottom: height * 0.012,
+    marginBottom: height * 0.010,
   },
-  logoGradient: {
-    width: Math.min(width * 0.15, 48),
-    height: Math.min(width * 0.15, 48),
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#FFFFFF",
-    shadowOffset: { width: 0, height: 4 },
+  logoCircleBorder: {
+    width: 140,            // bigger circle
+    height: 140,           // bigger circle
+    borderRadius: 70,      // always half of width/height
+    backgroundColor: '#f5f5f5ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    shadowColor: '#00FF87',
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowRadius: 16,
+    elevation: 15,
+    borderWidth: 3,
+    borderColor: '#00FF87',
+},
+  logo: {
+        width: 50,        // <--- Set size smaller than parent
+        height: 50,
+        borderRadius: 30, // <--- makes perfect circle
+        resizeMode: 'contain',
+    },
+  
+  logoGradient: {
+    width: '90%',
+    height: '90%',
+    borderRadius: 9999,
   },
   logoText: {
     fontSize: Math.min(width * 0.06, 24),
     color: "#1e3a8a",
   },
-  brandName: {
-    fontSize: Math.min(width * 0.055, 22),
-    fontWeight: "900",
-    color: "#FFFFFF",
-    letterSpacing: 2.5,
-    marginBottom: height * 0.005,
+  tagline: {
+    fontSize: Math.min(width * 0.032, 13),
+    color: "#00FF87",
+    fontWeight: "800",
+    marginBottom: height * 0.025,
+    letterSpacing: 1.5,
+    textAlign: 'center',
+    textTransform: 'uppercase',
     textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
+    textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
-  tagline: {
-    fontSize: Math.min(width * 0.025, 10),
-    color: "#93c5fd",
-    fontWeight: "700",
-    marginBottom: height * 0.015,
-    letterSpacing: 0.5,
-    textAlign: 'center',
-  },
   heading: {
-    fontSize: Math.min(width * 0.06, 24),
+    fontSize: Math.min(width * 0.07, 28),
     fontWeight: "900",
     color: "#FFFFFF",
-    lineHeight: Math.min(width * 0.07, 28),
-    marginBottom: height * 0.008,
+    lineHeight: Math.min(width * 0.085, 34),
+    marginBottom: height * 0.012,
     textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.2)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    paddingHorizontal: width * 0.08,
+    textShadowColor: "rgba(0, 0, 0, 0.4)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
   },
   subheading: {
-    fontSize: Math.min(width * 0.025, 10),
-    color: "rgba(255, 255, 255, 0.85)",
-    lineHeight: Math.min(width * 0.035, 14),
+    fontSize: Math.min(width * 0.035, 14),
+    color: "rgba(255, 255, 255, 0.95)",
+    lineHeight: Math.min(width * 0.045, 18),
     textAlign: "center",
-    paddingHorizontal: width * 0.02,
+    paddingHorizontal: width * 0.1,
+    fontWeight: '500',
+    letterSpacing: 0.3,
   },
   featuresSection: {
     flexDirection: 'row',

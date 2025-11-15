@@ -1,189 +1,384 @@
-import { useNavigation } from "@react-navigation/native";
 import {
-  AlertCircle,
-  BarChart2,
-  Briefcase,
-  CheckSquare,
-  Clock,
   FileText,
-  MapPin,
   Plus,
-  Settings,
-  User,
   UserCheck,
+  Building2,
   Users,
+  ClipboardList,
+  TrendingUp,
 } from "lucide-react-native";
 import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  useWindowDimensions,
+  Platform,
+  Pressable, // Import Pressable
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Overview() {
-  const navigation = useNavigation();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <ScrollView>
-      {/* QUICK ACTIONS */}
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
-      <View style={styles.quickContainer}>
-        <QuickAction
-          icon={<Plus color="#fff" size={18} />}
-          bg="#0284c7"
-          title="Onboard New Spa"
-          desc="Add a new spa to platform"
-        />
-        <QuickAction
-          icon={<MapPin color="#0284c7" size={18} />}
-          title="Manage Spas"
-          desc="View and edit existing spas"
-        />
-        <QuickAction
-          icon={<AlertCircle color="#0284c7" size={18} />}
-          title="Review Approvals"
-          desc="8 items need attention"
-        />
-        <QuickAction
-          icon={<Users color="#0284c7" size={18} />}
-          title="Vendor Relations"
-          desc="Manage vendor partnerships"
-        />
-        <QuickAction
-          icon={<BarChart2 color="#0284c7" size={18} />}
-          title="Analytics"
-          desc="View performance metrics"
-        />
-        <QuickAction
-          icon={<Settings color="#0284c7" size={18} />}
-          title="System Settings"
-          desc="Configure preferences"
-          nav={() => navigation.navigate("Employee/QuickAction/systemSetting")}
-        />
-
-        <QuickAction
-          icon={<User color="#0284c7" size={18} />}
-          title="My Profile"
-          desc="View and edit profile"
-          nav={() => navigation.navigate("Employee/QuickAction/MyProfile")}
-        />
-
-        <QuickAction
-          icon={<Clock color="#0284c7" size={18} />}
-          title="Self Attendance"
-          desc="Mark attendance with location"
-          nav={() => navigation.navigate("Employee/QuickAction/SelfAttendance")}
-        />
-        <QuickAction
-          icon={<CheckSquare color="#0284c7" size={18} />}
-          title="Leave Management"
-          desc="Apply for leave or view history"
-          nav={() => navigation.navigate("Employee/QuickAction/LeaveManage")}
-        />
-        <QuickAction
-          icon={<Briefcase color="#0284c7" size={18} />}
-          title="HR Documents"
-          desc="Salary, documents & performance"
-          nav={() => navigation.navigate("Employee/QuickAction/HrDocument")}
-        />
+    <View style={{ flex: 1, backgroundColor: "#F0FDF4" }}>
+      {/* Stats Section - Horizontal Swipe - Fixed at top */}
+      <View style={styles.statsSection}>
+        <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
+          Overview Stats
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.statsContainer, isMobile && styles.statsContainerMobile]}
+          style={styles.statsScrollView}
+        >
+          <StatCard
+            icon={<Building2 color="#014D2A" size={24} />}
+            gradient={["#014D2A", "#016B3A"]}
+            label="Total Spas"
+            value="24"
+            subtitle="+3 this month"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<Users color="#FFFFFF" size={24} />}
+            gradient={["#016B3A", "#047857"]}
+            label="Active Vendors"
+            value="156"
+            subtitle="+12 this week"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<ClipboardList color="#FFFFFF" size={24} />}
+            gradient={["#047857", "#10B981"]}
+            label="Pending Items"
+            value="8"
+            subtitle="Needs attention"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<TrendingUp color="#FFFFFF" size={24} />}
+            gradient={["#10B981", "#34D399"]}
+            label="Revenue"
+            value="₹4.2L"
+            subtitle="+18% growth"
+            isMobile={isMobile}
+            width={width}
+          />
+        </ScrollView>
       </View>
 
-      {/* RECENT ACTIVITY */}
-      <Text style={styles.sectionTitle}>Recent Activity</Text>
-      <View style={styles.activityContainer}>
-        <ActivityCard
-          icon={<Plus color="#22c55e" size={18} />}
-          title="Serenity Spa successfully onboarded"
-          desc="Added 12 services, verified documentation"
-          time="2 hours ago"
-        />
-        <ActivityCard
-          icon={<FileText color="#3b82f6" size={18} />}
-          title="Bliss Spa details updated"
-          desc="Contact information and operating hours modified"
-          time="1 day ago"
-        />
-        <ActivityCard
-          icon={<UserCheck color="#a855f7" size={18} />}
-          title="New vendor partnership approved"
-          desc="Ayurvedic Wellness Center joined the platform"
-          time="3 days ago"
-        />
+      {/* Recent Activity - Scrollable Container */}
+      <View style={[styles.activitySection, isMobile && styles.activitySectionMobile]}>
+        <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
+          Recent Activity
+        </Text>
+        <View style={[styles.activityBox, isMobile && styles.activityBoxMobile]}>
+          <ScrollView
+            style={styles.activityScrollView}
+            contentContainerStyle={[styles.activityScrollContent, isMobile && styles.activityScrollContentMobile]}
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+          >
+            <ActivityCard
+              icon={<Plus color="#047857" size={20} />}
+              title="Serenity Spa successfully onboarded"
+              desc="Added 12 services, verified documentation"
+              time="2 hours ago"
+              isMobile={isMobile}
+            />
+            <ActivityCard
+              icon={<FileText color="#016B3A" size={20} />}
+              title="Bliss Spa details updated"
+              desc="Contact information and operating hours modified"
+              time="1 day ago"
+              isMobile={isMobile}
+            />
+            <ActivityCard
+              icon={<UserCheck color="#10B981" size={20} />}
+              title="New vendor partnership approved"
+              desc="Ayurvedic Wellness Center joined the platform"
+              time="3 days ago"
+              isMobile={isMobile}
+            />
+            <ActivityCard
+              icon={<Plus color="#047857" size={20} />}
+              title="Serenity Spa successfully onboarded"
+              desc="Added 12 services, verified documentation"
+              time="2 hours ago"
+              isMobile={isMobile}
+            />
+            <ActivityCard
+              icon={<FileText color="#016B3A" size={20} />}
+              title="Bliss Spa details updated"
+              desc="Contact information and operating hours modified"
+              time="1 day ago"
+              isMobile={isMobile}
+            />
+            <ActivityCard
+              icon={<UserCheck color="#10B981" size={20} />}
+              title="New vendor partnership approved"
+              desc="Ayurvedic Wellness Center joined the platform"
+              time="3 days ago"
+              isMobile={isMobile}
+            />
+          </ScrollView>
+        </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
-/* ---- Internal Components ---- */
-
-const QuickAction = ({ icon, title, desc, bg, nav }) => (
-  <TouchableOpacity
-    onPress={nav}
-    style={[styles.quickCard, bg && { backgroundColor: bg, borderColor: bg }]}
-    activeOpacity={0.85}
+const StatCard = ({ icon, gradient, label, value, subtitle, isMobile, width }) => (
+  <Pressable
+    style={({ pressed }) => [
+      {
+        width: isMobile ? width * 0.85 : 320,
+        height: isMobile ? 140 : 160,
+        marginRight: 16,
+        borderRadius: 24,
+        padding: 0,
+        transform: [{ scale: pressed ? 0.97 : 1 }],
+        ...Platform.select({
+          ios: {
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+          },
+          android: {
+            elevation: 4,
+          },
+        }),
+      },
+    ]}
   >
-    <View style={styles.quickRow}>
-      <View style={[styles.quickIcon, bg && { backgroundColor: "transparent" }]}>
+    <LinearGradient colors={gradient} style={{ flex: 1, borderRadius: 24, padding: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 36, fontWeight: "900", color: "#fff", marginBottom: 8 }}>
+          {value}
+        </Text>
+        <Text style={{ fontSize: 16, fontWeight: "700", color: "#fff", marginBottom: 4 }}>
+          {label}
+        </Text>
+        <Text style={{ fontSize: 12, color: "rgba(255,255,255,0.9)" }}>
+          {subtitle}
+        </Text>
+      </View>
+      <View style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: "rgba(255,255,255,0.25)", alignItems: "center", justifyContent: "center" }}>
         {icon}
       </View>
-      <View>
-        <Text style={[styles.quickTitle, bg && { color: "#fff" }]}>{title}</Text>
-        <Text style={[styles.quickDesc, bg && { color: "#e0f2fe" }]}>{desc}</Text>
-      </View>
-    </View>
-  </TouchableOpacity>
+    </LinearGradient>
+  </Pressable>
 );
 
-const ActivityCard = ({ icon, title, desc, time }) => (
-  <View style={styles.activityCard}>
+const ActivityCard = ({ icon, title, desc, time, isMobile }) => (
+  <View style={[styles.activityCard, isMobile && styles.activityCardMobile]}>
     <View style={styles.activityRow}>
-      {icon}
-      <View style={{ marginLeft: 10 }}>
-        <Text style={styles.activityTitle}>{title}</Text>
-        <Text style={styles.activityDesc}>{desc}</Text>
+      <View style={styles.activityIconWrap}>
+        {icon}
+      </View>
+      <View style={{ flex: 1, marginLeft: 12 }}>
+        <Text style={[styles.activityTitle, isMobile && styles.activityTitleMobile]}>
+          {title}
+        </Text>
+        <Text style={[styles.activityDesc, isMobile && styles.activityDescMobile]}>
+          {desc}
+        </Text>
       </View>
     </View>
-    <Text style={styles.activityTime}>{time}</Text>
+    <Text style={[styles.activityTime, isMobile && styles.activityTimeMobile]}>{time}</Text>
   </View>
 );
 
-/* ---- Styles (only those used here) ---- */
-
 const styles = StyleSheet.create({
+  statsSection: {
+    marginBottom: 16,
+  },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginVertical: 12,
+    fontSize: 20,
+    fontWeight: "900",
+    marginVertical: 16,
     paddingHorizontal: 16,
+    color: "#014D2A",
+    letterSpacing: 0.3,
   },
-  quickContainer: { paddingHorizontal: 16 },
-  quickCard: {
-    borderWidth: 1,
-    borderColor: "#bae6fd",
+  sectionTitleMobile: {
+    fontSize: 18,
+    paddingHorizontal: 14,
+    marginVertical: 12,
+  },
+  statsScrollView: {
+    paddingVertical: 4,
+  },
+  statsContainer: {
+    paddingHorizontal: 16,
+    paddingRight: 32,
+    gap: 14,
+  },
+  statsContainerMobile: {
+    paddingHorizontal: 14,
+    gap: 12,
+  },
+  statCard: {
+    width: 180,
+    borderRadius: 20,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#014D2A",
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 4 },
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  statCardMobile: {
+    width: 160,
+    padding: 16,
+  },
+  statIconWrapper: {
+    width: 48,
+    height: 48,
     borderRadius: 14,
-    padding: 12,
-    marginBottom: 10,
-  },
-  quickRow: { flexDirection: "row", alignItems: "center" },
-  quickIcon: {
-    width: 30,
-    height: 30,
-    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.25)",
     alignItems: "center",
-    marginRight: 10,
+    justifyContent: "center",
+    marginBottom: 12,
   },
-  quickTitle: { fontWeight: "600", fontSize: 14 },
-  quickDesc: { fontSize: 12, color: "#666" },
-
-  activityContainer: { paddingHorizontal: 16, marginBottom: 20 },
+  statValue: {
+    fontSize: 28,
+    fontWeight: "900",
+    color: "#FFFFFF",
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  statValueMobile: {
+    fontSize: 24,
+  },
+  statLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.95)",
+    marginBottom: 4,
+  },
+  statLabelMobile: {
+    fontSize: 13,
+  },
+  statSubtitle: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.85)",
+    fontWeight: "600",
+  },
+  statSubtitleMobile: {
+    fontSize: 11,
+  },
+  activitySection: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  activitySectionMobile: {
+    paddingBottom: 15,
+  },
+  activityBox: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#D1FAE5",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 2 },
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  activityBoxMobile: {
+    marginHorizontal: 14,
+    borderRadius: 16,
+  },
+  activityScrollView: {
+    flex: 1,
+  },
+  activityScrollContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+    gap: 12,
+  },
+  activityScrollContentMobile: {
+    paddingHorizontal: 14,
+    paddingVertical: 16,
+    gap: 10,
+  },
   activityCard: {
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#F9FAFB",
     borderRadius: 14,
-    padding: 12,
-    marginBottom: 10,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  activityRow: { flexDirection: "row", alignItems: "center" },
-  activityTitle: { fontWeight: "600", fontSize: 13 },
-  activityDesc: { color: "#666", fontSize: 12 },
-  activityTime: { alignSelf: "flex-end", color: "#999", fontSize: 11, marginTop: 6 },
+  activityCardMobile: {
+    padding: 14,
+    borderRadius: 14,
+  },
+  activityRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    flex: 1,
+    marginRight: 12,
+  },
+  activityIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#E6F7EE",
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'relative',
+  },
+  activityTitle: {
+    fontWeight: "800",
+    fontSize: 14,
+    color: "#014D2A",
+    marginBottom: 4,
+  },
+  activityTitleMobile: {
+    fontSize: 13,
+  },
+  activityDesc: {
+    color: "#047857",
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  activityDescMobile: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  activityTime: {
+    color: "#9CA3AF",
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  activityTimeMobile: {
+    fontSize: 10,
+  },
 });

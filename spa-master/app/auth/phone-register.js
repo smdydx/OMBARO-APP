@@ -136,12 +136,8 @@ export default function PhoneRegisterScreen() {
         return;
       }
       if (passwordError) {
-        // keep the specific passwordError message set by validator
         return;
       }
-
-
-
 
       const headers = {
         "Content-Type": "application/json",
@@ -165,11 +161,10 @@ export default function PhoneRegisterScreen() {
 
         const result = await res.json();
         console.log("Register API Result:", result);
-        // If API responds with an application-level failure, handle it
+
         if (!res.ok || result.success === false) {
           console.log("Register Failed:", result);
           const message = result.msg || 'Registration failed. Please try again.';
-          // If the API indicates the email is already used, show field-level error
           if (/email/i.test(message) && /in use|already/i.test(message)) {
             setEmailError(message);
           } else {
@@ -178,9 +173,6 @@ export default function PhoneRegisterScreen() {
           return;
         }
 
-        // SUCCESS
-        console.log("Register Success:", result);
-        // Show verification notice to the user
         setShowVerifyNotice(true);
       } catch (error) {
         console.log('Register error:', error);
@@ -198,8 +190,11 @@ export default function PhoneRegisterScreen() {
       !passwordError;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <StatusBar backgroundColor="#064e3b" barStyle="light-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }} edges={['top']}>
+      
+      {/* STATUSBAR TRANSPARENT + MERGED */}
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -462,7 +457,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
   },
   header: {
     paddingHorizontal: scale(20),

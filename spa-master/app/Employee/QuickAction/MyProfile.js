@@ -1,213 +1,213 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { ArrowLeft, User, Mail, Phone, MapPin, Briefcase, Calendar, Shield, Edit3 } from "lucide-react-native";
 import {
     Platform,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     useWindowDimensions,
     View,
+    TouchableOpacity,
+    ScrollView,
 } from "react-native";
 
 const COLORS = {
-  bg: "#F6F7FB",
-  surface: "#FFFFFF",
-  text: "#0F172A",
-  textMuted: "#6B7280",
-  border: "rgba(2,6,23,0.08)",
-  divider: "rgba(2,6,23,0.06)",
-  purple: "#7C3AED",
-  pink: "#EC4899",
-  blue: "#2563EB",
-  gradient1: "#A855F7",
-  gradient2: "#EC4899",
-  cardShadow: "rgba(0,0,0,0.1)",
+  gradient1: "#00FF87",
+  gradient2: "#016B3A",
+  gradient3: "#013B1F",
+  gradient4: "#012B17",
+  primary: "#016B3A",
+  primaryLight: "#10B981",
+  white: "#FFFFFF",
+  text: "#1A1A1A",
+  textSecondary: "#666666",
+  textLight: "#999999",
+  bg: "#FFFFFF",
+  cardBg: "#F9FAFB",
+  border: "#E5E7EB",
 };
 
-/* --- Responsive helper --- */
 function useScale() {
-  const { width } = useWindowDimensions();
-  const base = Math.min(Math.max(width, 320), 480);
+  const { width, height } = useWindowDimensions();
+  const base = Math.min(width, 480);
   const sw = (n) => Math.round((base / 390) * n);
-  return { sw };
+  return { sw, width, height };
 }
 
-/* --- Small field item --- */
-function InfoField({ icon, label, value, sw }) {
+function InfoRow({ icon: Icon, label, value, sw, isLast }) {
   return (
-    <View style={{ marginBottom: sw(10) }}>
-      <Text style={{ color: COLORS.textMuted, fontSize: sw(13), marginBottom: sw(4) }}>
-        {label}
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#F9FAFB",
-          borderWidth: 1,
-          borderColor: COLORS.border,
-          borderRadius: sw(12),
-          paddingVertical: sw(10),
-          paddingHorizontal: sw(12),
-        }}
-      >
-        <Text style={{ fontSize: sw(16), marginRight: sw(8) }}>{icon}</Text>
-        <Text style={{ color: COLORS.text, fontSize: sw(15), flexShrink: 1 }}>{value}</Text>
+    <View 
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: sw(14),
+        borderBottomWidth: isLast ? 0 : 1,
+        borderBottomColor: "#F3F4F6",
+      }}
+    >
+      <View style={{ 
+        width: sw(40), 
+        height: sw(40), 
+        borderRadius: sw(20), 
+        backgroundColor: `${COLORS.primary}10`,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: sw(12)
+      }}>
+        <Icon size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={{ 
+          color: COLORS.textLight, 
+          fontSize: sw(11), 
+          marginBottom: sw(4),
+          fontWeight: "500",
+          letterSpacing: 0.3,
+        }}>
+          {label}
+        </Text>
+        <Text style={{ 
+          color: COLORS.text, 
+          fontSize: sw(14), 
+          fontWeight: "600", 
+        }}>
+          {value}
+        </Text>
       </View>
     </View>
   );
 }
 
-/* --- Card container --- */
-function SectionCard({ title, children, sw }) {
+export default function MyProfile({ onBack }) {
+  const { sw, width, height } = useScale();
+  const nav = useNavigation();
+
+  const headerHeight = height * 0.333;
+  const contentHeight = height * 0.667;
+
   return (
-    <View
-      style={[
-        styles.card,
-        {
-          borderRadius: sw(16),
-          padding: sw(16),
-          marginBottom: sw(18),
-        },
-      ]}
-    >
-      <Text style={{ color: COLORS.text, fontWeight: "800", fontSize: sw(17), marginBottom: sw(12) }}>
-        {title}
-      </Text>
-      {children}
+    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor={COLORS.gradient2}
+        translucent={false}
+      />
+
+      <LinearGradient 
+        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} 
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: headerHeight,
+          paddingTop:sw(20),
+          paddingHorizontal: sw(20),
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(30),marginTop:sw(30) }}>
+          <TouchableOpacity 
+            onPress={() => onBack ? onBack() : nav.goBack()} 
+            style={{
+              width: sw(42),
+              height: sw(42),
+              borderRadius: sw(21),
+              backgroundColor: "rgba(255,255,255,0.2)",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
+          </TouchableOpacity>
+          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42) }}>
+            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800" }}>My Profile</Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
+              Personal Information
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{
+            width: sw(90),
+            height: sw(90),
+            borderRadius: sw(45),
+            backgroundColor: "rgba(255,255,255,0.25)",
+            alignItems: "center",
+            justifyContent: "center",
+            borderWidth: 3,
+            borderColor: "rgba(255,255,255,0.4)",
+          }}>
+            <User size={sw(45)} color="#FFFFFF" strokeWidth={2} />
+          </View>
+          <Text style={{ 
+            color: "#FFFFFF", 
+            fontSize: sw(18), 
+            fontWeight: "800",
+            marginTop: sw(12),
+          }}>
+            Rahul Kumar
+          </Text>
+          <Text style={{ 
+            color: "rgba(255,255,255,0.9)", 
+            fontSize: sw(13),
+            marginTop: sw(4),
+          }}>
+            Spa Manager
+          </Text>
+        </View>
+      </LinearGradient>
+
+      <View style={{ 
+        height: contentHeight,
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: sw(30),
+        borderTopRightRadius: sw(30),
+      }}>
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={{ 
+            paddingTop: sw(24), 
+            paddingHorizontal: sw(20), 
+            paddingBottom: sw(40) 
+          }} 
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{
+            backgroundColor: COLORS.cardBg,
+            borderRadius: sw(16),
+            padding: sw(18),
+            borderWidth: 1,
+            borderColor: COLORS.border,
+          }}>
+            <InfoRow icon={Mail} label="EMAIL" value="rahul.kumar@spa.com" sw={sw} />
+            <InfoRow icon={Phone} label="PHONE" value="+91 98765 43210" sw={sw} />
+            <InfoRow icon={MapPin} label="LOCATION" value="Mumbai, Maharashtra" sw={sw} />
+            <InfoRow icon={Briefcase} label="DEPARTMENT" value="Operations" sw={sw} />
+            <InfoRow icon={Calendar} label="JOINING DATE" value="15 Jan 2023" sw={sw} />
+            <InfoRow icon={Shield} label="EMPLOYEE ID" value="SPA-2023-001" sw={sw} isLast={true} />
+          </View>
+
+          <TouchableOpacity style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: COLORS.primary,
+            borderRadius: sw(14),
+            paddingVertical: sw(14),
+            marginTop: sw(20),
+          }}>
+            <Edit3 size={sw(18)} color="#FFFFFF" strokeWidth={2.5} />
+            <Text style={{ 
+              fontSize: sw(15), 
+              color: "#FFFFFF", 
+              fontWeight: "700",
+              marginLeft: sw(8),
+            }}>
+              Edit Profile
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </View>
   );
 }
-
-/* --- Main screen --- */
-export default function MyProfile({ onBack, onEdit }) {
-  const { sw } = useScale();
-
-  const navigation = useNavigation();
-
-  // dummy data (replace with API / props)
-  const profile = {
-    name: "Rahul Kumar",
-    designation: "Field Operations Manager",
-    id: "EMP001",
-    email: "rahul.kumar@ombaro.com",
-    phone: "+91 98765 43210",
-    address: "Bangalore, Karnataka",
-    department: "Operations",
-    joiningDate: "2024-01-15",
-    emergencyPhone: "+91 98765 00000",
-    bloodGroup: "O+",
-  };
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.bg }}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView
-        contentContainerStyle={{ padding: sw(16), paddingBottom: sw(24),paddingTop:40 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
-          <Pressable
-            onPress={()=>navigation.goBack()}
-            hitSlop={12}
-            style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, marginRight: sw(6) }]}
-          >
-            <Text style={{ color: COLORS.textMuted, fontSize: sw(16) }}>← Back</Text>
-          </Pressable>
-          <Text style={{ flex: 1, textAlign: "center", color: COLORS.text, fontWeight: "900", fontSize: sw(20) }}>
-            My Profile
-          </Text>
-          <Pressable
-            onPress={onEdit}
-            hitSlop={12}
-            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-          >
-            <View
-              style={{
-                backgroundColor: "#F3E8FF",
-                padding: sw(8),
-                borderRadius: sw(12),
-              }}
-            >
-              <Text style={{ fontSize: sw(16) }}>✎</Text>
-            </View>
-          </Pressable>
-        </View>
-
-        {/* Gradient profile card */}
-        <LinearGradient
-          colors={[COLORS.gradient1, COLORS.gradient2]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            borderRadius: sw(18),
-            paddingVertical: sw(24),
-            alignItems: "center",
-            marginBottom: sw(18),
-          }}
-        >
-          <View
-            style={{
-              width: sw(80),
-              height: sw(80),
-              borderRadius: sw(40),
-              backgroundColor: "rgba(255,255,255,0.15)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: sw(12),
-            }}
-          >
-            <Text style={{ fontSize: sw(36), color: "#fff" }}>👤</Text>
-          </View>
-          <Text style={{ color: "#fff", fontWeight: "800", fontSize: sw(20) }}>{profile.name}</Text>
-          <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(15), marginTop: sw(4) }}>
-            {profile.designation}
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.8)", fontSize: sw(13), marginTop: sw(2) }}>
-            ID: {profile.id}
-          </Text>
-        </LinearGradient>
-
-        {/* Personal info */}
-        <SectionCard title="Personal Information" sw={sw}>
-          <InfoField icon="👤" label="Full Name" value={profile.name} sw={sw} />
-          <InfoField icon="📧" label="Email" value={profile.email} sw={sw} />
-          <InfoField icon="📞" label="Phone" value={profile.phone} sw={sw} />
-          <InfoField icon="📍" label="Address" value={profile.address} sw={sw} />
-        </SectionCard>
-
-        {/* Work info */}
-        <SectionCard title="Work Information" sw={sw}>
-          <InfoField icon="🆔" label="Employee ID" value={profile.id} sw={sw} />
-          <InfoField icon="🏢" label="Department" value={profile.department} sw={sw} />
-          <InfoField icon="💼" label="Designation" value={profile.designation} sw={sw} />
-          <InfoField icon="📅" label="Joining Date" value={profile.joiningDate} sw={sw} />
-        </SectionCard>
-
-        {/* Emergency info */}
-        <SectionCard title="Emergency Details" sw={sw}>
-          <InfoField icon="📞" label="Emergency Contact" value={profile.emergencyPhone} sw={sw} />
-          <InfoField icon="🩸" label="Blood Group" value={profile.bloodGroup} sw={sw} />
-        </SectionCard>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-/* --- Styles --- */
-const shadowStyle =
-  Platform.OS === "ios"
-    ? { shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 10, shadowOffset: { width: 0, height: 6 } }
-    : { elevation: 2 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: COLORS.surface,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: COLORS.border,
-  },
-});

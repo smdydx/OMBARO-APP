@@ -1,3 +1,4 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useRouter } from 'expo-router'
@@ -8,7 +9,6 @@ import {
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
@@ -16,14 +16,15 @@ import {
     TouchableOpacity,
     View,
     useWindowDimensions,
+    Animated,
 } from 'react-native'
 import { useSafeNavigation } from '../../hooks/useSafeNavigation'
+import { Eye, EyeOff, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react-native'
 
-const LOGIN_ENDPOINT =
-    'https://api.gateway.ombaro.com/api/v1/auth/login/email'
-const HERO_GRADIENT_COLORS = ['#064e3b', '#047857', '#059669']
-const PASSWORD_RULE =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
+const LOGIN_ENDPOINT = 'https://api.gateway.ombaro.com/api/v1/auth/login/email'
+const HERO_GRADIENT_COLORS = ['#013B1F', '#016B3A', '#02945A']
+const PASSWORD_RULE = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
+const EMAIL_RULE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const LoginScreen = () => {
     const router = useRouter()
@@ -32,37 +33,75 @@ const LoginScreen = () => {
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [feedback, setFeedback] = useState({ type: null, message: '' })
-
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+    const [emailFocused, setEmailFocused] = useState(false)
+    const [passwordFocused, setPasswordFocused] = useState(false)
 
     const { isNavigating, navigate } = useSafeNavigation()
-
     const { height: windowHeight, width: windowWidth } = useWindowDimensions()
 
     const metrics = useMemo(() => {
-        const heroHeight = Math.max(320, Math.min(460, windowHeight * 0.55))
-        const heroRadius = heroHeight * 0.35
-        const portraitSize = Math.min(240, heroHeight * 0.52)
-        const cardOffset = Math.min(heroHeight * 0.25, 110)
-        const heroPaddingTop = Platform.OS === 'ios' ? 40 : 32
-        const horizontalPadding = windowWidth < 360 ? 18 : 26
+        const isSmall = windowHeight < 700
+        const heroHeight = isSmall ? windowHeight * 0.32 : windowHeight * 0.35
+        const logoSize = isSmall ? 90 : 100
+        const inputHeight = isSmall ? 56 : 60
+        const buttonHeight = isSmall ? 56 : 60
+        const spacing = isSmall ? 16 : 20
+        const fontSize = {
+            brand: isSmall ? 38 : 44,
+            title: isSmall ? 28 : 32,
+            subtitle: isSmall ? 14 : 15,
+            label: isSmall ? 13 : 14,
+            input: isSmall ? 15 : 16,
+            button: isSmall ? 16 : 17,
+            helper: isSmall ? 12 : 13,
+        }
 
         return {
             heroHeight,
-            heroRadius,
-            portraitSize,
-            cardOffset,
-            heroPaddingTop,
-            horizontalPadding,
+            logoSize,
+            inputHeight,
+            buttonHeight,
+            spacing,
+            fontSize,
         }
-    }, [windowHeight, windowWidth])
+    }, [windowHeight])
 
     const handleFeedback = (type, message) => {
         setFeedback({ type, message })
     }
 
+    const validateEmail = (text) => {
+        setEmail(text)
+        if (text.trim() === '') {
+            setEmailError('')
+        } else if (!EMAIL_RULE.test(text)) {
+            setEmailError('Please enter a valid email address')
+        } else {
+            setEmailError('')
+        }
+    }
+
+    const validatePassword = (text) => {
+        setPassword(text)
+        if (text.trim() === '') {
+            setPasswordError('')
+        } else if (!PASSWORD_RULE.test(text)) {
+            setPasswordError('Password must be 6+ chars with uppercase, number & special char')
+        } else {
+            setPasswordError('')
+        }
+    }
+
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
             handleFeedback('error', 'Please enter both email and password.')
+            return
+        }
+
+        if (!EMAIL_RULE.test(email)) {
+            handleFeedback('error', 'Please enter a valid email address.')
             return
         }
 
@@ -81,7 +120,6 @@ const LoginScreen = () => {
             email: email.toLowerCase(),
             password,
         }
-        console.log(payload)
 
         try {
             const response = await fetch(LOGIN_ENDPOINT, {
@@ -94,15 +132,11 @@ const LoginScreen = () => {
 
             const data = await response.json().catch(() => ({}))
 
-            console.log(data)
-
-
             if (!response.ok || data?.success === false) {
                 throw new Error(
                     data?.msg || data?.message || 'Unable to sign in. Please try again.'
                 )
             }
-
 
             const token = data.data.cookies.accessToken
 
@@ -120,165 +154,197 @@ const LoginScreen = () => {
         }
     }
 
-    const isButtonDisabled = loading || !email.trim() || !password.trim()
+    const isButtonDisabled = loading || !email.trim() || !password.trim() || emailError || passwordError
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar barStyle="light-content" backgroundColor="#064e3b" />
+            <StatusBar barStyle="light-content" backgroundColor="#013B1F" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.flex}
             >
-                <ScrollView
-                    contentContainerStyle={[
-                        styles.scrollContent,
-                        { paddingBottom: Math.max(24, metrics.horizontalPadding) },
-                    ]}
-                    keyboardShouldPersistTaps="handled"
-                >
-                    <View style={styles.screen}>
-                        <LinearGradient
-                            colors={HERO_GRADIENT_COLORS}
-                            style={[
-                                styles.hero,
-                                {
-                                    height: metrics.heroHeight,
-                                    borderBottomLeftRadius: metrics.heroRadius,
-                                    borderBottomRightRadius: metrics.heroRadius,
-                                    paddingHorizontal: metrics.horizontalPadding,
-                                    paddingTop: metrics.heroPaddingTop,
-                                },
-                            ]}
-                        >
-                            <Text style={styles.brand}>metime</Text>
-                            <Text style={styles.brandSubtitle}>
-                                Because your skin deserves the best care.
-                            </Text>
+                <View style={styles.container}>
+                    {/* Hero Section with Animated Background */}
+                    <LinearGradient
+                        colors={HERO_GRADIENT_COLORS}
+                        style={[styles.hero, { height: metrics.heroHeight }]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                    >
+                        <View style={styles.decorativeCircle1} />
+                        <View style={styles.decorativeCircle2} />
+
+                        <View style={styles.logoCircle}>
                             <Image
-                                source={{
-                                    uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80',
-                                }}
-                                style={[
-                                    styles.heroImage,
-                                    {
-                                        width: metrics.portraitSize,
-                                        height: metrics.portraitSize,
-                                        borderRadius: metrics.portraitSize / 2,
-                                        marginTop: metrics.heroHeight * 0.09,
-                                    },
-                                ]}
-                                resizeMode="cover"
+                                source={require('../../assets/Spa/logo.png')}
+                                style={[styles.logo, { width: metrics.logoSize * 0.9, height: metrics.logoSize * 0.9 }]}
+                                resizeMode="contain"
                             />
-                            <View
-                                style={[
-                                    styles.heroCurve,
-                                    {
-                                        borderTopLeftRadius: metrics.heroRadius,
-                                        borderTopRightRadius: metrics.heroRadius,
-                                        height: metrics.cardOffset + 40,
-                                    },
-                                ]}
-                            />
-                        </LinearGradient>
+                        </View>
+                    
+                        <Text style={[styles.brandTagline, { fontSize: metrics.fontSize.subtitle }]}>
+                            Your Wellness Journey Begins Here
+                        </Text>
+                    </LinearGradient>
 
-                        <View
-                            style={[
-                                styles.card,
-                                {
-                                    marginTop: -metrics.cardOffset,
-                                    marginHorizontal: 6,
-                                    paddingHorizontal: metrics.horizontalPadding,
-                                },
-                            ]}
-                        >
-                            <Text style={styles.title}>Your Skin Journey Starts Here!</Text>
-                            <Text style={styles.subtitle}>
-                                Log in to access personalized routines and bookings.
+                    {/* Form Section */}
+                    <View style={[styles.formContainer, { paddingVertical: metrics.spacing * 1.5 }]}>
+                        <View style={styles.titleContainer}>
+                            <Text style={[styles.title, { fontSize: metrics.fontSize.title }]}>
+                                Welcome Back
                             </Text>
+                            <Text style={[styles.subtitle, { fontSize: metrics.fontSize.subtitle }]}>
+                                Sign in to continue your spa experience
+                            </Text>
+                        </View>
 
-                            <Text style={styles.label}>Email</Text>
-                            <TextInput
-                                value={email}
-                                onChangeText={setEmail}
-                                placeholder="you@example.com"
-                                placeholderTextColor="#94a3b8"
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                textContentType="emailAddress"
-                                style={styles.input}
-                            />
+                        {/* Email Input with Validation */}
+                        <View style={[styles.inputGroup, { marginBottom: metrics.spacing }]}>
+                            <Text style={[styles.label, { fontSize: metrics.fontSize.label }]}>Email Address</Text>
+                            <View style={[
+                                styles.inputWrapper,
+                                { height: metrics.inputHeight },
+                                emailFocused && styles.inputWrapperFocused,
+                                emailError && styles.inputWrapperError
+                            ]}>
+                                <Mail
+                                    size={20}
+                                    color={emailError ? '#EF4444' : emailFocused ? '#016B3A' : '#94A3B8'}
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    value={email}
+                                    onChangeText={validateEmail}
+                                    onFocus={() => setEmailFocused(true)}
+                                    onBlur={() => setEmailFocused(false)}
+                                    placeholder="you@example.com"
+                                    placeholderTextColor="#94a3b8"
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                    textContentType="emailAddress"
+                                    style={[
+                                        styles.input,
+                                        { fontSize: metrics.fontSize.input }
+                                    ]}
+                                />
+                                {email.trim() !== '' && !emailError && (
+                                    <CheckCircle size={20} color="#10B981" style={styles.validIcon} />
+                                )}
+                            </View>
+                            {emailError ? (
+                                <View style={styles.errorContainer}>
+                                    <AlertCircle size={14} color="#EF4444" />
+                                    <Text style={[styles.errorText, { fontSize: metrics.fontSize.helper }]}>
+                                        {emailError}
+                                    </Text>
+                                </View>
+                            ) : null}
+                        </View>
 
-                            <Text style={styles.label}>Password</Text>
-                            <View style={styles.passwordWrapper}>
+                        {/* Password Input with Toggle */}
+                        <View style={[styles.inputGroup, { marginBottom: metrics.spacing * 0.8 }]}>
+                            <Text style={[styles.label, { fontSize: metrics.fontSize.label }]}>Password</Text>
+                            <View style={[
+                                styles.inputWrapper,
+                                { height: metrics.inputHeight },
+                                passwordFocused && styles.inputWrapperFocused,
+                                passwordError && styles.inputWrapperError
+                            ]}>
+                                <Lock
+                                    size={20}
+                                    color={passwordError ? '#EF4444' : passwordFocused ? '#016B3A' : '#94A3B8'}
+                                    style={styles.inputIcon}
+                                />
                                 <TextInput
                                     value={password}
-                                    onChangeText={setPassword}
-                                    placeholder="********"
+                                    onChangeText={validatePassword}
+                                    onFocus={() => setPasswordFocused(true)}
+                                    onBlur={() => setPasswordFocused(false)}
+                                    placeholder="Enter your password"
                                     placeholderTextColor="#94a3b8"
                                     secureTextEntry={!showPassword}
                                     textContentType="password"
-                                    style={[styles.input, styles.passwordInput]}
+                                    style={[
+                                        styles.input,
+                                        styles.passwordInput,
+                                        { fontSize: metrics.fontSize.input }
+                                    ]}
                                 />
                                 <TouchableOpacity
                                     activeOpacity={0.7}
                                     onPress={() => setShowPassword((prev) => !prev)}
                                     style={styles.toggleVisibility}
                                 >
-                                    <Text style={styles.toggleText}>
-                                        {showPassword ? 'Hide' : 'Show'}
-                                    </Text>
+                                    {showPassword ? (
+                                        <EyeOff size={20} color="#64748B" />
+                                    ) : (
+                                        <Eye size={20} color="#64748B" />
+                                    )}
                                 </TouchableOpacity>
                             </View>
-
-
-                            {feedback.message ? (
-                                <View
-                                    style={[
-                                        styles.feedback,
-                                        feedback.type === 'error' && styles.feedbackError,
-                                        feedback.type === 'success' && styles.feedbackSuccess,
-                                    ]}
-                                >
-                                    <Text
-                                        style={[
-                                            styles.feedbackText,
-                                            feedback.type === 'success' && styles.feedbackTextSuccess,
-                                        ]}
-                                    >
-                                        {feedback.message}
+                            {passwordError ? (
+                                <View style={styles.errorContainer}>
+                                    <AlertCircle size={14} color="#EF4444" />
+                                    <Text style={[styles.errorText, { fontSize: metrics.fontSize.helper }]}>
+                                        {passwordError}
                                     </Text>
                                 </View>
                             ) : null}
+                        </View>
 
-                            <TouchableOpacity
-                                onPress={handleLogin}
-                                style={styles.button}
-                                disabled={isButtonDisabled || isNavigating}
-                                activeOpacity={0.9}
+                        <TouchableOpacity activeOpacity={0.7} style={{ marginBottom: metrics.spacing }}>
+                            <Text style={[styles.forgotText, { fontSize: metrics.fontSize.label }]}>
+                                Forgot Password?
+                            </Text>
+                        </TouchableOpacity>
+
+                        {feedback.message ? (
+                            <View
+                                style={[
+                                    styles.feedback,
+                                    feedback.type === 'error' && styles.feedbackError,
+                                    feedback.type === 'success' && styles.feedbackSuccess,
+                                ]}
                             >
-                                <LinearGradient
-                                    colors={HERO_GRADIENT_COLORS}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
+                                <Text
                                     style={[
-                                        styles.buttonBackground,
-                                        isButtonDisabled && styles.buttonDisabled,
+                                        styles.feedbackText,
+                                        { fontSize: metrics.fontSize.label },
+                                        feedback.type === 'success' && styles.feedbackTextSuccess,
                                     ]}
                                 >
-                                    {loading ? (
-                                        <ActivityIndicator color="#ffffff" />
-                                    ) : (
-                                        <Text style={styles.buttonText}>Sign In</Text>
-                                    )}
-                                </LinearGradient>
-                            </TouchableOpacity>
+                                    {feedback.message}
+                                </Text>
+                            </View>
+                        ) : null}
 
-                            <TouchableOpacity activeOpacity={0.7}>
-                                <Text style={styles.forgotText}>Forgot Password?</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity
+                            onPress={handleLogin}
+                            style={[styles.button, { height: metrics.buttonHeight }]}
+                            disabled={isButtonDisabled || isNavigating}
+                            activeOpacity={0.9}
+                        >
+                            <LinearGradient
+                                colors={isButtonDisabled ? ['#94A3B8', '#94A3B8'] : HERO_GRADIENT_COLORS}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.buttonBackground}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color="#ffffff" />
+                                ) : (
+                                    <Text style={[styles.buttonText, { fontSize: metrics.fontSize.button }]}>
+                                        Sign In Securely
+                                    </Text>
+                                )}
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+
+
+
                     </View>
-                </ScrollView>
+                </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
@@ -287,150 +353,248 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
+        backgroundColor: '#F8FAFB',
     },
     flex: {
         flex: 1,
     },
-    scrollContent: {
-        flexGrow: 1,
-        backgroundColor: '#f8fafc',
-    },
-    screen: {
+    container: {
         flex: 1,
+        backgroundColor: '#F8FAFB',
     },
     hero: {
+        width: '100%',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    decorativeCircle1: {
+        position: 'absolute',
+        width: 200,
+        height: 200,
+        borderRadius: 100,
+        backgroundColor: 'rgba(0, 255, 135, 0.1)',
+        top: -50,
+        right: -50,
+    },
+    decorativeCircle2: {
+        position: 'absolute',
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        backgroundColor: 'rgba(0, 255, 135, 0.08)',
+        bottom: 20,
+        left: -30,
+    },
+    logoCircle: {
+        width: 110,
+        height: 110,
+        borderRadius: 55,
+        backgroundColor: '#ffffffff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
+        shadowColor: '#00FF87',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 16,
+        elevation: 15,
+        borderWidth: 3,
+        borderColor: '#00FF87',
+    },
+    logo: {
+        width: 70,        // <--- Set size smaller than parent
+        height: 70,
+        borderRadius: 30, // <--- makes perfect circle
+        resizeMode: 'contain',
     },
     brand: {
-        fontSize: 36,
-        fontWeight: '800',
-        color: '#ffffff',
-        letterSpacing: 1,
+        fontWeight: '900',
+        color: '#FFFFFF',
+        letterSpacing: 6,
+        marginBottom: 8,
+        textShadowColor: 'rgba(0, 0, 0, 0.3)',
+        textShadowOffset: { width: 0, height: 2 },
+        textShadowRadius: 4,
     },
-    brandSubtitle: {
-        fontSize: 16,
-        color: '#bbf7d0',
+    brandTagline: {
+        fontWeight: '600',
+        color: '#00FF87',
+        letterSpacing: 0.5,
+        marginBottom: 0,
         textAlign: 'center',
-        marginTop: 8,
     },
-    heroImage: {
-        borderWidth: 5,
-        borderColor: '#ecfdf5',
-    },
-    heroCurve: {
-        position: 'absolute',
-        bottom: -40,
-        left: -20,
-        right: -20,
-        backgroundColor: '#f8fafc',
-    },
-    card: {
-        backgroundColor: '#ffffff',
-        borderRadius: 32,
-        paddingVertical: 26,
-        shadowColor: '#047857',
-        shadowOffset: { width: 0, height: 15 },
-        shadowOpacity: 0.25,
-        shadowRadius: 30,
+    formContainer: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        paddingHorizontal: 24,
+        marginTop: -30,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        shadowColor: '#016B3A',
+        shadowOffset: { width: 0, height: -8 },
+        shadowOpacity: 0.12,
+        shadowRadius: 20,
         elevation: 12,
     },
+    titleContainer: {
+        marginBottom: 24,
+        marginTop: 8,
+    },
     title: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: '#1f2937',
+        fontWeight: '900',
+        color: '#013B1F',
         textAlign: 'center',
+        marginBottom: 8,
     },
     subtitle: {
-        marginTop: 6,
-        fontSize: 14,
-        color: '#475569',
+        fontWeight: '500',
+        color: '#64748B',
         textAlign: 'center',
-        marginBottom: 10,
+    },
+    inputGroup: {
+        marginBottom: 16,
     },
     label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#0f172a',
-        marginTop: 18,
-        marginBottom: 6,
+        fontWeight: '700',
+        color: '#013B1F',
+        marginBottom: 10,
+    },
+    inputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#E5E7EB',
+        borderRadius: 16,
+        backgroundColor: '#F8FAFC',
+        paddingHorizontal: 16,
+        shadowColor: '#016B3A',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        elevation: 1,
+    },
+    inputWrapperFocused: {
+        borderColor: '#016B3A',
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#016B3A',
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    inputWrapperError: {
+        borderColor: '#EF4444',
+        backgroundColor: '#FEF2F2',
+    },
+    inputIcon: {
+        marginRight: 12,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#e5e7eb',
-        borderRadius: 20,
-        paddingHorizontal: 18,
-        paddingVertical: 14,
-        fontSize: 16,
-        color: '#0f172a',
-        backgroundColor: '#f8fafc',
-        shadowColor: '#e5e7eb',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 8,
-        elevation: 3,
-    },
-    passwordWrapper: {
-        position: 'relative',
+        flex: 1,
+        color: '#0F172A',
+        fontWeight: '500',
     },
     passwordInput: {
-        paddingRight: 70,
+        paddingRight: 0,
+    },
+    validIcon: {
+        marginLeft: 8,
     },
     toggleVisibility: {
-        position: 'absolute',
-        right: 12,
-        top: 0,
-        bottom: 0,
-        justifyContent: 'center',
-        paddingHorizontal: 8,
+        padding: 8,
+        marginLeft: 8,
     },
-    toggleText: {
-        color: '#047857',
+    errorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 6,
+        paddingLeft: 4,
+    },
+    errorText: {
+        color: '#EF4444',
         fontWeight: '600',
+        marginLeft: 6,
     },
     feedback: {
-        marginTop: 20,
-        borderRadius: 16,
-        padding: 12,
-        backgroundColor: '#e2e8f0',
+        marginBottom: 16,
+        borderRadius: 14,
+        padding: 14,
+        backgroundColor: '#E2E8F0',
+        shadowColor: '#016B3A',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
     },
     feedbackError: {
-        backgroundColor: '#fee2e2',
+        backgroundColor: '#FEE2E2',
     },
     feedbackSuccess: {
-        backgroundColor: '#dcfce7',
+        backgroundColor: '#DCFCE7',
     },
     feedbackText: {
-        color: '#1e293b',
-        fontSize: 14,
+        color: '#1E293B',
+        fontWeight: '600',
+        textAlign: 'center',
     },
     feedbackTextSuccess: {
         color: '#166534',
     },
     button: {
-        marginTop: 26,
-        borderRadius: 22,
+        borderRadius: 16,
         overflow: 'hidden',
+        shadowColor: '#016B3A',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+        elevation: 10,
+        marginBottom: 20,
     },
     buttonBackground: {
-        paddingVertical: 16,
+        flex: 1,
         alignItems: 'center',
-    },
-    buttonDisabled: {
-        opacity: 0.6,
+        justifyContent: 'center',
     },
     buttonText: {
-        color: '#ffffff',
-        fontSize: 18,
-        fontWeight: '700',
-        letterSpacing: 0.3,
+        color: '#FFFFFF',
+        fontWeight: '900',
+        letterSpacing: 1.5,
     },
     forgotText: {
-        marginTop: 18,
-        textAlign: 'center',
-        color: '#2563eb',
-        fontSize: 15,
+        textAlign: 'right',
+        color: '#016B3A',
+        fontWeight: '700',
+    },
+    divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E5E7EB',
+    },
+    dividerText: {
+        marginHorizontal: 16,
+        color: '#64748B',
         fontWeight: '600',
+    },
+    signupButton: {
+        borderRadius: 16,
+        borderWidth: 2,
+        borderColor: '#016B3A',
+        backgroundColor: 'transparent',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+    signupButtonText: {
+        color: '#016B3A',
+        fontWeight: '800',
+        letterSpacing: 1,
     },
 })
 

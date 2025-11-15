@@ -1,12 +1,221 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { ArrowLeft, Clock, CheckCircle, XCircle } from "lucide-react-native";
+import {
+  Platform,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
-const ReviewApproval = () => {
-  return (
-    <View>
-      <Text>ReviewApproval</Text>
-    </View>
-  )
+const COLORS = {
+  gradient1: "#00FF87",
+  gradient2: "#016B3A",
+  gradient3: "#013B1F",
+  gradient4: "#012B17",
+  white: "#FFFFFF",
+  text: "#1A1A1A",
+  textSecondary: "#666666",
+  textLight: "#999999",
+  bg: "#FFFFFF",
+  cardBg: "#F9FAFB",
+  border: "#E5E7EB",
+  success: "#10B981",
+  warning: "#F59E0B",
+  danger: "#EF4444",
+};
+
+function useScale() {
+  const { width, height } = useWindowDimensions();
+  const base = Math.min(width, 480);
+  const sw = (n) => Math.round((base / 390) * n);
+  return { sw, width, height };
 }
 
-export default ReviewApproval
+function ApprovalCard({ title, requester, date, status, sw }) {
+  const statusConfig = {
+    pending: { color: COLORS.warning, icon: Clock, label: "Pending" },
+    approved: { color: COLORS.success, icon: CheckCircle, label: "Approved" },
+    rejected: { color: COLORS.danger, icon: XCircle, label: "Rejected" },
+  };
+
+  const config = statusConfig[status] || statusConfig.pending;
+  const StatusIcon = config.icon;
+
+  return (
+    <TouchableOpacity style={{
+      backgroundColor: COLORS.cardBg,
+      borderRadius: sw(14),
+      borderWidth: 1,
+      borderColor: COLORS.border,
+      padding: sw(16),
+      marginBottom: sw(12),
+    }} activeOpacity={0.7}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
+        <View style={{
+          backgroundColor: `${config.color}15`,
+          paddingHorizontal: sw(12),
+          paddingVertical: sw(6),
+          borderRadius: sw(16),
+          flexDirection: "row",
+          alignItems: "center",
+        }}>
+          <StatusIcon size={sw(13)} color={config.color} strokeWidth={2.5} />
+          <Text style={{ color: config.color, fontSize: sw(12), marginLeft: sw(6), fontWeight: "700" }}>
+            {config.label}
+          </Text>
+        </View>
+      </View>
+
+      <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
+        {title}
+      </Text>
+      <Text style={{ fontSize: sw(13), color: COLORS.textSecondary, marginBottom: sw(4) }}>
+        Requested by: {requester}
+      </Text>
+      <Text style={{ fontSize: sw(12), color: COLORS.textLight }}>
+        {date}
+      </Text>
+
+      {status === "pending" && (
+        <View style={{ flexDirection: "row", gap: sw(10), marginTop: sw(14) }}>
+          <TouchableOpacity style={{
+            flex: 1,
+            paddingVertical: sw(10),
+            borderRadius: sw(10),
+            backgroundColor: `${COLORS.success}15`,
+            borderWidth: 1,
+            borderColor: COLORS.success,
+            alignItems: "center",
+          }}>
+            <Text style={{ fontSize: sw(13), color: COLORS.success, fontWeight: "700" }}>
+              Approve
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{
+            flex: 1,
+            paddingVertical: sw(10),
+            borderRadius: sw(10),
+            backgroundColor: `${COLORS.danger}15`,
+            borderWidth: 1,
+            borderColor: COLORS.danger,
+            alignItems: "center",
+          }}>
+            <Text style={{ fontSize: sw(13), color: COLORS.danger, fontWeight: "700" }}>
+              Reject
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+}
+
+export default function ReviewApproval({ onBack }) {
+  const { sw, width, height } = useScale();
+  const nav = useNavigation();
+
+  const headerHeight = height * 0.333;
+  const contentHeight = height * 0.667;
+
+  const approvals = [
+    { id: 1, title: "Leave Request - 3 Days", requester: "Rahul Kumar", date: "Jan 15, 2025", status: "pending" },
+    { id: 2, title: "Expense Claim - ₹5,000", requester: "Priya Sharma", date: "Jan 14, 2025", status: "pending" },
+    { id: 3, title: "Overtime Request", requester: "Amit Singh", date: "Jan 13, 2025", status: "approved" },
+    { id: 4, title: "Equipment Purchase", requester: "Neha Patel", date: "Jan 12, 2025", status: "rejected" },
+  ];
+
+  return (
+    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor={COLORS.gradient2}
+        translucent={false}
+      />
+
+      <LinearGradient 
+        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} 
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: headerHeight,
+          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(20),
+          paddingHorizontal: sw(20),
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
+          <TouchableOpacity 
+            onPress={() => onBack ? onBack() : nav.goBack()} 
+            style={{
+              width: sw(42),
+              height: sw(42),
+              borderRadius: sw(21),
+              backgroundColor: "rgba(255,255,255,0.2)",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
+          </TouchableOpacity>
+          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42) }}>
+            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800",marginTop:sw(50)  }}>
+              Review & Approvals
+            </Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
+              Pending Requests
+            </Text>
+          </View>
+        </View>
+
+        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: sw(4) }}>
+          <View style={{ flexDirection: "row", gap: sw(12) }}>
+            <View style={{
+              flex: 1,
+              backgroundColor: "rgba(255,255,255,0.2)",
+              borderRadius: sw(16),
+              padding: sw(14),
+              alignItems: "center",
+            }}>
+              <Text style={{ fontSize: sw(22), fontWeight: "900", color: "#FFFFFF" }}>4</Text>
+              <Text style={{ fontSize: sw(11), color: "rgba(255,255,255,0.95)", marginTop: sw(4), fontWeight: "600" }}>
+                Total
+              </Text>
+            </View>
+            <View style={{
+              flex: 1,
+              backgroundColor: "rgba(255,255,255,0.2)",
+              borderRadius: sw(16),
+              padding: sw(14),
+              alignItems: "center",
+            }}>
+              <Text style={{ fontSize: sw(22), fontWeight: "900", color: "#FFFFFF" }}>2</Text>
+              <Text style={{ fontSize: sw(11), color: "rgba(255,255,255,0.95)", marginTop: sw(4), fontWeight: "600" }}>
+                Pending
+              </Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
+
+      <View style={{ 
+        height: contentHeight,
+        backgroundColor: COLORS.white,
+        borderTopLeftRadius: sw(30),
+        borderTopRightRadius: sw(30),
+      }}>
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          showsVerticalScrollIndicator={false}
+        >
+          {approvals.map((approval) => (
+            <ApprovalCard key={approval.id} {...approval} sw={sw} />
+          ))}
+        </ScrollView>
+      </View>
+    </View>
+  );
+}

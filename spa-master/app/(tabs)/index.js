@@ -517,6 +517,9 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1
   },
+  container: {
+    flex: 1
+  },
 
   headerGrad: {
     paddingHorizontal: isSmallDevice ? 16 : isMediumDevice ? 20 : 32,
