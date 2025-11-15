@@ -46,29 +46,29 @@ function LeaveCard({ type, from, to, days, status, sw }) {
   return (
     <View style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: sw(12) }}>
-        <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text }}>{type}</Text>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: sw(10) }}>
+        <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text }}>{type}</Text>
         <View style={{
           backgroundColor: statusColor.bg,
-          paddingHorizontal: sw(10),
-          paddingVertical: sw(5),
-          borderRadius: sw(10),
+          paddingHorizontal: sw(8),
+          paddingVertical: sw(4),
+          borderRadius: sw(8),
         }}>
-          <Text style={{ fontSize: sw(11), fontWeight: "700", color: statusColor.text }}>{status}</Text>
+          <Text style={{ fontSize: sw(10), fontWeight: "700", color: statusColor.text }}>{status}</Text>
         </View>
       </View>
 
-      <View style={{ gap: sw(8) }}>
-        <Text style={{ fontSize: sw(12), color: COLORS.textSecondary }}>
+      <View style={{ gap: sw(6) }}>
+        <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
           From: {from} • To: {to}
         </Text>
-        <Text style={{ fontSize: sw(12), color: COLORS.textLight }}>
+        <Text style={{ fontSize: sw(10), color: COLORS.textLight }}>
           Duration: {days} days
         </Text>
       </View>
@@ -162,12 +162,13 @@ export default function LeaveManage({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           <TouchableOpacity style={{
@@ -175,17 +176,17 @@ export default function LeaveManage({ onBack }) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: COLORS.primary,
-            borderRadius: sw(14),
-            paddingVertical: sw(14),
-            marginBottom: sw(20),
+            borderRadius: sw(12),
+            paddingVertical: sw(12),
+            marginBottom: sw(16),
           }}>
-            <FileText size={sw(18)} color="#FFFFFF" strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(15), color: "#FFFFFF", fontWeight: "700", marginLeft: sw(8) }}>
+            <FileText size={sw(15)} color="#FFFFFF" strokeWidth={2.5} />
+            <Text style={{ fontSize: sw(13), color: "#FFFFFF", fontWeight: "700", marginLeft: sw(6) }}>
               Request New Leave
             </Text>
           </TouchableOpacity>
 
-          <Text style={{ fontSize: sw(16), fontWeight: "700", color: COLORS.text, marginBottom: sw(16) }}>
+          <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>
             Recent Leaves
           </Text>
           {leaves.map((leave, index) => (

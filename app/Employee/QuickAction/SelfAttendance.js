@@ -38,27 +38,27 @@ function AttendanceCard({ date, checkIn, checkOut, status, sw }) {
   return (
     <View style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(12) }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(10) }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Calendar size={sw(16)} color={COLORS.primary} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.text, marginLeft: sw(8) }}>
+          <Calendar size={sw(14)} color={COLORS.primary} strokeWidth={2.5} />
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginLeft: sw(6) }}>
             {date}
           </Text>
         </View>
         <View style={{
           backgroundColor: status === "Present" ? "#D1FAE5" : "#FEE2E2",
-          paddingHorizontal: sw(10),
-          paddingVertical: sw(5),
-          borderRadius: sw(10),
+          paddingHorizontal: sw(8),
+          paddingVertical: sw(4),
+          borderRadius: sw(8),
         }}>
           <Text style={{ 
-            fontSize: sw(11), 
+            fontSize: sw(9), 
             fontWeight: "700", 
             color: status === "Present" ? "#059669" : "#DC2626" 
           }}>
@@ -67,14 +67,14 @@ function AttendanceCard({ date, checkIn, checkOut, status, sw }) {
         </View>
       </View>
 
-      <View style={{ flexDirection: "row", gap: sw(16) }}>
+      <View style={{ flexDirection: "row", gap: sw(12) }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(11), color: COLORS.textLight, marginBottom: sw(4) }}>Check In</Text>
-          <Text style={{ fontSize: sw(14), fontWeight: "600", color: COLORS.text }}>{checkIn}</Text>
+          <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(3) }}>Check In</Text>
+          <Text style={{ fontSize: sw(12), fontWeight: "600", color: COLORS.text }}>{checkIn}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(11), color: COLORS.textLight, marginBottom: sw(4) }}>Check Out</Text>
-          <Text style={{ fontSize: sw(14), fontWeight: "600", color: COLORS.text }}>{checkOut}</Text>
+          <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(3) }}>Check Out</Text>
+          <Text style={{ fontSize: sw(12), fontWeight: "600", color: COLORS.text }}>{checkOut}</Text>
         </View>
       </View>
     </View>
@@ -174,15 +174,16 @@ export default function SelfAttendance({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
-          <Text style={{ fontSize: sw(16), fontWeight: "700", color: COLORS.text, marginBottom: sw(16) }}>
+          <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>
             Recent Attendance
           </Text>
           {attendanceData.map((item, index) => (

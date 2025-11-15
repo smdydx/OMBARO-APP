@@ -39,34 +39,34 @@ function StatCard({ icon: Icon, label, value, trend, color, sw }) {
     <View style={{
       flex: 1,
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
+      padding: sw(12),
     }}>
       <View style={{
-        width: sw(42),
-        height: sw(42),
-        borderRadius: sw(12),
+        width: sw(36),
+        height: sw(36),
+        borderRadius: sw(10),
         backgroundColor: `${color}10`,
         borderColor: `${color}30`,
         borderWidth: 1,
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: sw(12),
+        marginBottom: sw(10),
       }}>
-        <Icon size={sw(20)} color={color} strokeWidth={2.5} />
+        <Icon size={sw(18)} color={color} strokeWidth={2.5} />
       </View>
-      <Text style={{ fontWeight: "800", fontSize: sw(24), color: COLORS.text, marginBottom: sw(4) }}>
+      <Text style={{ fontWeight: "800", fontSize: sw(20), color: COLORS.text, marginBottom: sw(3) }}>
         {value}
       </Text>
-      <Text style={{ color: COLORS.textSecondary, fontWeight: "500", fontSize: sw(12), marginBottom: sw(6) }}>
+      <Text style={{ color: COLORS.textSecondary, fontWeight: "500", fontSize: sw(10), marginBottom: sw(4) }}>
         {label}
       </Text>
       {trend && (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TrendingUp size={sw(12)} color="#10B981" strokeWidth={2.5} />
-          <Text style={{ color: "#10B981", fontWeight: "600", fontSize: sw(11), marginLeft: sw(4) }}>
+          <TrendingUp size={sw(10)} color="#10B981" strokeWidth={2.5} />
+          <Text style={{ color: "#10B981", fontWeight: "600", fontSize: sw(9), marginLeft: sw(3) }}>
             {trend}
           </Text>
         </View>
@@ -161,24 +161,25 @@ export default function Analytics({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
-          <Text style={{ fontSize: sw(16), fontWeight: "700", color: COLORS.text, marginBottom: sw(16) }}>
+          <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>
             Key Metrics
           </Text>
 
-          <View style={{ flexDirection: "row", gap: sw(12), marginBottom: sw(12) }}>
+          <View style={{ flexDirection: "row", gap: sw(10), marginBottom: sw(10) }}>
             <StatCard icon={Users} label="Total Clients" value="234" trend="+12%" color="#7C3AED" sw={sw} />
             <StatCard icon={DollarSign} label="Revenue" value="₹45K" trend="+18%" color="#10B981" sw={sw} />
           </View>
 
-          <View style={{ flexDirection: "row", gap: sw(12), marginBottom: sw(12) }}>
+          <View style={{ flexDirection: "row", gap: sw(10), marginBottom: sw(10) }}>
             <StatCard icon={Star} label="Rating" value="4.8" color="#F59E0B" sw={sw} />
             <StatCard icon={TrendingUp} label="Growth" value="+25%" color="#0EA5E9" sw={sw} />
           </View>

@@ -38,61 +38,61 @@ function VendorCard({ name, category, location, rating, performance, sw }) {
   return (
     <TouchableOpacity style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }} activeOpacity={0.7}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(12) }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
         <View style={{
-          width: sw(48),
-          height: sw(48),
-          borderRadius: sw(24),
+          width: sw(40),
+          height: sw(40),
+          borderRadius: sw(20),
           backgroundColor: `${COLORS.primaryLight}15`,
           alignItems: "center",
           justifyContent: "center",
         }}>
-          <Briefcase size={sw(22)} color={COLORS.primary} strokeWidth={2.5} />
+          <Briefcase size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
         </View>
-        <View style={{ flex: 1, marginLeft: sw(12) }}>
-          <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text }}>{name}</Text>
-          <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginTop: sw(2) }}>{category}</Text>
+        <View style={{ flex: 1, marginLeft: sw(10) }}>
+          <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text }}>{name}</Text>
+          <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginTop: sw(1) }}>{category}</Text>
         </View>
         <View style={{
-          paddingHorizontal: sw(10),
-          paddingVertical: sw(6),
+          paddingHorizontal: sw(8),
+          paddingVertical: sw(5),
           backgroundColor: "#FEF3C7",
-          borderRadius: sw(12),
+          borderRadius: sw(10),
           flexDirection: "row",
           alignItems: "center",
         }}>
-          <Star size={sw(13)} color="#F59E0B" strokeWidth={2.5} fill="#F59E0B" />
-          <Text style={{ fontSize: sw(12), color: "#92400E", fontWeight: "700", marginLeft: sw(4) }}>
+          <Star size={sw(11)} color="#F59E0B" strokeWidth={2.5} fill="#F59E0B" />
+          <Text style={{ fontSize: sw(10), color: "#92400E", fontWeight: "700", marginLeft: sw(3) }}>
             {rating}
           </Text>
         </View>
       </View>
 
-      <View style={{ gap: sw(8) }}>
+      <View style={{ gap: sw(6) }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <MapPin size={sw(14)} color={COLORS.textLight} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginLeft: sw(6) }}>{location}</Text>
+          <MapPin size={sw(12)} color={COLORS.textLight} strokeWidth={2.5} />
+          <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginLeft: sw(5) }}>{location}</Text>
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TrendingUp size={sw(14)} color="#10B981" strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(12), color: "#10B981", fontWeight: "600", marginLeft: sw(6) }}>
+          <TrendingUp size={sw(12)} color="#10B981" strokeWidth={2.5} />
+          <Text style={{ fontSize: sw(10), color: "#10B981", fontWeight: "600", marginLeft: sw(5) }}>
             Performance: {performance}%
           </Text>
         </View>
       </View>
 
-      <View style={{ flexDirection: "row", gap: sw(10), marginTop: sw(14) }}>
+      <View style={{ flexDirection: "row", gap: sw(8), marginTop: sw(12) }}>
         <TouchableOpacity style={{
           flex: 1,
-          paddingVertical: sw(10),
-          borderRadius: sw(10),
+          paddingVertical: sw(8),
+          borderRadius: sw(8),
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -100,15 +100,15 @@ function VendorCard({ name, category, location, rating, performance, sw }) {
           borderWidth: 1,
           borderColor: `${COLORS.primary}30`,
         }}>
-          <Phone size={sw(15)} color={COLORS.primary} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(13), color: COLORS.primary, fontWeight: "700", marginLeft: sw(6) }}>
+          <Phone size={sw(13)} color={COLORS.primary} strokeWidth={2.5} />
+          <Text style={{ fontSize: sw(11), color: COLORS.primary, fontWeight: "700", marginLeft: sw(5) }}>
             Call
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={{
           flex: 1,
-          paddingVertical: sw(10),
-          borderRadius: sw(10),
+          paddingVertical: sw(8),
+          borderRadius: sw(8),
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
@@ -116,8 +116,8 @@ function VendorCard({ name, category, location, rating, performance, sw }) {
           borderWidth: 1,
           borderColor: `${COLORS.primary}30`,
         }}>
-          <Mail size={sw(15)} color={COLORS.primary} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(13), color: COLORS.primary, fontWeight: "700", marginLeft: sw(6) }}>
+          <Mail size={sw(13)} color={COLORS.primary} strokeWidth={2.5} />
+          <Text style={{ fontSize: sw(11), color: COLORS.primary, fontWeight: "700", marginLeft: sw(5) }}>
             Email
           </Text>
         </TouchableOpacity>
@@ -212,12 +212,13 @@ export default function VendorRelations({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           {vendors.map((vendor) => (

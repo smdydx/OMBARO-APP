@@ -46,61 +46,61 @@ function OnboardingCard({ name, role, status, date, progress, sw }) {
   return (
     <TouchableOpacity style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }} activeOpacity={0.7}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(12) }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
         <View style={{
-          width: sw(48),
-          height: sw(48),
-          borderRadius: sw(24),
+          width: sw(40),
+          height: sw(40),
+          borderRadius: sw(20),
           backgroundColor: `${COLORS.primaryLight}15`,
           alignItems: "center",
           justifyContent: "center",
         }}>
-          <Users size={sw(22)} color={COLORS.primary} strokeWidth={2.5} />
+          <Users size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
         </View>
-        <View style={{ flex: 1, marginLeft: sw(12) }}>
-          <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text }}>{name}</Text>
-          <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginTop: sw(2) }}>{role}</Text>
+        <View style={{ flex: 1, marginLeft: sw(10) }}>
+          <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text }}>{name}</Text>
+          <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginTop: sw(1) }}>{role}</Text>
         </View>
         <View style={{
           backgroundColor: `${config.color}15`,
-          paddingHorizontal: sw(10),
-          paddingVertical: sw(6),
-          borderRadius: sw(12),
+          paddingHorizontal: sw(8),
+          paddingVertical: sw(5),
+          borderRadius: sw(10),
           flexDirection: "row",
           alignItems: "center",
         }}>
-          <StatusIcon size={sw(13)} color={config.color} strokeWidth={2.5} />
-          <Text style={{ color: config.color, fontSize: sw(11), marginLeft: sw(6), fontWeight: "700" }}>
+          <StatusIcon size={sw(11)} color={config.color} strokeWidth={2.5} />
+          <Text style={{ color: config.color, fontSize: sw(9), marginLeft: sw(4), fontWeight: "700" }}>
             {config.label}
           </Text>
         </View>
       </View>
 
-      <View style={{ gap: sw(8) }}>
-        <Text style={{ fontSize: sw(12), color: COLORS.textLight }}>Start Date: {date}</Text>
+      <View style={{ gap: sw(6) }}>
+        <Text style={{ fontSize: sw(10), color: COLORS.textLight }}>Start Date: {date}</Text>
         
         {status === "pending" && (
           <>
             <View style={{
-              height: sw(6),
+              height: sw(5),
               backgroundColor: "#E5E7EB",
-              borderRadius: sw(3),
+              borderRadius: sw(2.5),
               overflow: "hidden",
             }}>
               <View style={{
                 width: `${progress}%`,
-                height: sw(6),
+                height: sw(5),
                 backgroundColor: COLORS.primaryLight,
-                borderRadius: sw(3),
+                borderRadius: sw(2.5),
               }} />
             </View>
-            <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, fontWeight: "600" }}>
+            <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, fontWeight: "600" }}>
               Progress: {progress}%
             </Text>
           </>
@@ -184,12 +184,13 @@ export default function Onboarding({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           {employees.map((employee) => (

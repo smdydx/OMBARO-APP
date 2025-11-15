@@ -40,27 +40,27 @@ function ActionCard({ icon: Icon, title, description, color, onPress, sw }) {
       flexDirection: "row",
       alignItems: "center",
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }} onPress={onPress} activeOpacity={0.7}>
       <View style={{
         backgroundColor: `${color}15`,
-        width: sw(48),
-        height: sw(48),
-        borderRadius: sw(12),
+        width: sw(40),
+        height: sw(40),
+        borderRadius: sw(10),
         alignItems: "center",
         justifyContent: "center",
       }}>
-        <Icon size={sw(22)} color={color} strokeWidth={2.5} />
+        <Icon size={sw(18)} color={color} strokeWidth={2.5} />
       </View>
-      <View style={{ flex: 1, marginLeft: sw(14) }}>
-        <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text, marginBottom: sw(4) }}>
+      <View style={{ flex: 1, marginLeft: sw(10) }}>
+        <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(3) }}>
           {title}
         </Text>
-        <Text style={{ fontSize: sw(12), color: COLORS.textSecondary }}>
+        <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
           {description}
         </Text>
       </View>
@@ -147,12 +147,13 @@ export default function ManageSpa({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           {actions.map((action, index) => (

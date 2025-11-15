@@ -41,27 +41,27 @@ function InfoRow({ icon: Icon, label, value, sw, isLast }) {
       style={{
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: sw(14),
+        paddingVertical: sw(10),
         borderBottomWidth: isLast ? 0 : 1,
         borderBottomColor: "#F3F4F6",
       }}
     >
       <View style={{ 
-        width: sw(40), 
-        height: sw(40), 
-        borderRadius: sw(20), 
+        width: sw(32), 
+        height: sw(32), 
+        borderRadius: sw(16), 
         backgroundColor: `${COLORS.primary}10`,
         alignItems: "center",
         justifyContent: "center",
-        marginRight: sw(12)
+        marginRight: sw(10)
       }}>
-        <Icon size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
+        <Icon size={sw(15)} color={COLORS.primary} strokeWidth={2.5} />
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ 
           color: COLORS.textLight, 
-          fontSize: sw(11), 
-          marginBottom: sw(4),
+          fontSize: sw(9), 
+          marginBottom: sw(3),
           fontWeight: "500",
           letterSpacing: 0.3,
         }}>
@@ -69,7 +69,7 @@ function InfoRow({ icon: Icon, label, value, sw, isLast }) {
         </Text>
         <Text style={{ 
           color: COLORS.text, 
-          fontSize: sw(14), 
+          fontSize: sw(12), 
           fontWeight: "600", 
         }}>
           {value}
@@ -160,22 +160,23 @@ export default function MyProfile({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
           contentContainerStyle={{ 
-            paddingTop: sw(24), 
-            paddingHorizontal: sw(20), 
-            paddingBottom: sw(40) 
+            paddingTop: sw(18), 
+            paddingHorizontal: sw(16), 
+            paddingBottom: sw(30) 
           }} 
           showsVerticalScrollIndicator={false}
         >
           <View style={{
             backgroundColor: COLORS.cardBg,
-            borderRadius: sw(16),
-            padding: sw(18),
+            borderRadius: sw(12),
+            padding: sw(12),
             borderWidth: 1,
             borderColor: COLORS.border,
           }}>
@@ -192,16 +193,16 @@ export default function MyProfile({ onBack }) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: COLORS.primary,
-            borderRadius: sw(14),
-            paddingVertical: sw(14),
-            marginTop: sw(20),
+            borderRadius: sw(12),
+            paddingVertical: sw(12),
+            marginTop: sw(16),
           }}>
-            <Edit3 size={sw(18)} color="#FFFFFF" strokeWidth={2.5} />
+            <Edit3 size={sw(15)} color="#FFFFFF" strokeWidth={2.5} />
             <Text style={{ 
-              fontSize: sw(15), 
+              fontSize: sw(13), 
               color: "#FFFFFF", 
               fontWeight: "700",
-              marginLeft: sw(8),
+              marginLeft: sw(6),
             }}>
               Edit Profile
             </Text>

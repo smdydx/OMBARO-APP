@@ -38,43 +38,43 @@ function DocumentCard({ title, date, size, sw }) {
   return (
     <TouchableOpacity style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
       flexDirection: "row",
       alignItems: "center",
     }} activeOpacity={0.7}>
       <View style={{
-        width: sw(48),
-        height: sw(48),
-        borderRadius: sw(12),
+        width: sw(40),
+        height: sw(40),
+        borderRadius: sw(10),
         backgroundColor: `${COLORS.primary}15`,
         alignItems: "center",
         justifyContent: "center",
       }}>
-        <FileText size={sw(22)} color={COLORS.primary} strokeWidth={2.5} />
+        <FileText size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
       </View>
 
-      <View style={{ flex: 1, marginLeft: sw(14) }}>
-        <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text, marginBottom: sw(4) }}>
+      <View style={{ flex: 1, marginLeft: sw(10) }}>
+        <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(3) }}>
           {title}
         </Text>
-        <Text style={{ fontSize: sw(12), color: COLORS.textSecondary }}>
+        <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
           {date} • {size}
         </Text>
       </View>
 
       <TouchableOpacity style={{
-        width: sw(36),
-        height: sw(36),
-        borderRadius: sw(10),
+        width: sw(32),
+        height: sw(32),
+        borderRadius: sw(8),
         backgroundColor: `${COLORS.primary}10`,
         alignItems: "center",
         justifyContent: "center",
       }}>
-        <Download size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
+        <Download size={sw(15)} color={COLORS.primary} strokeWidth={2.5} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -171,12 +171,13 @@ export default function HrDocument({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           {documents.map((doc, index) => (

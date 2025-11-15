@@ -48,63 +48,63 @@ function ApprovalCard({ title, requester, date, status, sw }) {
   return (
     <TouchableOpacity style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(14),
+      borderRadius: sw(12),
       borderWidth: 1,
       borderColor: COLORS.border,
-      padding: sw(16),
-      marginBottom: sw(12),
+      padding: sw(12),
+      marginBottom: sw(10),
     }} activeOpacity={0.7}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(8) }}>
         <View style={{
           backgroundColor: `${config.color}15`,
-          paddingHorizontal: sw(12),
-          paddingVertical: sw(6),
-          borderRadius: sw(16),
+          paddingHorizontal: sw(10),
+          paddingVertical: sw(5),
+          borderRadius: sw(12),
           flexDirection: "row",
           alignItems: "center",
         }}>
-          <StatusIcon size={sw(13)} color={config.color} strokeWidth={2.5} />
-          <Text style={{ color: config.color, fontSize: sw(12), marginLeft: sw(6), fontWeight: "700" }}>
+          <StatusIcon size={sw(11)} color={config.color} strokeWidth={2.5} />
+          <Text style={{ color: config.color, fontSize: sw(10), marginLeft: sw(5), fontWeight: "700" }}>
             {config.label}
           </Text>
         </View>
       </View>
 
-      <Text style={{ fontSize: sw(15), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
+      <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(5) }}>
         {title}
       </Text>
-      <Text style={{ fontSize: sw(13), color: COLORS.textSecondary, marginBottom: sw(4) }}>
+      <Text style={{ fontSize: sw(11), color: COLORS.textSecondary, marginBottom: sw(3) }}>
         Requested by: {requester}
       </Text>
-      <Text style={{ fontSize: sw(12), color: COLORS.textLight }}>
+      <Text style={{ fontSize: sw(10), color: COLORS.textLight }}>
         {date}
       </Text>
 
       {status === "pending" && (
-        <View style={{ flexDirection: "row", gap: sw(10), marginTop: sw(14) }}>
+        <View style={{ flexDirection: "row", gap: sw(8), marginTop: sw(12) }}>
           <TouchableOpacity style={{
             flex: 1,
-            paddingVertical: sw(10),
-            borderRadius: sw(10),
+            paddingVertical: sw(8),
+            borderRadius: sw(8),
             backgroundColor: `${COLORS.success}15`,
             borderWidth: 1,
             borderColor: COLORS.success,
             alignItems: "center",
           }}>
-            <Text style={{ fontSize: sw(13), color: COLORS.success, fontWeight: "700" }}>
+            <Text style={{ fontSize: sw(11), color: COLORS.success, fontWeight: "700" }}>
               Approve
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={{
             flex: 1,
-            paddingVertical: sw(10),
-            borderRadius: sw(10),
+            paddingVertical: sw(8),
+            borderRadius: sw(8),
             backgroundColor: `${COLORS.danger}15`,
             borderWidth: 1,
             borderColor: COLORS.danger,
             alignItems: "center",
           }}>
-            <Text style={{ fontSize: sw(13), color: COLORS.danger, fontWeight: "700" }}>
+            <Text style={{ fontSize: sw(11), color: COLORS.danger, fontWeight: "700" }}>
               Reject
             </Text>
           </TouchableOpacity>
@@ -203,12 +203,13 @@ export default function ReviewApproval({ onBack }) {
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView 
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }} 
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
           {approvals.map((approval) => (

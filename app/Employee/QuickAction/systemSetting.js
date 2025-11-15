@@ -62,9 +62,9 @@ const TabButton = ({ label, icon: Icon, active, onPress, sw }) => (
 const RowSwitch = ({ icon: Icon, title, subtitle, value, onValueChange, sw }) => (
   <View style={{
     backgroundColor: COLORS.surface,
-    borderRadius: sw(14),
-    padding: sw(14),
-    marginBottom: sw(10),
+    borderRadius: sw(12),
+    padding: sw(12),
+    marginBottom: sw(8),
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
@@ -72,23 +72,23 @@ const RowSwitch = ({ icon: Icon, title, subtitle, value, onValueChange, sw }) =>
   }}>
     {Icon && (
       <View style={{
-        width: sw(38),
-        height: sw(38),
-        borderRadius: sw(10),
+        width: sw(32),
+        height: sw(32),
+        borderRadius: sw(8),
         backgroundColor: value ? `${COLORS.primaryLight}20` : "#E5E7EB",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: sw(12),
+        marginRight: sw(10),
       }}>
-        <Icon size={sw(18)} color={value ? COLORS.primary : COLORS.textMuted} strokeWidth={2.5} />
+        <Icon size={sw(15)} color={value ? COLORS.primary : COLORS.textMuted} strokeWidth={2.5} />
       </View>
     )}
     <View style={{ flex: 1 }}>
-      <Text style={{ color: COLORS.text, fontWeight: "600", fontSize: sw(14), marginBottom: sw(2) }}>
+      <Text style={{ color: COLORS.text, fontWeight: "600", fontSize: sw(12), marginBottom: sw(2) }}>
         {title}
       </Text>
       {subtitle && (
-        <Text style={{ color: COLORS.textMuted, fontSize: sw(12), lineHeight: sw(16) }}>
+        <Text style={{ color: COLORS.textMuted, fontSize: sw(10), lineHeight: sw(14) }}>
           {subtitle}
         </Text>
       )}
@@ -110,16 +110,16 @@ const ActionButton = ({ label, icon: Icon, color, bgColor, onPress, sw }) => (
       borderWidth: 1.5,
       borderColor: color,
       backgroundColor: bgColor || COLORS.surface,
-      borderRadius: sw(14),
-      paddingVertical: sw(14),
-      paddingHorizontal: sw(16),
+      borderRadius: sw(12),
+      paddingVertical: sw(12),
+      paddingHorizontal: sw(14),
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "center",
     }}
   >
-    {Icon && <Icon size={sw(18)} color={color} strokeWidth={2.5} style={{ marginRight: sw(8) }} />}
-    <Text style={{ color, fontWeight: "700", fontSize: sw(14) }}>{label}</Text>
+    {Icon && <Icon size={sw(15)} color={color} strokeWidth={2.5} style={{ marginRight: sw(6) }} />}
+    <Text style={{ color, fontWeight: "700", fontSize: sw(12) }}>{label}</Text>
   </TouchableOpacity>
 );
 
@@ -199,21 +199,22 @@ export default function SystemSetting({ onBack, onEnable2FA, onChangePassword, o
       <View style={{ 
         height: contentHeight,
         backgroundColor: COLORS.bg,
-        borderTopLeftRadius: sw(30),
-        borderTopRightRadius: sw(30),
+        borderTopLeftRadius: sw(28),
+        borderTopRightRadius: sw(28),
+        marginTop: -sw(1),
       }}>
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(24), paddingHorizontal: sw(20), paddingBottom: sw(150) }}
+          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }}
           showsVerticalScrollIndicator={false}
         >
           {tab === "notifications" && (
             <View>
-              <View style={{ marginBottom: sw(18) }}>
-                <Text style={{ color: COLORS.text, fontSize: sw(18), fontWeight: "700", marginBottom: sw(6) }}>
+              <View style={{ marginBottom: sw(14) }}>
+                <Text style={{ color: COLORS.text, fontSize: sw(14), fontWeight: "700", marginBottom: sw(5) }}>
                   Notification Preferences
                 </Text>
-                <Text style={{ color: COLORS.textMuted, fontSize: sw(13), lineHeight: sw(18) }}>
+                <Text style={{ color: COLORS.textMuted, fontSize: sw(11), lineHeight: sw(15) }}>
                   Manage how you receive notifications
                 </Text>
               </View>
@@ -243,9 +244,9 @@ export default function SystemSetting({ onBack, onEnable2FA, onChangePassword, o
                 onValueChange={(v) => setNotifState((s) => ({ ...s, systemAlerts: v }))}
               />
 
-              <View style={{ height: sw(10), backgroundColor: COLORS.border, marginVertical: sw(16), borderRadius: 2 }} />
+              <View style={{ height: sw(8), backgroundColor: COLORS.border, marginVertical: sw(12), borderRadius: 2 }} />
 
-              <Text style={{ color: COLORS.text, fontSize: sw(15), fontWeight: "700", marginBottom: sw(12) }}>
+              <Text style={{ color: COLORS.text, fontSize: sw(13), fontWeight: "700", marginBottom: sw(10) }}>
                 Notification Channels
               </Text>
 
