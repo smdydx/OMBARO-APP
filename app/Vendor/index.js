@@ -1,13 +1,34 @@
+
 import { LinearGradient } from "expo-linear-gradient";
-import { CalendarDays, DollarSign, ExternalLink, Package } from "lucide-react-native";
+import {
+  BarChart2,
+  Building2,
+  FileCheck,
+  Grid3x3,
+  Home,
+  Bell,
+  Search,
+  ChevronRight,
+  Briefcase,
+  Calendar,
+  Settings,
+  DollarSign,
+  Package,
+  Users,
+} from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   ScrollView,
-  StyleSheet,
+  StatusBar,
   Text,
+  TextInput,
   TouchableOpacity,
-  View
+  View,
+  Platform,
+  Dimensions,
+  StyleSheet,
 } from "react-native";
+
 import AnalyticsTab from "./AnalyticsTab";
 import BookingsTab from "./BookingsTab";
 import OverviewTab from "./OverviewTab";
@@ -15,167 +36,546 @@ import ReviewTab from "./ReviewTab";
 import ServicesTab from "./ServicesTab";
 import TherapistTab from "./TherapistTab";
 
+const COLORS = {
+  bg: "#FFFFFF",
+  surface: "#FFFFFF",
+  text: "#014D2A",
+  textMuted: "#047857",
+  border: "#D1FAE5",
+  divider: "#E6F7EE",
+  primary: "#014D2A",
+  primaryLight: "#10B981",
+  primaryDark: "#013B1F",
+  accent: "#00FF87",
+  danger: "#EF4444",
+  dangerLight: "#FEE2E2",
+  success: "#10B981",
+  successLight: "#D1FAE5",
+  warning: "#F59E0B",
+  cardBg: "#FAFFFE",
+};
 
-export default function VendorPortal() {
-  const [activeTab, setActiveTab] = useState("Overview");
+export default function VendorDashboard() {
+  const screenWidth = Dimensions.get("window").width;
+  const isMobile = screenWidth < 768;
+  const isTablet = screenWidth >= 768 && screenWidth < 1024;
 
-  const tabs = useMemo(
+  const styles = getStyles(screenWidth, isMobile, isTablet);
+
+  const [selectedTab, setSelectedTab] = useState("Overview");
+  const [activeBottomTab, setActiveBottomTab] = useState("home");
+  const [unreadCount, setUnreadCount] = useState(3);
+
+  const coreTabMap = useMemo(
     () => ({
       Overview: OverviewTab,
       Services: ServicesTab,
-      Revenue: TherapistTab,
       Bookings: BookingsTab,
-      Review:ReviewTab,
-      Analytics:AnalyticsTab,
+      Revenue: TherapistTab,
+      Review: ReviewTab,
+      Analytics: AnalyticsTab,
     }),
     []
   );
 
-  const ActiveComponent = tabs[activeTab] ?? OverviewTab;
+  const quickActionMap = useMemo(
+    () => ({
+      "Service Management": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Service Management</Text></View>,
+      "Therapist Management": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Therapist Management</Text></View>,
+      "Revenue Reports": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Revenue Reports</Text></View>,
+      "Analytics Dashboard": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Analytics Dashboard</Text></View>,
+      "Customer Reviews": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Customer Reviews</Text></View>,
+      "Booking Calendar": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Booking Calendar</Text></View>,
+      "Payment Settings": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Payment Settings</Text></View>,
+      "System Settings": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>System Settings</Text></View>,
+    }),
+    []
+  );
+
+  const allTabMap = { ...coreTabMap, ...quickActionMap };
+
+  const quickActions = [
+    { id: "service-management", label: "Service Management", icon: Package, tab: "Service Management", color: COLORS.primary },
+    { id: "therapist-management", label: "Therapist Management", icon: Users, tab: "Therapist Management", color: COLORS.primary },
+    { id: "revenue-reports", label: "Revenue Reports", icon: DollarSign, tab: "Revenue Reports", color: COLORS.primary },
+    { id: "analytics-dashboard", label: "Analytics Dashboard", icon: BarChart2, tab: "Analytics Dashboard", color: COLORS.primary },
+    { id: "customer-reviews", label: "Customer Reviews", icon: FileCheck, tab: "Customer Reviews", color: COLORS.primary },
+    { id: "booking-calendar", label: "Booking Calendar", icon: Calendar, tab: "Booking Calendar", color: COLORS.primary },
+    { id: "payment-settings", label: "Payment Settings", icon: DollarSign, tab: "Payment Settings", color: COLORS.primary },
+    { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
+  ];
+
+  const bottomNavItems = [
+    { id: "home", label: "Home", icon: Home, tab: "Overview" },
+    { id: "services", label: "Services", icon: Package, tab: "Services" },
+    { id: "bookings", label: "Bookings", icon: Calendar, tab: "Bookings" },
+    { id: "analytics", label: "Analytics", icon: BarChart2, tab: "Analytics" },
+    { id: "more", label: "More", icon: Grid3x3, tab: "QuickActions" },
+  ];
+
+  const handleBottomNavPress = (item) => {
+    setActiveBottomTab(item.id);
+    setSelectedTab(item.tab);
+  };
+
+  const handleQuickActionPress = (action) => {
+    setSelectedTab(action.tab);
+    setActiveBottomTab("more");
+  };
+
+  const handleBackToOverview = () => {
+    setSelectedTab("Overview");
+    setActiveBottomTab("home");
+  };
+
+  const CurrentTabComponent = allTabMap[selectedTab] ?? OverviewTab;
+  const isQuickActionsView = selectedTab === "QuickActions";
+  const isQuickActionScreen = !coreTabMap[selectedTab] && selectedTab !== "QuickActions";
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* HEADER */}
-      <LinearGradient
-        colors={['#00FF87', '#016B3A', '#013B1F', '#012B17']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Vendor Portal</Text>
-            <Text style={styles.subtitle}>Serenity Spa & Wellness • ID:</Text>
-            <Text style={styles.subtitle}>9876543234</Text>
+    <View style={styles.container}>
+      <StatusBar backgroundColor={COLORS.primaryDark} barStyle="light-content" />
+
+      {!isQuickActionScreen && (
+        <LinearGradient
+          colors={[COLORS.primaryLight, COLORS.primary, COLORS.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <View style={styles.headerTop}>
+              <View style={styles.headerLeft}>
+                <View style={styles.avatarContainer}>
+                  <LinearGradient
+                    colors={[COLORS.primaryLight, COLORS.primary]}
+                    style={styles.avatar}
+                  >
+                    <Text style={styles.avatarText}>V</Text>
+                  </LinearGradient>
+                </View>
+                <View style={styles.headerTextContainer}>
+                  <Text style={styles.welcomeText}>Welcome back,</Text>
+                  <Text style={styles.userName}>Vendor</Text>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.notificationBtn}>
+                <Bell size={24} color="#FFFFFF" strokeWidth={2} />
+                {unreadCount > 0 && (
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.searchContainer}>
+              <View style={styles.searchBox}>
+                <Search size={20} color={COLORS.textMuted} />
+                <TextInput
+                  placeholder="Search services, bookings..."
+                  placeholderTextColor={COLORS.textMuted}
+                  style={styles.searchInput}
+                />
+              </View>
+            </View>
           </View>
-          <TouchableOpacity style={styles.jumpBtn}>
-            <ExternalLink color="#fff" size={18} />
-          </TouchableOpacity>
+        </LinearGradient>
+      )}
+
+      <View style={styles.mainWrapper}>
+        {isQuickActionsView ? (
+          <ScrollView
+            style={styles.mainContent}
+            contentContainerStyle={styles.mainContentContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.quickActionsContainer}>
+              <Text style={styles.sectionTitle}>Quick Actions</Text>
+              <View style={styles.quickActionsList}>
+                {quickActions.map((action) => {
+                  const Icon = action.icon;
+                  return (
+                    <TouchableOpacity
+                      key={action.id}
+                      style={styles.quickActionCard}
+                      onPress={() => handleQuickActionPress(action)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.quickActionIconContainer}>
+                        <Icon size={24} color={COLORS.primary} strokeWidth={2.5} />
+                      </View>
+                      <View style={styles.quickActionContent}>
+                        <Text style={styles.quickActionLabel}>{action.label}</Text>
+                      </View>
+                      <View style={styles.quickActionArrow}>
+                        <ChevronRight size={20} color={COLORS.textMuted} strokeWidth={2.5} />
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </ScrollView>
+        ) : (
+          <View style={styles.mainContent}>
+            {CurrentTabComponent ? (
+              <CurrentTabComponent onBack={handleBackToOverview} />
+            ) : (
+              <View style={styles.placeholderContainer}>
+                <Text style={styles.placeholderText}>Select a tab</Text>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+
+      {!isQuickActionScreen && (
+        <View style={styles.bottomNav}>
+          <LinearGradient
+            colors={[COLORS.surface, COLORS.cardBg]}
+            style={styles.bottomNavGradient}
+          >
+            <View style={styles.bottomNavContent}>
+              {bottomNavItems.map((item) => {
+                const isActive = activeBottomTab === item.id;
+                const Icon = item.icon;
+                return (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.bottomNavItem}
+                    onPress={() => handleBottomNavPress(item)}
+                    activeOpacity={0.7}
+                  >
+                    <View style={[styles.navIconContainer, isActive && styles.activeNavIconContainer]}>
+                      <Icon
+                        size={22}
+                        color={isActive ? "#FFFFFF" : COLORS.textMuted}
+                        strokeWidth={2.5}
+                      />
+                    </View>
+                    <Text style={[styles.navLabel, isActive && styles.activeNavLabel]}>
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </LinearGradient>
         </View>
-      </LinearGradient>
-
-      {/* STATS CARDS */}
-      <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
-        <StatCard
-          tint="#e0ecff"
-          Icon={<Package size={20} color="#2563eb" />}
-          label="Active Services"
-          value="24"
-          sub="+3 this month"
-        />
-        <StatCard
-          tint="#dcfce7"
-          Icon={<DollarSign size={20} color="#16a34a" />}
-          label="Monthly Revenue"
-          value="₹45,280"
-          sub="+18% growth"
-          big
-        />
-        <StatCard
-          tint="#efe2ff"
-          Icon={<CalendarDays size={20} color="#7c3aed" />}
-          label="Total Bookings"
-          value="156"
-          sub="+12 this week"
-        />
-      </View>
-
-      {/* TABS */}
-      <View style={styles.tabsRow}>
-        {Object.keys(tabs).map((label) => {
-          const active = activeTab === label;
-          return (
-            <TouchableOpacity key={label} onPress={() => setActiveTab(label)}>
-              <Text style={[styles.tab, active && styles.tabActive]}>{label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* CONDITIONAL RENDER */}
-      <ActiveComponent />
-    </ScrollView>
+      )}
+    </View>
   );
 }
 
-/* ---- Small components ---- */
-const StatCard = ({ tint, Icon, label, value, sub, big }) => (
-  <View style={styles.card}>
-    <View style={[styles.iconWrap, { backgroundColor: tint }]}>{Icon}</View>
-    <View style={{ flex: 1 }}>
-      <Text style={[styles.value, big && styles.valueBig]}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.sub}>{sub}</Text>
-    </View>
-  </View>
-);
+const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor:"#ffffffff"
+  },
 
-/* ---- Styles ---- */
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: 56,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  title: { color: "#fff", fontSize: 22, fontWeight: "800" },
-  subtitle: { color: "#e6e6e6", marginTop: 2, fontSize: 14 },
-  jumpBtn: {
-    width: 38,
-    height: 38,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
   },
 
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#eef2f7",
+  headerContent: {
+    paddingHorizontal: isMobile ? 20 : 24,
+  },
+
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  headerLeft: {
     flexDirection: "row",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
   },
-  iconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
+
+  avatarContainer: {
     marginRight: 12,
   },
-  value: { fontSize: 22, fontWeight: "800", color: "#0f172a", textAlign: "right" },
-  valueBig: { fontSize: 26 },
-  label: { fontSize: 15, color: "#334155" },
-  sub: { color: "#94a3b8", fontSize: 12, marginTop: 6 },
 
-  tabsRow: {
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+
+  avatarText: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#FFFFFF",
+  },
+
+  headerTextContainer: {
+    justifyContent: "center",
+  },
+
+  welcomeText: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.9)",
+    fontWeight: "500",
+  },
+
+  userName: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginTop: 2,
+    letterSpacing: 0.5,
+  },
+
+  notificationBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+  },
+
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    backgroundColor: "#EF4444",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 5,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+    zIndex: 10,
+  },
+  badgeText: {
+    color: "#FFFFFF",
+    fontSize: 10,
+    fontWeight: "900",
+    lineHeight: 12,
+    textAlign: 'center',
+  },
+
+  searchContainer: {
+    marginTop: 4,
+  },
+
+  searchBox: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
+    alignItems: "center",
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
     paddingHorizontal: 16,
-    marginTop: 8,
-  },
-  tab: {
-    marginRight: 24,
-    paddingVertical: 12,
-    color: "#6b7280",
-    fontWeight: "600",
-  },
-  tabActive: {
-    color: "#7c3aed",
-    borderBottomWidth: 2,
-    borderBottomColor: "#7c3aed",
+    paddingVertical: 14,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 
-  tabBody: { padding: 16 },
-  tabBodyText: { color: "#64748b" },
+  searchInput: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 15,
+    color: COLORS.text,
+    fontWeight: "500",
+  },
+
+  mainWrapper: {
+    flex: 1,
+  },
+
+  mainContent: {
+    flex: 1,
+  },
+
+  mainContentContainer: {
+    paddingTop: 20,
+    paddingBottom: Platform.OS === 'ios' ? 120 : 100,
+  },
+
+  quickActionsContainer: {
+    paddingTop: 8,
+    paddingHorizontal: isMobile ? 16 : 20,
+  },
+
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: COLORS.primary,
+    marginBottom: 16,
+    letterSpacing: 0.3,
+  },
+
+  quickActionsList: {
+    gap: 12,
+  },
+
+  quickActionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: COLORS.surface,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+
+  quickActionIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: COLORS.primaryLight + '15',
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+
+  quickActionContent: {
+    flex: 1,
+  },
+
+  quickActionLabel: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+
+  quickActionArrow: {
+    marginLeft: 8,
+  },
+
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: isMobile ? 20 : 0,
+  },
+
+  placeholderText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.textMuted,
+  },
+
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    overflow: "hidden",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 16,
+      },
+    }),
+  },
+
+  bottomNavGradient: {
+    paddingTop: 12,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
+  },
+
+  bottomNavContent: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+
+  bottomNavItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+
+  navIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    marginBottom: 4,
+    overflow: 'hidden',
+  },
+
+  activeNavIconContainer: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 22,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+
+  navLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: COLORS.textMuted,
+    marginTop: 2,
+  },
+
+  activeNavLabel: {
+    color: COLORS.primary,
+  },
 });
