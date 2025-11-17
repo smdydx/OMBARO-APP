@@ -1,38 +1,32 @@
 
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import {
   BarChart2,
-  CalendarDays,
-  CheckCircle2,
-  Clock,
-  DollarSign,
-  MapPin,
+  Calendar,
+  Users,
   Star,
-  TrendingUp,
-  User2,
-  XCircle,
   Bell,
   Search,
   Home,
-  UserCheck,
-  FileCheck,
   Grid3x3,
   ChevronRight,
-  FileSpreadsheet,
+  Scissors,
+  DollarSign,
+  Clock,
   Settings,
+  FileText,
 } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   ScrollView,
-  StyleSheet,
+  StatusBar,
   Text,
   TextInput,
   TouchableOpacity,
   View,
   Platform,
   Dimensions,
-  StatusBar,
+  StyleSheet,
 } from "react-native";
 
 const COLORS = {
@@ -54,8 +48,7 @@ const COLORS = {
   cardBg: "#FAFFFE",
 };
 
-export default function TherapistProfile() {
-  const router = useRouter();
+export default function BeauticianDashboard() {
   const screenWidth = Dimensions.get("window").width;
   const isMobile = screenWidth < 768;
   const isTablet = screenWidth >= 768 && screenWidth < 1024;
@@ -64,24 +57,24 @@ export default function TherapistProfile() {
 
   const [selectedTab, setSelectedTab] = useState("Overview");
   const [activeBottomTab, setActiveBottomTab] = useState("home");
-  const [unreadCount, setUnreadCount] = useState(3);
+  const [unreadCount, setUnreadCount] = useState(4);
 
   const quickActions = [
-    { id: "assignments", label: "Assignments", icon: CalendarDays, route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "schedule", label: "Schedule", icon: Clock, route: "/Therapist/mySchedule", color: COLORS.primary },
-    { id: "location", label: "Location", icon: MapPin, route: "/Therapist/myLocation", color: COLORS.primary },
-    { id: "leaves", label: "Leaves", icon: XCircle, route: "/Therapist/LeaveRequest", color: COLORS.primary },
-    { id: "earnings", label: "Earnings", icon: DollarSign, route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "performance", label: "Performance", icon: BarChart2, route: "/Therapist/performance-review", color: COLORS.primary },
-    { id: "profile", label: "Profile", icon: User2, route: "/Therapist/profile", color: COLORS.primary },
-    { id: "settings", label: "Settings", icon: Settings, route: "#", color: COLORS.primary },
+    { id: "appointments", label: "Today's Appointments", icon: Calendar, subtitle: "View and manage appointments", color: COLORS.primary },
+    { id: "clients", label: "Client Management", icon: Users, subtitle: "Manage client profiles", color: COLORS.primary },
+    { id: "services", label: "Services & Pricing", icon: Scissors, subtitle: "Update service offerings", color: COLORS.primary },
+    { id: "earnings", label: "Earnings & Tips", icon: DollarSign, subtitle: "Track your income", color: COLORS.primary },
+    { id: "schedule", label: "Work Schedule", icon: Clock, subtitle: "Manage your availability", color: COLORS.primary },
+    { id: "performance", label: "Performance Review", icon: Star, subtitle: "View ratings & feedback", color: COLORS.primary },
+    { id: "reports", label: "Monthly Reports", icon: FileText, subtitle: "Access detailed reports", color: COLORS.primary },
+    { id: "settings", label: "Settings", icon: Settings, subtitle: "Account preferences", color: COLORS.primary },
   ];
 
   const bottomNavItems = [
     { id: "home", label: "Home", icon: Home, tab: "Overview" },
-    { id: "schedule", label: "Schedule", icon: Clock, tab: "Schedule" },
+    { id: "appointments", label: "Appointments", icon: Calendar, tab: "Appointments" },
+    { id: "clients", label: "Clients", icon: Users, tab: "Clients" },
     { id: "earnings", label: "Earnings", icon: DollarSign, tab: "Earnings" },
-    { id: "performance", label: "Performance", icon: BarChart2, tab: "Performance" },
     { id: "more", label: "More", icon: Grid3x3, tab: "QuickActions" },
   ];
 
@@ -91,73 +84,63 @@ export default function TherapistProfile() {
   };
 
   const handleQuickActionPress = (action) => {
-    if (action.route && action.route !== "#") {
-      router.push(action.route);
-    } else {
-      setSelectedTab(action.label);
-      setActiveBottomTab("more");
-    }
+    setSelectedTab(action.label);
+    setActiveBottomTab("more");
   };
 
   const isQuickActionsView = selectedTab === "QuickActions";
-  const isQuickActionScreen = false;
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={COLORS.primaryDark} barStyle="light-content" />
 
-      {!isQuickActionScreen && (
-        <LinearGradient
-          colors={[COLORS.primaryLight, COLORS.primary, COLORS.primaryDark]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
-        >
-          <View style={styles.headerContent}>
-            <View style={styles.headerTop}>
-              <View style={styles.headerLeft}>
-                <View style={styles.avatarContainer}>
-                  <LinearGradient
-                    colors={[COLORS.primaryLight, COLORS.primary]}
-                    style={styles.avatar}
-                  >
-                    <Text style={styles.avatarText}>P</Text>
-                  </LinearGradient>
-                </View>
-                <View style={styles.headerTextContainer}>
-                  <Text style={styles.welcomeText}>Welcome back,</Text>
-                  <Text style={styles.userName}>Priya Sharma</Text>
-                </View>
+      <LinearGradient
+        colors={[COLORS.primaryLight, COLORS.primary, COLORS.primaryDark]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerLeft}>
+              <View style={styles.avatarContainer}>
+                <LinearGradient
+                  colors={[COLORS.primaryLight, COLORS.primary]}
+                  style={styles.avatar}
+                >
+                  <Text style={styles.avatarText}>B</Text>
+                </LinearGradient>
               </View>
-              <TouchableOpacity 
-                style={styles.notificationBtn}
-                onPress={() => router.push('/Notifications')}
-              >
-                <Bell size={24} color="#FFFFFF" strokeWidth={2} />
-                {unreadCount > 0 && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.welcomeText}>Welcome back,</Text>
+                <Text style={styles.userName}>Beautician</Text>
+              </View>
             </View>
+            <TouchableOpacity style={styles.notificationBtn}>
+              <Bell size={24} color="#FFFFFF" strokeWidth={2} />
+              {unreadCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
 
-            <View style={styles.searchContainer}>
-              <View style={styles.searchBox}>
-                <Search size={20} color={COLORS.textMuted} />
-                <TextInput
-                  placeholder="Search assignments, schedule..."
-                  placeholderTextColor={COLORS.textMuted}
-                  style={styles.searchInput}
-                />
-              </View>
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBox}>
+              <Search size={20} color={COLORS.textMuted} />
+              <TextInput
+                placeholder="Search appointments, clients..."
+                placeholderTextColor={COLORS.textMuted}
+                style={styles.searchInput}
+              />
             </View>
           </View>
-        </LinearGradient>
-      )}
+        </View>
+      </LinearGradient>
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView ? (
+        {isQuickActionsView || selectedTab === "Overview" ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
@@ -180,6 +163,7 @@ export default function TherapistProfile() {
                       </View>
                       <View style={styles.quickActionContent}>
                         <Text style={styles.quickActionLabel}>{action.label}</Text>
+                        <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
                       </View>
                       <View style={styles.quickActionArrow}>
                         <ChevronRight size={20} color={COLORS.textMuted} strokeWidth={2.5} />
@@ -191,117 +175,53 @@ export default function TherapistProfile() {
             </View>
           </ScrollView>
         ) : (
-          <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.cardsWrap}>
-              <KPI
-                Icon={<CalendarDays size={20} color={COLORS.primary} />}
-                tint={COLORS.successLight}
-                value="0"
-                label="Today's Tasks"
-                sub="2 pending"
-              />
-              <KPI
-                Icon={<CheckCircle2 size={20} color={COLORS.success} />}
-                tint={COLORS.successLight}
-                value="93.3%"
-                label="Completion Rate"
-                sub="+5% this month"
-                rightAlign
-              />
-              <KPI
-                Icon={<Star size={20} color={COLORS.warning} />}
-                tint="#fef3c7"
-                value="4.7"
-                label="Average Rating"
-                sub="156 reviews"
-              />
-              <KPI
-                Icon={<TrendingUp size={20} color={COLORS.primary} />}
-                tint={COLORS.successLight}
-                value="₹125k"
-                label="Total Earnings"
-                sub="+12% growth"
-                rightAlign
-              />
-            </View>
-
-            <View style={styles.block}>
-              <View style={styles.blockHead}>
-                <Text style={styles.blockTitle}>Today's Assignments</Text>
-                <Text style={styles.muted}>0 tasks</Text>
-              </View>
-
-              <View style={styles.emptyWrap}>
-                <CalendarDays size={36} color="#c7cdd8" />
-                <Text style={styles.emptyTitle}>No assignments for today</Text>
-                <Text style={styles.emptySub}>You're all caught up!</Text>
-              </View>
-            </View>
-          </ScrollView>
+          <View style={styles.placeholderContainer}>
+            <Text style={styles.placeholderText}>{selectedTab}</Text>
+          </View>
         )}
       </View>
 
-      {!isQuickActionScreen && (
-        <View style={styles.bottomNav}>
-          <LinearGradient
-            colors={[COLORS.surface, COLORS.cardBg]}
-            style={styles.bottomNavGradient}
-          >
-            <View style={styles.bottomNavContent}>
-              {bottomNavItems.map((item) => {
-                const isActive = activeBottomTab === item.id;
-                const Icon = item.icon;
-                return (
-                  <TouchableOpacity
-                    key={item.id}
-                    style={styles.bottomNavItem}
-                    onPress={() => handleBottomNavPress(item)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={[styles.navIconContainer, isActive && styles.activeNavIconContainer]}>
-                      <Icon
-                        size={22}
-                        color={isActive ? "#FFFFFF" : COLORS.textMuted}
-                        strokeWidth={2.5}
-                      />
-                    </View>
-                    <Text style={[styles.navLabel, isActive && styles.activeNavLabel]}>
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </LinearGradient>
-        </View>
-      )}
+      <View style={styles.bottomNav}>
+        <LinearGradient
+          colors={[COLORS.surface, COLORS.cardBg]}
+          style={styles.bottomNavGradient}
+        >
+          <View style={styles.bottomNavContent}>
+            {bottomNavItems.map((item) => {
+              const isActive = activeBottomTab === item.id;
+              const Icon = item.icon;
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.bottomNavItem}
+                  onPress={() => handleBottomNavPress(item)}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.navIconContainer, isActive && styles.activeNavIconContainer]}>
+                    <Icon
+                      size={22}
+                      color={isActive ? "#FFFFFF" : COLORS.textMuted}
+                      strokeWidth={2.5}
+                    />
+                  </View>
+                  <Text style={[styles.navLabel, isActive && styles.activeNavLabel]}>
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </LinearGradient>
+      </View>
     </View>
   );
 }
 
-const KPI = ({ Icon, tint, value, label, sub, rightAlign }) => (
-  <View style={styles.kpiCard}>
-    <View style={[styles.kpiIcon, { backgroundColor: tint }]}>{Icon}</View>
-    <View style={{ flex: 1 }}>
-      <Text
-        style={[styles.kpiValue, rightAlign && { textAlign: "right" }]}
-        numberOfLines={1}
-      >
-        {value}
-      </Text>
-      <Text
-        style={[styles.kpiLabel, rightAlign && { textAlign: "right" }]}
-        numberOfLines={1}
-      >
-        {label}
-      </Text>
-      <Text style={styles.kpiSub}>{sub}</Text>
-    </View>
-  </View>
-);
-
 const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
 
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
@@ -453,29 +373,6 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 120 : 100,
   },
 
-  cardsWrap: { paddingHorizontal: 16, marginTop: 12 },
-  kpiCard: {
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  kpiIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  kpiValue: { fontSize: 22, fontWeight: "800", color: COLORS.text },
-  kpiLabel: { color: COLORS.textMuted, fontSize: 14 },
-  kpiSub: { color: "#94a3b8", fontSize: 12, marginTop: 6 },
-
   quickActionsContainer: {
     paddingTop: 8,
     paddingHorizontal: isMobile ? 16 : 20,
@@ -535,34 +432,28 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
     marginBottom: 2,
   },
 
+  quickActionSubtitle: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    fontWeight: "600",
+  },
+
   quickActionArrow: {
     marginLeft: 8,
   },
 
-  block: {
-    margin: 16,
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    padding: 14,
-  },
-  blockHead: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  placeholderContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
+    paddingHorizontal: isMobile ? 20 : 0,
   },
-  blockTitle: { fontWeight: "800", color: COLORS.text, fontSize: 16 },
-  muted: { color: "#94a3b8" },
 
-  emptyWrap: {
-    paddingVertical: 28,
-    alignItems: "center",
-    gap: 6,
+  placeholderText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.textMuted,
   },
-  emptyTitle: { fontWeight: "800", color: "#111827", marginTop: 8 },
-  emptySub: { color: "#94a3b8", marginTop: 2 },
 
   bottomNav: {
     position: "absolute",
@@ -643,5 +534,3 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
     color: COLORS.primary,
   },
 });
-
-const styles = StyleSheet.create({});

@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import {
   BarChart2,
   Building2,
@@ -66,6 +67,7 @@ const COLORS = {
 };
 
 export default function EmployeeDashboard() {
+  const router = useRouter();
   const screenWidth = Dimensions.get("window").width;
   const isMobile = screenWidth < 768;
   const isTablet = screenWidth >= 768 && screenWidth < 1024;
@@ -175,7 +177,10 @@ export default function EmployeeDashboard() {
                 <Text style={styles.userName}>Employee</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.notificationBtn} onPress={() => console.log("Notifications pressed")}>
+            <TouchableOpacity 
+              style={styles.notificationBtn} 
+              onPress={() => router.push('/Notifications')}
+            >
               <Bell size={24} color="#FFFFFF" strokeWidth={2} />
               {unreadCount > 0 && (
                 <View style={styles.badge}>

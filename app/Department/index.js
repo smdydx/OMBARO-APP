@@ -89,7 +89,10 @@ export default function DepartmentDashboard() {
                 <Text style={styles.userName}>OMBARO Department</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.notificationBtn}>
+            <TouchableOpacity 
+              style={styles.notificationBtn}
+              onPress={() => router.push('/Notifications')}
+            >
               <Bell size={24} color="#FFFFFF" strokeWidth={2} />
               {unreadCount > 0 && (
                 <View style={styles.badge}>

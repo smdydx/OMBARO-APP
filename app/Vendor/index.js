@@ -1,4 +1,3 @@
-
 import { LinearGradient } from "expo-linear-gradient";
 import {
   BarChart2,
@@ -28,6 +27,7 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
+import { useRouter } from "expo-router"; // Import useRouter
 
 import AnalyticsTab from "./AnalyticsTab";
 import BookingsTab from "./BookingsTab";
@@ -56,6 +56,7 @@ const COLORS = {
 };
 
 export default function VendorDashboard() {
+  const router = useRouter(); // Initialize router
   const screenWidth = Dimensions.get("window").width;
   const isMobile = screenWidth < 768;
   const isTablet = screenWidth >= 768 && screenWidth < 1024;
@@ -159,14 +160,17 @@ export default function VendorDashboard() {
                   <Text style={styles.userName}>Vendor</Text>
                 </View>
               </View>
-              <TouchableOpacity style={styles.notificationBtn}>
-                <Bell size={24} color="#FFFFFF" strokeWidth={2} />
-                {unreadCount > 0 && (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
-                  </View>
-                )}
-              </TouchableOpacity>
+              <TouchableOpacity
+              style={styles.notificationBtn}
+              onPress={() => router.push('/Notifications')}
+            >
+              <Bell size={24} color="#FFFFFF" strokeWidth={2} />
+              {unreadCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
             </View>
 
             <View style={styles.searchContainer}>
