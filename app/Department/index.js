@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, TextInput, Platform, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Briefcase, Calendar, Users, FileText, LogOut, Bell, Search, Home, Grid3x3, ChevronRight } from 'lucide-react-native';
+import { Briefcase, Calendar, Users, FileText, LogOut, Bell, Search, Home, Grid3x3, ChevronRight, CheckCircle2, Clock, TrendingUp } from 'lucide-react-native';
 
 const COLORS = {
   bg: "#FFFFFF",
@@ -49,6 +49,12 @@ export default function DepartmentDashboard() {
     { id: "schedule", label: "Schedule", icon: Calendar, tab: "Schedule" },
     { id: "team", label: "Team", icon: Users, tab: "Team" },
     { id: "more", label: "More", icon: Grid3x3, tab: "QuickActions" },
+  ];
+
+  const recentActivities = [
+    { id: 1, title: "Task Completed", desc: "Monthly report submitted", time: "10 min ago", icon: CheckCircle2, color: COLORS.success },
+    { id: 2, title: "Team Meeting", desc: "Scheduled for 3:00 PM today", time: "30 min ago", icon: Calendar, color: COLORS.primary },
+    { id: 3, title: "New Member Added", desc: "John joined the team", time: "2 hours ago", icon: Users, color: COLORS.warning },
   ];
 
   const handleBottomNavPress = (item) => {
@@ -116,7 +122,7 @@ export default function DepartmentDashboard() {
       </LinearGradient>
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView || selectedTab === "Overview" ? (
+        {isQuickActionsView ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
@@ -148,6 +154,64 @@ export default function DepartmentDashboard() {
                   );
                 })}
               </View>
+            </View>
+          </ScrollView>
+        ) : selectedTab === "Overview" ? (
+          <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.cardsWrap}>
+              <KPI
+                Icon={<Briefcase size={20} color={COLORS.primary} />}
+                tint={COLORS.successLight}
+                value="24"
+                label="Active Tasks"
+                sub="8 pending today"
+              />
+              <KPI
+                Icon={<CheckCircle2 size={20} color={COLORS.success} />}
+                tint={COLORS.successLight}
+                value="87%"
+                label="Completion Rate"
+                sub="+12% this week"
+                rightAlign
+              />
+              <KPI
+                Icon={<Users size={20} color={COLORS.warning} />}
+                tint="#fef3c7"
+                value="16"
+                label="Team Members"
+                sub="All active"
+              />
+              <KPI
+                Icon={<TrendingUp size={20} color={COLORS.primary} />}
+                tint={COLORS.successLight}
+                value="Good"
+                label="Department Health"
+                sub="Performance up"
+                rightAlign
+              />
+            </View>
+
+            <View style={styles.block}>
+              <View style={styles.blockHead}>
+                <Text style={styles.blockTitle}>Recent Activity</Text>
+                <Text style={styles.muted}>Today</Text>
+              </View>
+
+              {recentActivities.map((activity) => {
+                const Icon = activity.icon;
+                return (
+                  <View key={activity.id} style={styles.activityItem}>
+                    <View style={[styles.activityIcon, { backgroundColor: activity.color + '15' }]}>
+                      <Icon size={18} color={activity.color} strokeWidth={2.5} />
+                    </View>
+                    <View style={styles.activityContent}>
+                      <Text style={styles.activityTitle}>{activity.title}</Text>
+                      <Text style={styles.activityDesc}>{activity.desc}</Text>
+                      <Text style={styles.activityTime}>{activity.time}</Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </ScrollView>
         ) : (
@@ -192,6 +256,27 @@ export default function DepartmentDashboard() {
     </View>
   );
 }
+
+const KPI = ({ Icon, tint, value, label, sub, rightAlign }) => (
+  <View style={styles.kpiCard}>
+    <View style={[styles.kpiIcon, { backgroundColor: tint }]}>{Icon}</View>
+    <View style={{ flex: 1 }}>
+      <Text
+        style={[styles.kpiValue, rightAlign && { textAlign: "right" }]}
+        numberOfLines={1}
+      >
+        {value}
+      </Text>
+      <Text
+        style={[styles.kpiLabel, rightAlign && { textAlign: "right" }]}
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
+      <Text style={styles.kpiSub}>{sub}</Text>
+    </View>
+  </View>
+);
 
 const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
   container: {
@@ -349,6 +434,29 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 120 : 100,
   },
 
+  cardsWrap: { paddingHorizontal: 16, marginTop: 12 },
+  kpiCard: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  kpiIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  kpiValue: { fontSize: 22, fontWeight: "800", color: COLORS.text },
+  kpiLabel: { color: COLORS.textMuted, fontSize: 14 },
+  kpiSub: { color: "#94a3b8", fontSize: 12, marginTop: 6 },
+
   quickActionsContainer: {
     paddingTop: 8,
     paddingHorizontal: isMobile ? 16 : 20,
@@ -416,6 +524,58 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
 
   quickActionArrow: {
     marginLeft: 8,
+  },
+
+  block: {
+    margin: 16,
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: 14,
+  },
+  blockHead: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  blockTitle: { fontWeight: "800", color: COLORS.text, fontSize: 16 },
+  muted: { color: "#94a3b8" },
+
+  activityItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
+  },
+  activityIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  activityDesc: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    marginBottom: 4,
+  },
+  activityTime: {
+    fontSize: 11,
+    color: "#94a3b8",
+    fontWeight: "600",
   },
 
   placeholderContainer: {

@@ -51,6 +51,12 @@ export default function AdminDashboard() {
     { id: "more", label: "More", icon: Grid3x3, tab: "QuickActions" },
   ];
 
+  const recentActivities = [
+    { id: 1, title: "New User Registration", desc: "5 new customers registered", time: "2 min ago", icon: Users, color: COLORS.success },
+    { id: 2, title: "Vendor Approved", desc: "Spa Paradise approved successfully", time: "15 min ago", icon: FileText, color: COLORS.primary },
+    { id: 3, title: "System Update", desc: "Platform updated to v2.1.0", time: "1 hour ago", icon: Settings, color: COLORS.warning },
+  ];
+
   const handleBottomNavPress = (item) => {
     setActiveBottomTab(item.id);
     setSelectedTab(item.tab);
@@ -116,7 +122,7 @@ export default function AdminDashboard() {
       </LinearGradient>
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView || selectedTab === "Overview" ? (
+        {isQuickActionsView ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
@@ -148,6 +154,64 @@ export default function AdminDashboard() {
                   );
                 })}
               </View>
+            </View>
+          </ScrollView>
+        ) : selectedTab === "Overview" ? (
+          <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+            <View style={styles.cardsWrap}>
+              <KPI
+                Icon={<Users size={20} color={COLORS.primary} />}
+                tint={COLORS.successLight}
+                value="1,234"
+                label="Total Users"
+                sub="+156 this month"
+              />
+              <KPI
+                Icon={<BarChart3 size={20} color={COLORS.success} />}
+                tint={COLORS.successLight}
+                value="₹45.2L"
+                label="Revenue"
+                sub="+23% growth"
+                rightAlign
+              />
+              <KPI
+                Icon={<FileText size={20} color={COLORS.warning} />}
+                tint="#fef3c7"
+                value="89"
+                label="Pending Approvals"
+                sub="12 new today"
+              />
+              <KPI
+                Icon={<Settings size={20} color={COLORS.primary} />}
+                tint={COLORS.successLight}
+                value="24/7"
+                label="System Status"
+                sub="All systems operational"
+                rightAlign
+              />
+            </View>
+
+            <View style={styles.block}>
+              <View style={styles.blockHead}>
+                <Text style={styles.blockTitle}>Recent Activity</Text>
+                <Text style={styles.muted}>Last 24 hours</Text>
+              </View>
+
+              {recentActivities.map((activity) => {
+                const Icon = activity.icon;
+                return (
+                  <View key={activity.id} style={styles.activityItem}>
+                    <View style={[styles.activityIcon, { backgroundColor: activity.color + '15' }]}>
+                      <Icon size={18} color={activity.color} strokeWidth={2.5} />
+                    </View>
+                    <View style={styles.activityContent}>
+                      <Text style={styles.activityTitle}>{activity.title}</Text>
+                      <Text style={styles.activityDesc}>{activity.desc}</Text>
+                      <Text style={styles.activityTime}>{activity.time}</Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </ScrollView>
         ) : (
@@ -509,4 +573,100 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
   activeNavLabel: {
     color: COLORS.primary,
   },
+
+  cardsWrap: { paddingHorizontal: 16, marginTop: 12 },
+  kpiCard: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  kpiIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  kpiValue: { fontSize: 22, fontWeight: "800", color: COLORS.text },
+  kpiLabel: { color: COLORS.textMuted, fontSize: 14 },
+  kpiSub: { color: "#94a3b8", fontSize: 12, marginTop: 6 },
+
+  block: {
+    margin: 16,
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    padding: 14,
+  },
+  blockHead: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  blockTitle: { fontWeight: "800", color: COLORS.text, fontSize: 16 },
+  muted: { color: "#94a3b8" },
+
+  activityItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.divider,
+  },
+  activityIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  activityDesc: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    marginBottom: 4,
+  },
+  activityTime: {
+    fontSize: 11,
+    color: "#94a3b8",
+    fontWeight: "600",
+  },
 });
+
+const KPI = ({ Icon, tint, value, label, sub, rightAlign }) => (
+  <View style={styles.kpiCard}>
+    <View style={[styles.kpiIcon, { backgroundColor: tint }]}>{Icon}</View>
+    <View style={{ flex: 1 }}>
+      <Text
+        style={[styles.kpiValue, rightAlign && { textAlign: "right" }]}
+        numberOfLines={1}
+      >
+        {value}
+      </Text>
+      <Text
+        style={[styles.kpiLabel, rightAlign && { textAlign: "right" }]}
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
+      <Text style={styles.kpiSub}>{sub}</Text>
+    </View>
+  </View>
+);
