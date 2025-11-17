@@ -67,14 +67,14 @@ export default function TherapistProfile() {
   const [unreadCount, setUnreadCount] = useState(3);
 
   const quickActions = [
-    { id: "assignments", label: "Assignments", icon: CalendarDays, route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "schedule", label: "Schedule", icon: Clock, route: "/Therapist/mySchedule", color: COLORS.primary },
-    { id: "location", label: "Location", icon: MapPin, route: "/Therapist/myLocation", color: COLORS.primary },
-    { id: "leaves", label: "Leaves", icon: XCircle, route: "/Therapist/LeaveRequest", color: COLORS.primary },
-    { id: "earnings", label: "Earnings", icon: DollarSign, route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "performance", label: "Performance", icon: BarChart2, route: "/Therapist/performance-review", color: COLORS.primary },
-    { id: "profile", label: "Profile", icon: User2, route: "/Therapist/profile", color: COLORS.primary },
-    { id: "settings", label: "Settings", icon: Settings, route: "#", color: COLORS.primary },
+    { id: "assignments", label: "Assignments", icon: CalendarDays, subtitle: "View today's tasks", route: "/Therapist/assisnements", color: COLORS.primary },
+    { id: "schedule", label: "Schedule", icon: Clock, subtitle: "Manage your schedule", route: "/Therapist/mySchedule", color: COLORS.primary },
+    { id: "location", label: "Location", icon: MapPin, subtitle: "Update your location", route: "/Therapist/myLocation", color: COLORS.primary },
+    { id: "leaves", label: "Leaves", icon: XCircle, subtitle: "Request time off", route: "/Therapist/LeaveRequest", color: COLORS.primary },
+    { id: "earnings", label: "Earnings", icon: DollarSign, subtitle: "Track your income", route: "/Therapist/assisnements", color: COLORS.primary },
+    { id: "performance", label: "Performance", icon: BarChart2, subtitle: "View your ratings", route: "/Therapist/performance-review", color: COLORS.primary },
+    { id: "profile", label: "Profile", icon: User2, subtitle: "Edit your profile", route: "/Therapist/profile", color: COLORS.primary },
+    { id: "settings", label: "Settings", icon: Settings, subtitle: "App preferences", route: "#", color: COLORS.primary },
   ];
 
   const bottomNavItems = [
@@ -180,6 +180,9 @@ export default function TherapistProfile() {
                       </View>
                       <View style={styles.quickActionContent}>
                         <Text style={styles.quickActionLabel}>{action.label}</Text>
+                        {action.subtitle && (
+                          <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+                        )}
                       </View>
                       <View style={styles.quickActionArrow}>
                         <ChevronRight size={20} color={COLORS.textMuted} strokeWidth={2.5} />
@@ -533,6 +536,12 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
     fontWeight: "700",
     color: COLORS.text,
     marginBottom: 2,
+  },
+
+  quickActionSubtitle: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    fontWeight: "600",
   },
 
   quickActionArrow: {

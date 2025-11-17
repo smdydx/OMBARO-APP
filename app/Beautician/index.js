@@ -1,5 +1,6 @@
 
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import {
   BarChart2,
   Calendar,
@@ -49,6 +50,7 @@ const COLORS = {
 };
 
 export default function BeauticianDashboard() {
+  const router = useRouter();
   const screenWidth = Dimensions.get("window").width;
   const isMobile = screenWidth < 768;
   const isTablet = screenWidth >= 768 && screenWidth < 1024;
@@ -89,6 +91,7 @@ export default function BeauticianDashboard() {
   };
 
   const isQuickActionsView = selectedTab === "QuickActions";
+  const isOverviewView = selectedTab === "Overview";
 
   return (
     <View style={styles.container}>
@@ -116,7 +119,10 @@ export default function BeauticianDashboard() {
                 <Text style={styles.userName}>Beautician</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.notificationBtn}>
+            <TouchableOpacity 
+              style={styles.notificationBtn}
+              onPress={() => router.push('/Notifications')}
+            >
               <Bell size={24} color="#FFFFFF" strokeWidth={2} />
               {unreadCount > 0 && (
                 <View style={styles.badge}>
@@ -140,7 +146,7 @@ export default function BeauticianDashboard() {
       </LinearGradient>
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView || selectedTab === "Overview" ? (
+        {isQuickActionsView || isOverviewView ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
@@ -163,7 +169,9 @@ export default function BeauticianDashboard() {
                       </View>
                       <View style={styles.quickActionContent}>
                         <Text style={styles.quickActionLabel}>{action.label}</Text>
-                        <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+                        {action.subtitle && (
+                          <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+                        )}
                       </View>
                       <View style={styles.quickActionArrow}>
                         <ChevronRight size={20} color={COLORS.textMuted} strokeWidth={2.5} />

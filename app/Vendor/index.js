@@ -188,7 +188,7 @@ export default function VendorDashboard() {
       )}
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView ? (
+        {isQuickActionsView || selectedTab === "Overview" ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
@@ -211,6 +211,9 @@ export default function VendorDashboard() {
                       </View>
                       <View style={styles.quickActionContent}>
                         <Text style={styles.quickActionLabel}>{action.label}</Text>
+                        {action.subtitle && (
+                          <Text style={styles.quickActionSubtitle}>{action.subtitle}</Text>
+                        )}
                       </View>
                       <View style={styles.quickActionArrow}>
                         <ChevronRight size={20} color={COLORS.textMuted} strokeWidth={2.5} />
