@@ -490,28 +490,28 @@ export default function MyProfile({ onBack }) {
           )}
 
           {/* Logout Button - appears on all tabs */}
-          <View style={{ marginTop: sw(24), marginBottom: sw(16) }}>
-            <TouchableOpacity style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: `${COLORS.danger}15`,
-              borderRadius: sw(12),
-              paddingVertical: sw(12),
-              borderWidth: 1,
-              borderColor: COLORS.danger,
+          <TouchableOpacity style={{
+            marginTop: sw(24),
+            marginBottom: sw(80),
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: `${COLORS.danger}15`,
+            borderRadius: sw(12),
+            paddingVertical: sw(12),
+            borderWidth: 1,
+            borderColor: COLORS.danger,
+          }}>
+            <LogOut size={sw(16)} color={COLORS.danger} strokeWidth={2.5} />
+            <Text style={{ 
+              fontSize: sw(13), 
+              color: COLORS.danger, 
+              fontWeight: "700",
+              marginLeft: sw(6),
             }}>
-              <LogOut size={sw(16)} color={COLORS.danger} strokeWidth={2.5} />
-              <Text style={{ 
-                fontSize: sw(13), 
-                color: COLORS.danger, 
-                fontWeight: "700",
-                marginLeft: sw(6),
-              }}>
-                Logout
-              </Text>
-            </TouchableOpacity>
-          </View>
+              Logout
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </View>
