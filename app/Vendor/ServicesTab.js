@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   addBtn: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#0ea5e9",
+    backgroundColor: "#016B3A",
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 10,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: "#efe2ff",
+    backgroundColor: "#D1FAE5",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
@@ -176,11 +176,11 @@ const styles = StyleSheet.create({
 
   badgeRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
   badge: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2 },
-  active: { backgroundColor: "#dcfce7" },
-  paused: { backgroundColor: "#fef9c3" },
+  active: { backgroundColor: "#D1FAE5" },
+  paused: { backgroundColor: "#FEF3C7" },
   badgeText: { fontSize: 11, fontWeight: "700" },
-  activeText: { color: "#166534" },
-  pausedText: { color: "#854d0e" },
+  activeText: { color: "#014D2A" },
+  pausedText: { color: "#92400E" },
 
   ratingRow: { flexDirection: "row", alignItems: "center", marginLeft: 10 },
   ratingText: { fontSize: 12, color: "#475569", marginLeft: 4 },
@@ -189,9 +189,9 @@ const styles = StyleSheet.create({
   btnIcon: {
     padding: 6,
     borderRadius: 8,
-    backgroundColor: "#eff6ff",
+    backgroundColor: "#D1FAE5",
     marginLeft: 6,
   },
-  btnIconGray: { backgroundColor: "#f1f5f9" },
-  btnIconYellow: { backgroundColor: "#fef9c3" },
+  btnIconGray: { backgroundColor: "#D1FAE5" },
+  btnIconGreen: { backgroundColor: "#D1FAE5" },
 });
