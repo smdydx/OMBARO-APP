@@ -167,17 +167,19 @@ function RoleCard({ role, sw, onEdit, currentIndex, totalRoles }) {
 function StatCard({ label, value, icon: IconComponent, color, sw }) {
   return (
     <LinearGradient
-      colors={color === COLORS.success ? ["#D1FAE5", "#ECFDF5"] : color === COLORS.warning ? ["#FEF3C7", "#FFFBEB"] : color === COLORS.info ? ["#DBEAFE", "#F0F9FF"] : ["#FCE7F3", "#FDF2F8"]}
+      colors={["#10B981", "#016B3A"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ borderRadius: sw(14), overflow: "hidden", borderWidth: 1.5, borderColor: color === COLORS.success ? "#A7F3D0" : color === COLORS.warning ? "#FDE68A" : color === COLORS.info ? "#BFDBFE" : "#FBCFE8", padding: sw(14), width: sw(140), minHeight: sw(140), alignItems: "center", justifyContent: "center" }}
+      style={{ borderRadius: sw(14), overflow: "hidden", borderWidth: 1.5, borderColor: "#A7F3D0", padding: sw(14), width: sw(280), height: sw(90), alignItems: "center", justifyContent: "center" }}
     >
-      <View style={{ alignItems: "center", width: "100%" }}>
-        <View style={{ width: sw(40), height: sw(40), borderRadius: sw(20), backgroundColor: `${color}20`, alignItems: "center", justifyContent: "center", marginBottom: sw(8) }}>
-          <IconComponent size={sw(18)} color={color} strokeWidth={2.5} />
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", gap: sw(14) }}>
+        <View style={{ width: sw(50), height: sw(50), borderRadius: sw(12), backgroundColor: "rgba(255,255,255,0.25)", alignItems: "center", justifyContent: "center" }}>
+          <IconComponent size={sw(24)} color="#FFFFFF" strokeWidth={2.5} />
         </View>
-        <Text style={{ fontSize: sw(16), fontWeight: "800", color: color, marginBottom: sw(4) }}>{value}</Text>
-        <Text style={{ fontSize: sw(8), color: COLORS.textLight, textAlign: "center", fontWeight: "600" }}>{label}</Text>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text style={{ fontSize: sw(18), fontWeight: "800", color: "#FFFFFF", marginBottom: sw(2) }}>{value}</Text>
+          <Text style={{ fontSize: sw(9), color: "rgba(255,255,255,0.85)", fontWeight: "600" }}>{label}</Text>
+        </View>
       </View>
     </LinearGradient>
   );
