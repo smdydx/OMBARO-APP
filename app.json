@@ -24,7 +24,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.deepak903.spa",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#00B383",
         "foregroundImage": "./assets/Spa/logo.png",
         "backgroundImage": "./assets/Spa/logo.png",
         "monochromeImage": "./assets/Spa/logo.png"
@@ -42,9 +42,9 @@
           "image": "./assets/Spa/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#00B383",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#005A4D"
           }
         }
       ],
