@@ -180,11 +180,11 @@ export default function SystemSettings({ onBack }) {
       </LinearGradient>
 
       <View style={{
-        height: contentHeight,
+        flex: 1,
         backgroundColor: COLORS.bg,
         borderTopLeftRadius: sw(24),
         borderTopRightRadius: sw(24),
-        marginTop: -sw(2),
+        marginTop: 0,
         paddingTop: sw(20),
       }}>
         <ScrollView

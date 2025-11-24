@@ -170,11 +170,11 @@ export default function ServiceManagement({ onBack }) {
       </LinearGradient>
 
       <View style={{
-        height: contentHeight,
+        flex: 1,
         backgroundColor: COLORS.bg,
         borderTopLeftRadius: sw(24),
         borderTopRightRadius: sw(24),
-        marginTop: -sw(2),
+        marginTop: 0,
         paddingTop: sw(20),
       }}>
         <View style={{ paddingHorizontal: sw(20), marginBottom: sw(15) }}>
