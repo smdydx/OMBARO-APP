@@ -41,6 +41,7 @@ import SystemSettings from "./QuickAction/SystemSettings";
 import LocationTracking from "./QuickAction/LocationTracking";
 import VendorApproval from "./QuickAction/VendorApproval";
 import SystemAlerts from "./QuickAction/SystemAlerts";
+import PermissionMatrix from "./QuickAction/PermissionMatrix";
 
 const COLORS = {
   bg: "#FFFFFF",
@@ -95,6 +96,7 @@ export default function AdminDashboard() {
       "System Settings": SystemSettings,
       "Location Tracking": LocationTracking,
       "System Alerts": SystemAlerts,
+      "Permission Matrix": PermissionMatrix,
     }),
     []
   );
@@ -109,6 +111,7 @@ export default function AdminDashboard() {
     { id: "approvals", label: "Pending Approvals", icon: FileCheck, tab: "Approvals", color: COLORS.primary },
     { id: "security", label: "Security Center", icon: Shield, tab: "Security Center", color: COLORS.primary },
     { id: "location", label: "Location Tracking", icon: MapPin, tab: "Location Tracking", color: COLORS.primary },
+    { id: "permissions", label: "Permission Matrix", icon: Grid3x3, tab: "Permission Matrix", color: COLORS.primary },
     { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
     { id: "system-alerts", label: "System Alerts", icon: Bell, tab: "System Alerts", color: COLORS.primary },
   ];
