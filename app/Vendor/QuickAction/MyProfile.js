@@ -112,7 +112,7 @@ export default function MyProfile({ onBack }) {
   const contentHeight = isMobile ? height * 0.65 : height * 0.667;
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
       <StatusBar 
         barStyle="light-content" 
         backgroundColor={COLORS.gradient2}
@@ -120,12 +120,11 @@ export default function MyProfile({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight }}
+        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(10) }}
       >
         <View style={{ 
           paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), 
           paddingHorizontal: sw(20),
-          flex: 1,
         }}>
           <TouchableOpacity
             onPress={onBack}
@@ -136,63 +135,64 @@ export default function MyProfile({ onBack }) {
               backgroundColor: "rgba(255,255,255,0.2)",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: sw(20),
             }}
           >
             <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
           </TouchableOpacity>
+        </View>
 
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <View style={{
-              width: sw(100),
-              height: sw(100),
-              borderRadius: sw(50),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: sw(15),
-              borderWidth: 3,
-              borderColor: "rgba(255,255,255,0.3)",
-            }}>
-              <Building2 size={sw(45)} color="#FFFFFF" strokeWidth={2.5} />
-            </View>
-            <Text style={{ 
-              fontSize: sw(22), 
-              fontWeight: "800", 
-              color: "#FFFFFF",
-              marginBottom: sw(4),
-            }}>
-              Ombarc Spa & Wellness
+        <View style={{ alignItems: "center", paddingHorizontal: sw(20) }}>
+          <View style={{
+            width: sw(80),
+            height: sw(80),
+            borderRadius: sw(40),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(10),
+            borderWidth: 3,
+            borderColor: "rgba(255,255,255,0.3)",
+          }}>
+            <Building2 size={sw(38)} color="#FFFFFF" strokeWidth={2.5} />
+          </View>
+          <Text style={{ 
+            fontSize: sw(18), 
+            fontWeight: "800", 
+            color: "#FFFFFF",
+            marginBottom: sw(6),
+            textAlign: "center",
+          }}>
+            Ombarc Spa & Wellness
+          </Text>
+          <View style={{ 
+            flexDirection: "row", 
+            alignItems: "center",
+            backgroundColor: "rgba(255,255,255,0.2)",
+            paddingHorizontal: sw(12),
+            paddingVertical: sw(5),
+            borderRadius: sw(20),
+          }}>
+            <Star size={sw(13)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
+            <Text style={{ color: "#FFFFFF", fontSize: sw(11), fontWeight: "700", marginLeft: sw(4) }}>
+              4.8 Rating
             </Text>
-            <View style={{ 
-              flexDirection: "row", 
-              alignItems: "center",
-              backgroundColor: "rgba(255,255,255,0.2)",
-              paddingHorizontal: sw(12),
-              paddingVertical: sw(6),
-              borderRadius: sw(20),
-            }}>
-              <Star size={sw(14)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
-              <Text style={{ color: "#FFFFFF", fontSize: sw(12), fontWeight: "700", marginLeft: sw(5) }}>
-                4.8 Rating
-              </Text>
-            </View>
           </View>
         </View>
       </LinearGradient>
 
       <View style={{
-        height: contentHeight,
+        flex: 1,
         backgroundColor: COLORS.bg,
         borderTopLeftRadius: sw(24),
         borderTopRightRadius: sw(24),
         marginTop: -sw(20),
         paddingTop: sw(20),
+        overflow: "hidden",
       }}>
         <ScrollView
           contentContainerStyle={{ 
             paddingHorizontal: sw(20), 
-            paddingBottom: sw(100) 
+            paddingBottom: sw(40) 
           }}
           showsVerticalScrollIndicator={false}
         >
