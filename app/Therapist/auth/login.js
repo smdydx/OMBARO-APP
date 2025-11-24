@@ -47,7 +47,14 @@ export default function TherapistLogin() {
     };
   }, [cardOffset]);
 
-  const handleLogin = () => router.replace('/Therapist');
+  const handleLogin = () => {
+    // Simple credential check
+    if (email === 'therapist321' && password === '1234') {
+      router.replace('/Therapist');
+    } else {
+      alert('Invalid credentials. Use:\nUsername: therapist321\nPassword: 1234');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -89,18 +96,17 @@ export default function TherapistLogin() {
             <View style={styles.formContainer}>
               <Text style={styles.formTitle}>Login to Continue</Text>
 
-              {/* Email Input */}
+              {/* Username Input */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Email Address</Text>
+                <Text style={styles.label}>Username</Text>
                 <View style={styles.inputWrapper}>
                   <Mail size={18} color="#016B3A" strokeWidth={2} />
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
+                    placeholder="therapist321"
                     placeholderTextColor="rgba(1,107,58,0.4)"
                     value={email}
                     onChangeText={setEmail}
-                    keyboardType="email-address"
                     autoCapitalize="none"
                     returnKeyType="next"
                   />
@@ -114,12 +120,13 @@ export default function TherapistLogin() {
                   <Lock size={18} color="#016B3A" strokeWidth={2} />
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your password"
+                    placeholder="1234"
                     placeholderTextColor="rgba(1,107,58,0.4)"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
                     returnKeyType="done"
+                    onSubmitEditing={handleLogin}
                   />
                 </View>
               </View>

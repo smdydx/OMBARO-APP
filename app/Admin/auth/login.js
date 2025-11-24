@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Mail, Lock } from 'lucide-react-native';
+import { ArrowLeft, Lock, User } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,7 +22,12 @@ export default function AdminLogin() {
   const router = useRouter();
 
   const handleLogin = () => {
-    router.replace('/Admin');
+    // Simple credential check
+    if (email === 'admin321' && password === 'admin321') {
+      router.replace('/Admin');
+    } else {
+      alert('Invalid credentials. Use:\nUsername: admin321\nPassword: admin321');
+    }
   };
 
   return (
@@ -59,33 +64,37 @@ export default function AdminLogin() {
             <View style={styles.formContainer}>
               <Text style={styles.formTitle}>Login to Continue</Text>
 
+              {/* Username Input */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Email Address</Text>
+                <Text style={styles.label}>Username</Text>
                 <View style={styles.inputWrapper}>
-                  <Mail size={Math.min(width * 0.045, 18)} color="#1e3a8a" strokeWidth={2} />
+                  <User size={Math.min(width * 0.045, 18)} color="#1e3a8a" strokeWidth={2} />
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your email"
+                    placeholder="admin321"
                     placeholderTextColor="rgba(30, 58, 138, 0.4)"
                     value={email}
                     onChangeText={setEmail}
-                    keyboardType="email-address"
                     autoCapitalize="none"
+                    returnKeyType="next"
                   />
                 </View>
               </View>
 
+              {/* Password Input */}
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Password</Text>
                 <View style={styles.inputWrapper}>
                   <Lock size={Math.min(width * 0.045, 18)} color="#1e3a8a" strokeWidth={2} />
                   <TextInput
                     style={styles.input}
-                    placeholder="Enter your password"
+                    placeholder="admin321"
                     placeholderTextColor="rgba(30, 58, 138, 0.4)"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
+                    returnKeyType="done"
+                    onSubmitEditing={handleLogin}
                   />
                 </View>
               </View>
