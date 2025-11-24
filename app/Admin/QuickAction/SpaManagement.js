@@ -27,18 +27,9 @@ export default function SpaManagement({ onBack }) {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.gradient2} translucent={false} />
-      <LinearGradient colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40), paddingBottom: sw(24), paddingHorizontal: sw(20) }}>
-        <TouchableOpacity onPress={() => onBack ? onBack() : nav.goBack()} style={{ width: sw(40), height: sw(40), borderRadius: sw(20), backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center", marginBottom: sw(12) }}>
-          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-        </TouchableOpacity>
-        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
-          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5) }}>Spa Management</Text>
-          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10) }}>Manage all spa locations</Text>
-        </View>
-      </LinearGradient>
-      <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(28), borderTopRightRadius: sw(28), marginTop: 0 }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} translucent={false} />
+      <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
         <View style={{ backgroundColor: COLORS.cardBg, borderBottomWidth: 1, borderBottomColor: COLORS.border, paddingHorizontal: sw(16), paddingVertical: sw(10), flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <View style={{ flexDirection: "row", gap: sw(4) }}>
             {["All", "Active", "Inactive"].map((tab) => (
