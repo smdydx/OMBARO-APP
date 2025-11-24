@@ -169,15 +169,15 @@ export default function RevenueReports({ onBack }) {
           <Text style={{ 
             fontSize: sw(16), 
             fontWeight: "800", 
-              color: "#FFFFFF",
-              marginBottom: sw(8),
-            }}>
-              Revenue Reports
-            </Text>
-            <Text style={{ fontSize: sw(13), color: "rgba(255,255,255,0.9)", fontWeight: "500" }}>
-              Track your earnings and revenue
-            </Text>
-          </View>
+            color: "#FFFFFF",
+            marginBottom: sw(4),
+            textAlign: "center",
+          }} numberOfLines={1}>
+            Revenue Reports
+          </Text>
+          <Text style={{ fontSize: sw(11), color: "rgba(255,255,255,0.9)", fontWeight: "500", textAlign: "center" }} numberOfLines={1}>
+            Track your earnings and revenue
+          </Text>
         </View>
       </LinearGradient>
 
