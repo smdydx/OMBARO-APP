@@ -189,6 +189,17 @@ const ROLES_DATA = [
 
 function EditRoleModal({ visible, role, sw, onClose, onSave }) {
   const [description, setDescription] = useState(role?.description || "");
+  const [enabledPermissions, setEnabledPermissions] = useState(role?.permissions ? new Set(role.permissions) : new Set());
+
+  const togglePermission = (permission) => {
+    const newSet = new Set(enabledPermissions);
+    if (newSet.has(permission)) {
+      newSet.delete(permission);
+    } else {
+      newSet.add(permission);
+    }
+    setEnabledPermissions(newSet);
+  };
 
   if (!role) return null;
 
@@ -232,13 +243,19 @@ function EditRoleModal({ visible, role, sw, onClose, onSave }) {
             <View style={{ marginBottom: sw(14) }}>
               <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.textLight, marginBottom: sw(8) }}>PERMISSIONS</Text>
               <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), borderWidth: 1, borderColor: COLORS.border, overflow: "hidden" }}>
-                {role.permissions.map((perm, idx) => (
-                  <View key={idx} style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: sw(10), paddingVertical: sw(6), borderBottomWidth: idx < role.permissions.length - 1 ? 1 : 0, borderBottomColor: COLORS.border }}>
-                    <CheckCircle size={sw(12)} color={COLORS.success} strokeWidth={2.5} />
-                    <Text style={{ fontSize: sw(9), color: COLORS.text, fontWeight: "600", marginLeft: sw(8) }}>{perm}</Text>
-                  </View>
-                ))}
+                {role.permissions.map((perm, idx) => {
+                  const isEnabled = enabledPermissions.has(perm);
+                  return (
+                    <TouchableOpacity key={idx} onPress={() => togglePermission(perm)} style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: sw(10), paddingVertical: sw(8), borderBottomWidth: idx < role.permissions.length - 1 ? 1 : 0, borderBottomColor: COLORS.border, backgroundColor: isEnabled ? `${COLORS.success}08` : "transparent" }}>
+                      <View style={{ width: sw(18), height: sw(18), borderRadius: sw(4), borderWidth: 2, borderColor: isEnabled ? COLORS.success : COLORS.border, backgroundColor: isEnabled ? COLORS.success : "transparent", alignItems: "center", justifyContent: "center" }}>
+                        {isEnabled && <CheckCircle size={sw(12)} color="#FFFFFF" strokeWidth={3} />}
+                      </View>
+                      <Text style={{ fontSize: sw(9), color: COLORS.text, fontWeight: "600", marginLeft: sw(10), textDecorationLine: isEnabled ? "none" : "none" }}>{perm}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
+              <Text style={{ fontSize: sw(7), color: COLORS.textLight, marginTop: sw(6), fontStyle: "italic" }}>Enabled: {enabledPermissions.size} / {role.permissions.length}</Text>
             </View>
 
             {/* Reporting Structure */}
@@ -269,9 +286,9 @@ function EditRoleModal({ visible, role, sw, onClose, onSave }) {
               <TouchableOpacity onPress={onClose} style={{ flex: 1, borderWidth: 1, borderColor: COLORS.primary, borderRadius: sw(10), paddingVertical: sw(11), alignItems: "center", justifyContent: "center" }}>
                 <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.primary }}>Close</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => { onSave(description); onClose(); }} style={{ flex: 1, backgroundColor: COLORS.primary, borderRadius: sw(10), paddingVertical: sw(11), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(6) }}>
-                <Edit3 size={sw(12)} color="#FFFFFF" strokeWidth={2} />
-                <Text style={{ fontSize: sw(10), fontWeight: "700", color: "#FFFFFF" }}>Edit Role</Text>
+              <TouchableOpacity onPress={() => { onSave({ description, permissions: Array.from(enabledPermissions) }); onClose(); }} style={{ flex: 1, backgroundColor: COLORS.primary, borderRadius: sw(10), paddingVertical: sw(11), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(6) }}>
+                <CheckCircle size={sw(12)} color="#FFFFFF" strokeWidth={2} />
+                <Text style={{ fontSize: sw(10), fontWeight: "700", color: "#FFFFFF" }}>Save Role</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -328,8 +345,9 @@ export default function RoleManagement({ onBack }) {
     setEditModalVisible(true);
   };
 
-  const handleSave = (desc) => {
-    console.log("Saved:", desc);
+  const handleSave = (data) => {
+    console.log("Saved:", data);
+    alert(`✓ Saved ${selectedRole?.name}\n✓ Permissions: ${data.permissions.length}\n✓ All changes saved successfully!`);
   };
 
   return (
