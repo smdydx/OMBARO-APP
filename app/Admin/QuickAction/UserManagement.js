@@ -84,7 +84,7 @@ export default function UserManagement({ onBack }) {
           </View>
           <View style={{ width: sw(40) }} />
         </View>
-        <View style={{ backgroundColor: "rgba(255,255,255,0.15)", borderRadius: sw(12), flexDirection: "row", alignItems: "center", paddingHorizontal: sw(12), marginBottom: sw(12) }}>
+        <View style={{ backgroundColor: "rgba(255,255,255,0.15)", borderRadius: sw(12), flexDirection: "row", alignItems: "center", paddingHorizontal: sw(12) }}>
           <Search size={sw(16)} color="rgba(255,255,255,0.6)" strokeWidth={2} />
           <TextInput
             placeholder="Search users..."
@@ -93,14 +93,6 @@ export default function UserManagement({ onBack }) {
             onChangeText={setSearchQuery}
             style={{ flex: 1, paddingVertical: sw(10), paddingHorizontal: sw(10), color: "#FFFFFF", fontSize: sw(12) }}
           />
-        </View>
-        <View style={{ flexDirection: "row", gap: sw(6), marginBottom: sw(2) }}>
-          {stats.map((stat, idx) => (
-            <View key={idx} style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.15)", borderRadius: sw(10), paddingVertical: sw(8), paddingHorizontal: sw(6), alignItems: "center" }}>
-              <Text style={{ fontSize: sw(12), fontWeight: "800", color: "#FFFFFF" }}>{stat.value}</Text>
-              <Text style={{ fontSize: sw(7), color: "rgba(255,255,255,0.85)", marginTop: sw(2) }}>{stat.label}</Text>
-            </View>
-          ))}
         </View>
       </LinearGradient>
       <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(24), borderTopRightRadius: sw(24), marginTop: -sw(8) }}>
