@@ -39,25 +39,9 @@ export default function Analytics({ onBack }) {
   const [timePeriod, setTimePeriod] = useState("Month");
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.gradient2} translucent={false} />
-      <LinearGradient colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40), paddingBottom: sw(24), paddingHorizontal: sw(20) }}>
-        <TouchableOpacity onPress={() => onBack ? onBack() : nav.goBack()} style={{ width: sw(40), height: sw(40), borderRadius: sw(20), backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center", marginBottom: sw(12) }}>
-          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-        </TouchableOpacity>
-        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
-          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5) }}>Analytics</Text>
-          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10) }}>Platform Performance Metrics</Text>
-        </View>
-        <View style={{ backgroundColor: "rgba(255,255,255,0.15)", borderRadius: sw(10), padding: sw(4), flexDirection: "row", gap: sw(4) }}>
-          {["Week", "Month", "Year"].map((period) => (
-            <TouchableOpacity key={period} onPress={() => setTimePeriod(period)} style={{ flex: 1, paddingVertical: sw(8), paddingHorizontal: sw(6), borderRadius: sw(8), backgroundColor: timePeriod === period ? "#FFFFFF" : "transparent", alignItems: "center" }}>
-              <Text style={{ fontSize: sw(10), fontWeight: timePeriod === period ? "700" : "600", color: timePeriod === period ? COLORS.primary : "#FFFFFF" }}>{period}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </LinearGradient>
-      <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(28), borderTopRightRadius: sw(28), marginTop: 0 }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} translucent={false} />
+      <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
         <ScrollView contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(16), paddingBottom: sw(120) }} showsVerticalScrollIndicator={false}>
           <MetricCard icon={Users} label="User Growth" value="2,847" change="+12%" color={COLORS.primary} sw={sw} />
           <MetricCard icon={DollarSign} label="Revenue" value="₹8.4L" change="+23%" color={COLORS.warning} sw={sw} />
