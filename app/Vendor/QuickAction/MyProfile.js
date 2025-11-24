@@ -425,7 +425,7 @@ export default function MyProfile({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(12), paddingHorizontal: sw(20) }}
+        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(24), paddingHorizontal: sw(20) }}
       >
         <View style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40) }}>
           <TouchableOpacity
@@ -443,23 +443,25 @@ export default function MyProfile({ onBack }) {
           </TouchableOpacity>
         </View>
 
-        <View style={{ alignItems: "center", paddingBottom: sw(8) }}>
+        <View style={{ alignItems: "center", paddingBottom: sw(16) }}>
           <View style={{
-            width: sw(60),
-            height: sw(60),
-            borderRadius: sw(16),
-            backgroundColor: "rgba(255,255,255,0.2)",
+            width: sw(70),
+            height: sw(70),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.25)",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: sw(8),
+            marginBottom: sw(12),
+            borderWidth: 2,
+            borderColor: "rgba(255,255,255,0.3)",
           }}>
-            <Building2 size={sw(32)} color="#FFFFFF" strokeWidth={2.5} />
+            <Building2 size={sw(36)} color="#FFFFFF" strokeWidth={2} />
           </View>
           <Text style={{ 
-            fontSize: sw(16), 
+            fontSize: sw(18), 
             fontWeight: "800", 
             color: "#FFFFFF",
-            marginBottom: sw(4),
+            marginBottom: sw(8),
             textAlign: "center",
           }} numberOfLines={1}>
             My Profile
@@ -467,13 +469,15 @@ export default function MyProfile({ onBack }) {
           <View style={{ 
             flexDirection: "row", 
             alignItems: "center",
-            backgroundColor: "rgba(255,255,255,0.2)",
-            paddingHorizontal: sw(10),
-            paddingVertical: sw(4),
-            borderRadius: sw(16),
+            backgroundColor: "rgba(255,255,255,0.25)",
+            paddingHorizontal: sw(12),
+            paddingVertical: sw(6),
+            borderRadius: sw(18),
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.3)",
           }}>
-            <Star size={sw(12)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
-            <Text style={{ color: "#FFFFFF", fontSize: sw(10), fontWeight: "700", marginLeft: sw(4) }}>
+            <Star size={sw(14)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
+            <Text style={{ color: "#FFFFFF", fontSize: sw(11), fontWeight: "700", marginLeft: sw(5) }}>
               4.8 Rating
             </Text>
           </View>
@@ -482,7 +486,7 @@ export default function MyProfile({ onBack }) {
 
       <TabHeader tabs={TABS} activeTab={activeTab} onTabPress={setActiveTab} sw={sw} />
 
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
         {renderTabContent()}
       </View>
     </View>
