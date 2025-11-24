@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ArrowLeft, X, Edit3, CheckCircle, Plus, Search, Filter } from "lucide-react-native";
-import { Platform, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View, TextInput, Modal } from "react-native";
-import { useState } from "react";
+import { Platform, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View, TextInput, Modal, FlatList } from "react-native";
+import { useState, useRef } from "react";
 
 const COLORS = {
   gradient1: "#00FF87", gradient2: "#016B3A", gradient3: "#013B1F", gradient4: "#012B17",
@@ -108,34 +108,59 @@ function EditRoleModal({ visible, role, sw, onClose, onSave }) {
   );
 }
 
-function RoleCard({ role, sw, onEdit }) {
+function RoleCard({ role, sw, onEdit, currentIndex, totalRoles }) {
   return (
-    <TouchableOpacity activeOpacity={0.7} onPress={() => onEdit(role)}>
-      <LinearGradient colors={[`${role.color}15`, `${role.color}08`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: sw(16), overflow: "hidden", width: sw(280), height: sw(220) }}>
-        <View style={{ backgroundColor: "#FFFFFF", borderRadius: sw(16), padding: sw(14), borderWidth: 1, borderColor: COLORS.border, flex: 1, justifyContent: "space-between" }}>
+    <View style={{ width: sw(350), height: sw(380), paddingHorizontal: sw(16), justifyContent: "center", alignItems: "center" }}>
+      <LinearGradient colors={[`${role.color}15`, `${role.color}08`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: sw(20), overflow: "hidden", width: "100%", height: "100%", borderWidth: 1.5, borderColor: COLORS.border }}>
+        <View style={{ backgroundColor: "#FFFFFF", borderRadius: sw(20), padding: sw(20), borderWidth: 1.5, borderColor: COLORS.border, flex: 1, justifyContent: "space-between" }}>
           <View>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(12) }}>
-              <Text style={{ fontSize: sw(32) }}>{role.icon}</Text>
-              <View style={{ backgroundColor: `${role.color}20`, paddingHorizontal: sw(10), paddingVertical: sw(5), borderRadius: sw(8) }}>
-                <Text style={{ fontSize: sw(9), fontWeight: "700", color: role.color }}>{role.count} Users</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(16) }}>
+              <Text style={{ fontSize: sw(48) }}>{role.icon}</Text>
+              <View style={{ backgroundColor: `${role.color}20`, paddingHorizontal: sw(12), paddingVertical: sw(8), borderRadius: sw(10) }}>
+                <Text style={{ fontSize: sw(11), fontWeight: "700", color: role.color }}>{role.count} Users</Text>
               </View>
             </View>
-            <Text style={{ fontSize: sw(12), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>{role.name}</Text>
-            <Text style={{ fontSize: sw(8), color: COLORS.textLight, lineHeight: sw(12) }}>{role.desc}</Text>
+            <Text style={{ fontSize: sw(18), fontWeight: "800", color: COLORS.text, marginBottom: sw(8) }}>{role.name}</Text>
+            <Text style={{ fontSize: sw(10), color: COLORS.textLight, lineHeight: sw(16), marginBottom: sw(16) }}>{role.description}</Text>
+            
+            <View style={{ backgroundColor: `${role.color}10`, borderRadius: sw(12), padding: sw(12), marginBottom: sw(16) }}>
+              <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.textLight, marginBottom: sw(6) }}>PERMISSIONS: {role.permissions.length}</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
+                {role.permissions.slice(0, 3).map((perm, idx) => (
+                  <View key={idx} style={{ backgroundColor: `${role.color}20`, paddingHorizontal: sw(10), paddingVertical: sw(4), borderRadius: sw(6) }}>
+                    <Text style={{ fontSize: sw(8), color: role.color, fontWeight: "600" }}>{perm}</Text>
+                  </View>
+                ))}
+                {role.permissions.length > 3 && (
+                  <View style={{ backgroundColor: `${role.color}20`, paddingHorizontal: sw(10), paddingVertical: sw(4), borderRadius: sw(6) }}>
+                    <Text style={{ fontSize: sw(8), color: role.color, fontWeight: "600" }}>+{role.permissions.length - 3} more</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            <View style={{ backgroundColor: "#FEF3C7", borderRadius: sw(12), padding: sw(12) }}>
+              <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.textLight, marginBottom: sw(6) }}>REPORTS TO</Text>
+              {role.reportsTo.map((dept, idx) => (
+                <Text key={idx} style={{ fontSize: sw(9), color: "#92400E", fontWeight: "600", marginBottom: idx < role.reportsTo.length - 1 ? sw(4) : 0 }}>→ {dept}</Text>
+              ))}
+            </View>
           </View>
           
-          <View style={{ flexDirection: "row", gap: sw(8) }}>
-            <TouchableOpacity style={{ flex: 1, backgroundColor: `${role.color}15`, borderRadius: sw(10), paddingVertical: sw(8), alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ fontSize: sw(9), fontWeight: "700", color: role.color }}>View</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onEdit(role)} style={{ flex: 1, backgroundColor: COLORS.primary, borderRadius: sw(10), paddingVertical: sw(8), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(4) }}>
-              <Edit3 size={sw(10)} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={{ fontSize: sw(9), fontWeight: "700", color: "#FFFFFF" }}>Edit</Text>
-            </TouchableOpacity>
+          <View style={{ flexDirection: "row", gap: sw(10), alignItems: "center" }}>
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity onPress={() => onEdit(role)} style={{ backgroundColor: COLORS.primary, borderRadius: sw(12), paddingVertical: sw(12), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(6) }}>
+                <Edit3 size={sw(12)} color="#FFFFFF" strokeWidth={2.5} />
+                <Text style={{ fontSize: sw(11), fontWeight: "800", color: "#FFFFFF" }}>Edit Permissions</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(12), paddingHorizontal: sw(12), paddingVertical: sw(10), alignItems: "center" }}>
+              <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.textLight }}>{currentIndex + 1} / {totalRoles}</Text>
+            </View>
           </View>
         </View>
       </LinearGradient>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -165,6 +190,8 @@ export default function RoleManagement({ onBack }) {
   const [selectedRole, setSelectedRole] = useState(null);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [filterType, setFilterType] = useState("All");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef(null);
 
   const totalUsers = 84;
   const departmentalCount = 17;
@@ -184,6 +211,12 @@ export default function RoleManagement({ onBack }) {
 
   const handleSave = (data) => {
     alert(`✓ Saved ${selectedRole?.name}\n✓ Permissions: ${data.permissions.length}`);
+  };
+
+  const handleScroll = (event) => {
+    const scrollX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(scrollX / sw(350));
+    setCurrentIndex(Math.max(0, Math.min(index, filteredRoles.length - 1)));
   };
 
   return (
@@ -255,20 +288,32 @@ export default function RoleManagement({ onBack }) {
           </View>
         </View>
 
-        {/* Roles Title */}
-        <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text, marginBottom: sw(14) }}>
-          {searchQuery ? `Found ${filteredRoles.length} Roles` : `${filterType === "All" ? "All Roles" : filterType === "departmental" ? "Departmental Roles" : "System Roles"} (${filteredRoles.length})`}
-        </Text>
-
-        {/* Swipeable Roles */}
+        {/* Roles Carousel */}
         {filteredRoles.length > 0 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: sw(12), paddingBottom: sw(10) }} scrollEventThrottle={16}>
-            {filteredRoles.map((role) => (
-              <RoleCard key={role.id} role={role} sw={sw} onEdit={handleEdit} />
-            ))}
-          </ScrollView>
+          <>
+            <FlatList
+              ref={flatListRef}
+              data={filteredRoles}
+              renderItem={({ item, index }) => <RoleCard role={item} sw={sw} onEdit={handleEdit} currentIndex={index} totalRoles={filteredRoles.length} />}
+              keyExtractor={(item) => `${item.id}`}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              snapToAlignment="center"
+              decelerationRate="fast"
+              bounces={false}
+              contentContainerStyle={{ paddingVertical: sw(10) }}
+            />
+            <View style={{ flexDirection: "row", justifyContent: "center", gap: sw(6), marginTop: sw(10) }}>
+              {filteredRoles.map((_, idx) => (
+                <View key={idx} style={{ width: currentIndex === idx ? sw(24) : sw(8), height: sw(8), borderRadius: sw(4), backgroundColor: currentIndex === idx ? COLORS.primary : COLORS.border, transitionDuration: "300ms" }} />
+              ))}
+            </View>
+          </>
         ) : (
-          <View style={{ alignItems: "center", justifyContent: "center", paddingVertical: sw(40), paddingHorizontal: sw(20) }}>
+          <View style={{ alignItems: "center", justifyContent: "center", paddingVertical: sw(60), paddingHorizontal: sw(20) }}>
             <Text style={{ fontSize: sw(12), color: COLORS.textLight, fontWeight: "500" }}>No roles found</Text>
           </View>
         )}
