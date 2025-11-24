@@ -7,6 +7,7 @@ import {
   Building2,
   FileCheck,
   Plus,
+  Shield,
 } from "lucide-react-native";
 import {
   ScrollView,
@@ -74,6 +75,15 @@ export default function Overview() {
             label="Pending"
             value="12"
             subtitle="Action needed"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<Shield color="#FFFFFF" size={24} />}
+            gradient={["#7C3AED", "#A855F7"]}
+            label="Total Roles"
+            value="21"
+            subtitle="System roles"
             isMobile={isMobile}
             width={width}
           />
