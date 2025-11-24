@@ -154,54 +154,52 @@ export default function SystemSetting({ onBack, onEnable2FA, onChangePassword, o
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
-          height: headerHeight,
-          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(20),
+          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40),
+          paddingBottom: sw(24),
           paddingHorizontal: sw(20),
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
-          <TouchableOpacity
-            onPress={() => (onBack ? onBack() : navigation.goBack())}
-            style={{
-              width: sw(42),
-              height: sw(42),
-              borderRadius: sw(21),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42),marginTop:sw(50)  }}>
-            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800" }}>Settings</Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
-              Manage your preferences
-            </Text>
-          </View>
+        <TouchableOpacity
+          onPress={() => (onBack ? onBack() : navigation.goBack())}
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
+
+        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
+          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5), textAlign: "center" }}>Settings</Text>
+          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10), textAlign: "center" }}>
+            Manage your preferences
+          </Text>
         </View>
 
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <View style={{
-            backgroundColor: "rgba(255,255,255,0.2)",
-            borderRadius: sw(14),
-            padding: sw(6),
-            flexDirection: "row",
-            gap: sw(6),
-          }}>
-            <TabButton label="Notifications" icon={Bell} active={tab === "notifications"} onPress={() => setTab("notifications")} sw={sw} />
-            <TabButton label="Privacy" icon={Shield} active={tab === "privacy"} onPress={() => setTab("privacy")} sw={sw} />
-            <TabButton label="Security" icon={Lock} active={tab === "security"} onPress={() => setTab("security")} sw={sw} />
-          </View>
+        <View style={{
+          backgroundColor: "rgba(255,255,255,0.15)",
+          borderRadius: sw(12),
+          padding: sw(4),
+          flexDirection: "row",
+          gap: sw(4),
+        }}>
+          <TabButton label="Notifications" icon={Bell} active={tab === "notifications"} onPress={() => setTab("notifications")} sw={sw} />
+          <TabButton label="Privacy" icon={Shield} active={tab === "privacy"} onPress={() => setTab("privacy")} sw={sw} />
+          <TabButton label="Security" icon={Lock} active={tab === "security"} onPress={() => setTab("security")} sw={sw} />
         </View>
       </LinearGradient>
 
       <View style={{ 
-        height: contentHeight,
+        flex: 1,
         backgroundColor: COLORS.bg,
         borderTopLeftRadius: sw(28),
         borderTopRightRadius: sw(28),
-        marginTop: -sw(1),
+        marginTop: 0,
       }}>
         <ScrollView
           style={{ flex: 1 }}

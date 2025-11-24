@@ -152,69 +152,67 @@ export default function VendorRelations({ onBack }) {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
-          height: headerHeight,
-          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(20),
+          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40),
+          paddingBottom: sw(32),
           paddingHorizontal: sw(20),
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
-          <TouchableOpacity 
-            onPress={() => onBack ? onBack() : nav.goBack()} 
-            style={{
-              width: sw(42),
-              height: sw(42),
-              borderRadius: sw(21),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42) }}>
-            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800",marginTop:sw(50)  }}>
-              Vendor Relations
-            </Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
-              Partner Management
-            </Text>
-          </View>
+        <TouchableOpacity 
+          onPress={() => onBack ? onBack() : nav.goBack()} 
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
+
+        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
+          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5), textAlign: "center" }}>
+            Vendor Relations
+          </Text>
+          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10), textAlign: "center" }}>
+            Partner Management
+          </Text>
         </View>
 
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: sw(10) }}>
-          <View style={{
-            backgroundColor: "rgba(255,255,255,0.25)",
-            borderRadius: sw(16),
-            padding: sw(16),
-            alignItems: 'center',
+        <View style={{
+          backgroundColor: "rgba(255,255,255,0.2)",
+          borderRadius: sw(12),
+          padding: sw(12),
+          alignItems: 'center',
+        }}>
+          <Briefcase size={sw(28)} color="#FFFFFF" strokeWidth={2} />
+          <Text style={{ 
+            color: "#FFFFFF", 
+            fontSize: sw(18), 
+            fontWeight: "900",
+            marginTop: sw(8),
           }}>
-            <Briefcase size={sw(36)} color="#FFFFFF" strokeWidth={2} />
-            <Text style={{ 
-              color: "#FFFFFF", 
-              fontSize: sw(20), 
-              fontWeight: "900",
-              marginTop: sw(10),
-            }}>
-              {vendors.length}
-            </Text>
-            <Text style={{ 
-              color: "rgba(255,255,255,0.95)", 
-              fontSize: sw(12), 
-              fontWeight: "600",
-              marginTop: sw(4),
-            }}>
-              Active Partners
-            </Text>
-          </View>
+            {vendors.length}
+          </Text>
+          <Text style={{ 
+            color: "rgba(255,255,255,0.95)", 
+            fontSize: sw(10), 
+            fontWeight: "600",
+            marginTop: sw(3),
+          }}>
+            Active Partners
+          </Text>
         </View>
       </LinearGradient>
 
       <View style={{ 
-        height: contentHeight,
+        flex: 1,
         backgroundColor: COLORS.white,
         borderTopLeftRadius: sw(28),
         borderTopRightRadius: sw(28),
-        marginTop: -sw(1),
+        marginTop: 0,
       }}>
         <ScrollView 
           style={{ flex: 1 }}
