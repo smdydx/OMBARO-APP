@@ -46,9 +46,8 @@ const getMockLocation = () => ({
   accuracy: 15,
 });
 
-const formatTime = () => {
-  const now = new Date();
-  return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+const formatTimeOnly = (date) => {
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 };
 
 const formatDate = () => {
@@ -56,15 +55,33 @@ const formatDate = () => {
   return now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-const ATTENDANCE_DATA = [
-  { date: "Jan 15, 2025", day: "Today", checkIn: "09:00 AM", checkOut: "06:00 PM", status: "Present", duration: "9h 0m", location: "28.531098, 77.093274" },
-  { date: "Jan 14, 2025", day: "Mon", checkIn: "09:15 AM", checkOut: "06:10 PM", status: "Present", duration: "8h 55m", location: "28.531098, 77.093274" },
-  { date: "Jan 13, 2025", day: "Sun", checkIn: "09:05 AM", checkOut: "06:05 PM", status: "Present", duration: "8h 59m", location: "28.531098, 77.093274" },
-  { date: "Jan 12, 2025", day: "Sat", checkIn: "--", checkOut: "--", status: "Absent", duration: "0h 0m", location: "N/A" },
-  { date: "Jan 11, 2025", day: "Fri", checkIn: "09:30 AM", checkOut: "06:15 PM", status: "Present", duration: "8h 45m", location: "28.531098, 77.093274" },
-  { date: "Jan 10, 2025", day: "Thu", checkIn: "08:45 AM", checkOut: "01:00 PM", status: "Half Day", duration: "4h 15m", location: "28.531098, 77.093274" },
-  { date: "Jan 09, 2025", day: "Wed", checkIn: "02:00 PM", checkOut: "06:00 PM", status: "Work From Home", duration: "4h 0m", location: "Home" },
-  { date: "Jan 08, 2025", day: "Tue", checkIn: "09:20 AM", checkOut: "05:50 PM", status: "Present", duration: "8h 30m", location: "28.531098, 77.093274" },
+const calculateDuration = (checkInTime, checkOutTime) => {
+  if (!checkInTime || !checkOutTime) return null;
+
+  const diffMs = checkOutTime - checkInTime;
+  const totalSeconds = Math.floor(diffMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return {
+    hours,
+    minutes,
+    seconds,
+    totalSeconds,
+    display: `${hours}h ${minutes}m ${seconds}s`,
+    shortDisplay: `${hours}h ${minutes}m`,
+  };
+};
+
+const ATTENDANCE_HISTORY = [
+  { date: "Jan 14, 2025", day: "Mon", checkIn: "09:15 AM", checkOut: "06:10 PM", status: "Present", duration: "8h 55m 30s", location: "28.531098, 77.093274" },
+  { date: "Jan 13, 2025", day: "Sun", checkIn: "09:05 AM", checkOut: "06:05 PM", status: "Present", duration: "8h 59m 45s", location: "28.531098, 77.093274" },
+  { date: "Jan 12, 2025", day: "Sat", checkIn: "--", checkOut: "--", status: "Absent", duration: "0h 0m 0s", location: "N/A" },
+  { date: "Jan 11, 2025", day: "Fri", checkIn: "09:30 AM", checkOut: "06:15 PM", status: "Present", duration: "8h 45m 15s", location: "28.531098, 77.093274" },
+  { date: "Jan 10, 2025", day: "Thu", checkIn: "08:45 AM", checkOut: "01:00 PM", status: "Half Day", duration: "4h 15m 30s", location: "28.531098, 77.093274" },
+  { date: "Jan 09, 2025", day: "Wed", checkIn: "02:00 PM", checkOut: "06:00 PM", status: "Work From Home", duration: "4h 0m 0s", location: "Home" },
+  { date: "Jan 08, 2025", day: "Tue", checkIn: "09:20 AM", checkOut: "05:50 PM", status: "Present", duration: "8h 30m 45s", location: "28.531098, 77.093274" },
 ];
 
 function LocationCard({ location, sw }) {
@@ -118,7 +135,7 @@ function LocationCard({ location, sw }) {
   );
 }
 
-function AttendanceButtons({ isCheckedIn, isCheckedOut, checkInTime, checkOutTime, attendanceType, onCheckIn, onCheckOut, onHalfDay, onWorkFromHome, sw }) {
+function AttendanceButtons({ isCheckedIn, isCheckedOut, checkInTimeDisplay, attendanceType, onCheckIn, onCheckOut, onHalfDay, onWorkFromHome, sw }) {
   return (
     <View style={{ marginBottom: sw(18) }}>
       <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text, marginBottom: sw(12) }}>Mark Attendance</Text>
@@ -229,14 +246,8 @@ function AttendanceButtons({ isCheckedIn, isCheckedOut, checkInTime, checkOutTim
   );
 }
 
-function TodaysAttendanceCard({ isCheckedIn, checkInTime, checkOutTime, location, attendanceType, sw }) {
+function TodaysAttendanceCard({ isCheckedIn, checkInTimeDisplay, checkOutTimeDisplay, duration, location, attendanceType, sw }) {
   if (!isCheckedIn) return null;
-
-  const getStatusColor = () => {
-    if (attendanceType === "HalfDay") return "#F59E0B";
-    if (attendanceType === "WorkFromHome") return "#10B981";
-    return "#10B981";
-  };
 
   return (
     <View style={{ marginBottom: sw(18) }}>
@@ -259,15 +270,24 @@ function TodaysAttendanceCard({ isCheckedIn, checkInTime, checkOutTime, location
           <View style={{ flexDirection: "row", marginBottom: sw(14) }}>
             <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.7)", borderRadius: sw(10), padding: sw(12), marginRight: sw(8) }}>
               <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(4), fontWeight: "600" }}>Check In</Text>
-              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>{checkInTime}</Text>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>{checkInTimeDisplay}</Text>
             </View>
             <View style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.7)", borderRadius: sw(10), padding: sw(12) }}>
               <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(4), fontWeight: "600" }}>Check Out</Text>
-              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>{checkOutTime || "--"}</Text>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>{checkOutTimeDisplay || "--"}</Text>
             </View>
           </View>
 
-          <View style={{ backgroundColor: "rgba(255,255,255,0.7)", borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+          {duration && (
+            <View style={{ backgroundColor: "rgba(255,255,255,0.7)", borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+              <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(4), fontWeight: "600" }}>Total Time</Text>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.success }}>
+                {duration.hours}h {duration.minutes}m {duration.seconds}s
+              </Text>
+            </View>
+          )}
+
+          <View style={{ backgroundColor: "rgba(255,255,255,0.7)", borderRadius: sw(10), padding: sw(12) }}>
             <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(4), fontWeight: "600" }}>Location</Text>
             <Text style={{ fontSize: sw(10), fontWeight: "600", color: COLORS.text }}>📍 {location}</Text>
           </View>
@@ -304,7 +324,7 @@ function AttendanceHistoryCard({ item, sw }) {
         </View>
       </View>
 
-      <View style={{ flexDirection: "row", gap: sw(10) }}>
+      <View style={{ flexDirection: "row", gap: sw(8), marginBottom: sw(10) }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(3) }}>Check In</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: sw(4) }}>
@@ -322,10 +342,10 @@ function AttendanceHistoryCard({ item, sw }) {
         </View>
 
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(3) }}>Duration</Text>
+          <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(3) }}>Total Time</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: sw(4) }}>
             <Clock size={sw(12)} color={COLORS.info} strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.text }}>{item.duration}</Text>
+            <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.text }}>{item.duration}</Text>
           </View>
         </View>
       </View>
@@ -368,13 +388,17 @@ export default function SelfAttendance({ onBack }) {
   const [isCheckedOut, setIsCheckedOut] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
   const [checkOutTime, setCheckOutTime] = useState(null);
+  const [checkInTimeDisplay, setCheckInTimeDisplay] = useState(null);
+  const [checkOutTimeDisplay, setCheckOutTimeDisplay] = useState(null);
   const [location, setLocation] = useState(getMockLocation());
   const [showNotification, setShowNotification] = useState(false);
   const [attendanceType, setAttendanceType] = useState("Regular");
+  const [duration, setDuration] = useState(null);
 
   const handleCheckIn = () => {
-    const time = formatTime();
-    setCheckInTime(time);
+    const now = new Date();
+    setCheckInTime(now);
+    setCheckInTimeDisplay(formatTimeOnly(now));
     setIsCheckedIn(true);
     setAttendanceType("Regular");
     setShowNotification(true);
@@ -382,8 +406,9 @@ export default function SelfAttendance({ onBack }) {
   };
 
   const handleHalfDay = () => {
-    const time = formatTime();
-    setCheckInTime(time);
+    const now = new Date();
+    setCheckInTime(now);
+    setCheckInTimeDisplay(formatTimeOnly(now));
     setIsCheckedIn(true);
     setAttendanceType("HalfDay");
     setShowNotification(true);
@@ -391,8 +416,9 @@ export default function SelfAttendance({ onBack }) {
   };
 
   const handleWorkFromHome = () => {
-    const time = formatTime();
-    setCheckInTime(time);
+    const now = new Date();
+    setCheckInTime(now);
+    setCheckInTimeDisplay(formatTimeOnly(now));
     setIsCheckedIn(true);
     setAttendanceType("WorkFromHome");
     setShowNotification(true);
@@ -400,18 +426,26 @@ export default function SelfAttendance({ onBack }) {
   };
 
   const handleCheckOut = () => {
-    const time = formatTime();
-    setCheckOutTime(time);
+    const now = new Date();
+    setCheckOutTime(now);
+    setCheckOutTimeDisplay(formatTimeOnly(now));
     setIsCheckedOut(true);
+    
+    // Calculate duration
+    if (checkInTime) {
+      const calc = calculateDuration(checkInTime, now);
+      setDuration(calc);
+    }
+    
     setShowNotification(true);
     setTimeout(() => setShowNotification(false), 3000);
   };
 
   const filteredData = activeTab === "Today"
-    ? ATTENDANCE_DATA.slice(0, 1)
+    ? []
     : activeTab === "Weekly"
-    ? ATTENDANCE_DATA.slice(0, 7)
-    : ATTENDANCE_DATA;
+    ? ATTENDANCE_HISTORY.slice(0, 7)
+    : ATTENDANCE_HISTORY;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
@@ -526,8 +560,7 @@ export default function SelfAttendance({ onBack }) {
           <AttendanceButtons
             isCheckedIn={isCheckedIn}
             isCheckedOut={isCheckedOut}
-            checkInTime={checkInTime}
-            checkOutTime={checkOutTime}
+            checkInTimeDisplay={checkInTimeDisplay}
             attendanceType={attendanceType}
             onCheckIn={handleCheckIn}
             onCheckOut={handleCheckOut}
@@ -541,8 +574,9 @@ export default function SelfAttendance({ onBack }) {
         {activeTab === "Today" && isCheckedIn && (
           <TodaysAttendanceCard
             isCheckedIn={isCheckedIn}
-            checkInTime={checkInTime}
-            checkOutTime={checkOutTime}
+            checkInTimeDisplay={checkInTimeDisplay}
+            checkOutTimeDisplay={checkOutTimeDisplay}
+            duration={duration}
             location={location.latitude + ", " + location.longitude}
             attendanceType={attendanceType}
             sw={sw}
@@ -553,13 +587,17 @@ export default function SelfAttendance({ onBack }) {
         {activeTab === "Today" && <StatsCards daysPresent={22} avgHours={8.5} sw={sw} />}
 
         {/* Attendance History */}
-        <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text, marginBottom: sw(12) }}>
-          {activeTab === "Today" ? "Attendance History" : activeTab === "Weekly" ? "Weekly Attendance" : "All Attendance Records"}
-        </Text>
+        {(activeTab === "Weekly" || activeTab === "All") && (
+          <>
+            <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text, marginBottom: sw(12) }}>
+              {activeTab === "Weekly" ? "Weekly Attendance" : "All Attendance Records"}
+            </Text>
 
-        {filteredData.map((item, index) => (
-          <AttendanceHistoryCard key={index} item={item} sw={sw} />
-        ))}
+            {filteredData.map((item, index) => (
+              <AttendanceHistoryCard key={index} item={item} sw={sw} />
+            ))}
+          </>
+        )}
       </ScrollView>
     </View>
   );
