@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, User, Mail, Phone, MapPin, Briefcase, Calendar, Award, Heart, FileText, MoreVertical, Star, TrendingUp } from "lucide-react-native";
+import { ArrowLeft, User, Mail, Phone, MapPin, Briefcase, Calendar, Award, Heart, FileText, MoreVertical, Star, TrendingUp, LogOut } from "lucide-react-native";
 import { useState } from "react";
 import {
     Platform,
@@ -28,6 +28,7 @@ const COLORS = {
   border: "#E5E7EB",
   success: "#10B981",
   warning: "#F59E0B",
+  danger: "#EF4444",
 };
 
 function useScale() {
@@ -487,6 +488,30 @@ export default function MyProfile({ onBack }) {
               </SectionCard>
             </>
           )}
+
+          {/* Logout Button - appears on all tabs */}
+          <View style={{ marginTop: sw(24), marginBottom: sw(16) }}>
+            <TouchableOpacity style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: `${COLORS.danger}15`,
+              borderRadius: sw(12),
+              paddingVertical: sw(12),
+              borderWidth: 1,
+              borderColor: COLORS.danger,
+            }}>
+              <LogOut size={sw(16)} color={COLORS.danger} strokeWidth={2.5} />
+              <Text style={{ 
+                fontSize: sw(13), 
+                color: COLORS.danger, 
+                fontWeight: "700",
+                marginLeft: sw(6),
+              }}>
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     </View>
