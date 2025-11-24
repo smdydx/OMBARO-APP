@@ -71,31 +71,9 @@ export default function UserManagement({ onBack }) {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.gradient2} translucent={false} />
-      <LinearGradient colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40), paddingBottom: sw(16), paddingHorizontal: sw(20) }}>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(14) }}>
-          <TouchableOpacity onPress={() => onBack ? onBack() : nav.goBack()} style={{ width: sw(40), height: sw(40), borderRadius: sw(20), backgroundColor: "rgba(255,255,255,0.2)", alignItems: "center", justifyContent: "center" }}>
-            <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-          <View style={{ alignItems: "center", flex: 1 }}>
-            <Text style={{ color: "#FFFFFF", fontSize: sw(15), fontWeight: "800" }}>User Management</Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(9), marginTop: sw(2) }}>Manage all system users</Text>
-          </View>
-          <View style={{ width: sw(40) }} />
-        </View>
-        <View style={{ backgroundColor: "rgba(255,255,255,0.15)", borderRadius: sw(12), flexDirection: "row", alignItems: "center", paddingHorizontal: sw(12) }}>
-          <Search size={sw(16)} color="rgba(255,255,255,0.6)" strokeWidth={2} />
-          <TextInput
-            placeholder="Search users..."
-            placeholderTextColor="rgba(255,255,255,0.5)"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={{ flex: 1, paddingVertical: sw(10), paddingHorizontal: sw(10), color: "#FFFFFF", fontSize: sw(12) }}
-          />
-        </View>
-      </LinearGradient>
-      <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(24), borderTopRightRadius: sw(24), marginTop: -sw(8) }}>
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} translucent={false} />
+      <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: sw(16), paddingVertical: sw(12), borderBottomWidth: 1, borderBottomColor: COLORS.border }}>
           <View style={{ flexDirection: "row", gap: sw(8) }}>
             {["All", "Active", "Inactive"].map((tab) => (
