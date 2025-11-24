@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, Clock, CheckCircle, Calendar, LogIn, LogOut, TrendingUp } from "lucide-react-native";
-import { useState } from "react";
+import { ArrowLeft, MapPin, Clock, CheckCircle, LogIn, LogOut, RefreshCw, AlertCircle, Copy, Share2 } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  Alert,
 } from "react-native";
 
 const COLORS = {
@@ -21,183 +22,295 @@ const COLORS = {
   primaryLight: "#10B981",
   success: "#10B981",
   warning: "#F59E0B",
+  danger: "#DC2626",
   info: "#3B82F6",
   white: "#FFFFFF",
   text: "#1A1A1A",
   textSecondary: "#666666",
   textLight: "#999999",
-  bg: "#FFFFFF",
-  cardBg: "#F9FAFB",
+  bg: "#F9FAFB",
+  cardBg: "#FFFFFF",
   border: "#E5E7EB",
 };
 
 function useScale() {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const base = Math.min(width, 480);
   const sw = (n) => Math.round((base / 390) * n);
-  return { sw, width, height };
+  return { sw, width };
 }
 
-function AttendanceCard({ date, checkIn, checkOut, status, duration, sw }) {
-  const isPresent = status === "Present";
-  const statusBg = isPresent ? "#DCFCE7" : "#FEE2E2";
-  const statusColor = isPresent ? "#15803D" : "#DC2626";
+// Mock location data
+const getMockLocation = () => ({
+  latitude: 28.631908,
+  longitude: 77.093274,
+  accuracy: 15,
+});
 
+const formatTime = () => {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+};
+
+const formatDate = () => {
+  const now = new Date();
+  return now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const calculateDuration = (checkInTime, checkOutTime) => {
+  if (!checkInTime || !checkOutTime) return "0h 0m";
+  
+  const checkIn = new Date(`2025-01-01 ${checkInTime}`);
+  const checkOut = new Date(`2025-01-01 ${checkOutTime}`);
+  
+  const diffMs = checkOut - checkIn;
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours}h ${minutes}m`;
+};
+
+function LocationCard({ location, sw }) {
   return (
-    <View style={{
-      backgroundColor: COLORS.cardBg,
-      borderRadius: sw(12),
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      padding: sw(12),
-      marginBottom: sw(10),
-    }}>
+    <View style={{ marginBottom: sw(16) }}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(10) }}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Calendar size={sw(14)} color={COLORS.primary} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginLeft: sw(6) }}>
-            {date}
-          </Text>
-        </View>
-        <View style={{
-          backgroundColor: statusBg,
-          paddingHorizontal: sw(8),
-          paddingVertical: sw(4),
-          borderRadius: sw(8),
-        }}>
-          <Text style={{ 
-            fontSize: sw(9), 
-            fontWeight: "700", 
-            color: statusColor 
-          }}>
-            {status}
-          </Text>
-        </View>
+        <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text }}>Current Location</Text>
+        <TouchableOpacity style={{ padding: sw(4) }}>
+          <RefreshCw size={sw(14)} color={COLORS.info} strokeWidth={2.5} />
+        </TouchableOpacity>
       </View>
 
-      <View style={{
-        backgroundColor: COLORS.white,
-        borderRadius: sw(8),
-        padding: sw(10),
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(3) }}>Check In</Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: sw(4) }}>
-            <LogIn size={sw(13)} color={COLORS.success} strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>
-              {checkIn}
-            </Text>
+      <LinearGradient
+        colors={["#D1FAE5", "#ECFDF5"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ borderRadius: sw(12), overflow: "hidden", borderWidth: 1, borderColor: "#A7F3D0" }}
+      >
+        <View style={{ padding: sw(14) }}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
+            <View style={{ width: sw(24), height: sw(24), borderRadius: sw(12), backgroundColor: COLORS.success, alignItems: "center", justifyContent: "center", marginRight: sw(10) }}>
+              <MapPin size={sw(12)} color={COLORS.white} strokeWidth={2.5} />
+            </View>
+            <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.success }}>Location Tagged</Text>
+          </View>
+
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: sw(12) }}>
+            <View>
+              <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(2) }}>Latitude</Text>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.text }}>{location.latitude}</Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(2) }}>Longitude</Text>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.text }}>{location.longitude}</Text>
+            </View>
+          </View>
+
+          <View style={{ flexDirection: "row", gap: sw(8) }}>
+            <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.6)", borderRadius: sw(8), paddingVertical: sw(8), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(4) }}>
+              <Copy size={sw(11)} color={COLORS.success} strokeWidth={2.5} />
+              <Text style={{ fontSize: sw(8), fontWeight: "700", color: COLORS.success }}>Copy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.6)", borderRadius: sw(8), paddingVertical: sw(8), alignItems: "center", justifyContent: "center", flexDirection: "row", gap: sw(4) }}>
+              <Share2 size={sw(11)} color={COLORS.success} strokeWidth={2.5} />
+              <Text style={{ fontSize: sw(8), fontWeight: "700", color: COLORS.success }}>Share</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={{ width: 1, height: sw(30), backgroundColor: COLORS.border }} />
-
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(3) }}>Check Out</Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: sw(4) }}>
-            <LogOut size={sw(13)} color={COLORS.warning} strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>
-              {checkOut}
-            </Text>
-          </View>
-        </View>
-
-        <View style={{ width: 1, height: sw(30), backgroundColor: COLORS.border }} />
-
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
-          <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginBottom: sw(3) }}>Duration</Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: sw(4) }}>
-            <TrendingUp size={sw(13)} color={COLORS.info} strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>
-              {duration}
-            </Text>
-          </View>
-        </View>
-      </View>
+      </LinearGradient>
     </View>
   );
 }
 
-function StatCard({ label, value, icon: IconComponent, color, sw }) {
+function AttendanceButtons({ isCheckedIn, isCheckedOut, checkInTime, checkOutTime, onCheckIn, onCheckOut, sw }) {
   return (
-    <View style={{
-      backgroundColor: COLORS.cardBg,
-      borderRadius: sw(12),
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      padding: sw(12),
-      alignItems: "center",
-      flex: 1,
-      marginRight: sw(8),
-    }}>
-      <View style={{
-        width: sw(36),
-        height: sw(36),
-        borderRadius: sw(18),
-        backgroundColor: `${color}20`,
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: sw(8),
-      }}>
-        <IconComponent size={sw(16)} color={color} strokeWidth={2.5} />
-      </View>
-      <Text style={{ fontSize: sw(14), fontWeight: "800", color, marginBottom: sw(4) }}>
-        {value}
-      </Text>
-      <Text style={{ fontSize: sw(9), color: COLORS.textLight, textAlign: "center" }}>
-        {label}
-      </Text>
+    <View style={{ marginBottom: sw(16) }}>
+      <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>Mark Attendance</Text>
+
+      {!isCheckedIn ? (
+        <>
+          <TouchableOpacity
+            onPress={onCheckIn}
+            style={{
+              backgroundColor: COLORS.info,
+              borderRadius: sw(12),
+              paddingVertical: sw(14),
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              gap: sw(8),
+              marginBottom: sw(10),
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+              elevation: 5,
+            }}
+          >
+            <LogIn size={sw(18)} color={COLORS.white} strokeWidth={2.5} />
+            <Text style={{ fontSize: sw(12), fontWeight: "800", color: COLORS.white }}>Check In</Text>
+          </TouchableOpacity>
+
+          <View style={{ flexDirection: "row", gap: sw(8) }}>
+            <TouchableOpacity style={{ flex: 1, borderWidth: 2, borderColor: COLORS.border, borderRadius: sw(10), paddingVertical: sw(11), alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.textSecondary }}>Half Day</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ flex: 1, borderWidth: 2, borderColor: COLORS.border, borderRadius: sw(10), paddingVertical: sw(11), alignItems: "center", justifyContent: "center" }}>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.textSecondary }}>Work From Home</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        <>
+          {!isCheckedOut ? (
+            <TouchableOpacity
+              onPress={onCheckOut}
+              style={{
+                backgroundColor: COLORS.warning,
+                borderRadius: sw(12),
+                paddingVertical: sw(14),
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                gap: sw(8),
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 5,
+              }}
+            >
+              <LogOut size={sw(18)} color={COLORS.white} strokeWidth={2.5} />
+              <Text style={{ fontSize: sw(12), fontWeight: "800", color: COLORS.white }}>Check Out</Text>
+            </TouchableOpacity>
+          ) : null}
+        </>
+      )}
+    </View>
+  );
+}
+
+function TodaysAttendanceCard({ isCheckedIn, checkInTime, checkOutTime, location, sw }) {
+  if (!isCheckedIn) return null;
+
+  const duration = calculateDuration(checkInTime, checkOutTime);
+  const workingHoursNum = parseFloat(duration.split('h')[0]);
+
+  return (
+    <View style={{ marginBottom: sw(16) }}>
+      <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>Today's Attendance</Text>
+
+      <LinearGradient
+        colors={["#D1FAE5", "#ECFDF5"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ borderRadius: sw(12), overflow: "hidden", borderWidth: 1, borderColor: "#A7F3D0" }}
+      >
+        <View style={{ padding: sw(14) }}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(12) }}>
+            <CheckCircle size={sw(16)} color={COLORS.success} strokeWidth={2.5} />
+            <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.success, marginLeft: sw(8) }}>Present</Text>
+          </View>
+
+          <View style={{ flexDirection: "row", marginBottom: sw(12) }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(3) }}>Check In</Text>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text }}>{checkInTime}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(3) }}>Check Out</Text>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text }}>{checkOutTime || "--"}</Text>
+            </View>
+          </View>
+
+          <View style={{ backgroundColor: "rgba(255,255,255,0.5)", borderRadius: sw(8), padding: sw(10), marginBottom: sw(10) }}>
+            <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(2) }}>Working Hours</Text>
+            <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.success }}>{duration}</Text>
+          </View>
+
+          <View style={{ backgroundColor: "rgba(16, 185, 129, 0.1)", borderRadius: sw(8), padding: sw(10) }}>
+            <Text style={{ fontSize: sw(8), color: COLORS.textLight, marginBottom: sw(4) }}>Location</Text>
+            <Text style={{ fontSize: sw(9), fontWeight: "600", color: COLORS.text }}>📍 {location.latitude}, {location.longitude}</Text>
+          </View>
+        </View>
+      </LinearGradient>
+    </View>
+  );
+}
+
+function StatsCards({ daysPresent = 22, avgHours = 8.5, sw }) {
+  return (
+    <View style={{ flexDirection: "row", gap: sw(10) }}>
+      <LinearGradient
+        colors={["#D1FAE5", "#ECFDF5"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1, borderRadius: sw(12), overflow: "hidden", borderWidth: 1, borderColor: "#A7F3D0", padding: sw(12), alignItems: "center" }}
+      >
+        <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.success, marginBottom: sw(2) }}>{daysPresent}</Text>
+        <Text style={{ fontSize: sw(9), color: COLORS.textLight, textAlign: "center" }}>Days Present</Text>
+      </LinearGradient>
+
+      <LinearGradient
+        colors={["#FEF3C7", "#FFFBEB"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1, borderRadius: sw(12), overflow: "hidden", borderWidth: 1, borderColor: "#FDE68A", padding: sw(12), alignItems: "center" }}
+      >
+        <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.warning, marginBottom: sw(2) }}>{avgHours}</Text>
+        <Text style={{ fontSize: sw(9), color: COLORS.textLight, textAlign: "center" }}>Avg Hours</Text>
+      </LinearGradient>
     </View>
   );
 }
 
 export default function SelfAttendance({ onBack }) {
-  const { sw, width, height } = useScale();
+  const { sw } = useScale();
   const nav = useNavigation();
-  const [activeTab, setActiveTab] = useState("Today");
+  
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isCheckedOut, setIsCheckedOut] = useState(false);
+  const [checkInTime, setCheckInTime] = useState(null);
+  const [checkOutTime, setCheckOutTime] = useState(null);
+  const [location, setLocation] = useState(getMockLocation());
+  const [showNotification, setShowNotification] = useState(false);
 
-  const attendanceData = [
-    { date: "Jan 15, 2025 (Today)", checkIn: "09:00 AM", checkOut: "06:00 PM", status: "Present", duration: "9h 0m" },
-    { date: "Jan 14, 2025", checkIn: "09:15 AM", checkOut: "06:10 PM", status: "Present", duration: "8h 55m" },
-    { date: "Jan 13, 2025", checkIn: "09:05 AM", checkOut: "06:05 PM", status: "Present", duration: "8h 59m" },
-    { date: "Jan 12, 2025", checkIn: "--", checkOut: "--", status: "Absent", duration: "0h 0m" },
-    { date: "Jan 11, 2025", checkIn: "09:30 AM", checkOut: "06:15 PM", status: "Present", duration: "8h 45m" },
-  ];
+  const handleCheckIn = () => {
+    const time = formatTime();
+    setCheckInTime(time);
+    setIsCheckedIn(true);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  };
 
-  const weeklyStats = [
-    { date: "Mon", status: "Present", duration: "9h 0m" },
-    { date: "Tue", status: "Present", duration: "8h 55m" },
-    { date: "Wed", status: "Present", duration: "8h 59m" },
-    { date: "Thu", status: "Absent", duration: "0h 0m" },
-    { date: "Fri", status: "Present", duration: "8h 45m" },
-    { date: "Sat", status: "Half Day", duration: "4h 30m" },
-  ];
+  const handleCheckOut = () => {
+    const time = formatTime();
+    setCheckOutTime(time);
+    setIsCheckedOut(true);
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 3000);
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
-      <StatusBar 
-        barStyle="light-content" 
+    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+      <StatusBar
+        barStyle="light-content"
         backgroundColor={COLORS.gradient2}
         translucent={false}
       />
 
-      <LinearGradient 
-        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]} 
+      {/* Header Gradient */}
+      <LinearGradient
+        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
           paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40),
-          paddingBottom: sw(32),
+          paddingBottom: sw(20),
           paddingHorizontal: sw(20),
         }}
       >
-        <TouchableOpacity 
-          onPress={() => onBack ? onBack() : nav.goBack()} 
+        <TouchableOpacity
+          onPress={() => onBack ? onBack() : nav.goBack()}
           style={{
             width: sw(40),
             height: sw(40),
@@ -208,268 +321,80 @@ export default function SelfAttendance({ onBack }) {
             marginBottom: sw(12),
           }}
         >
-          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+          <ArrowLeft size={sw(20)} color={COLORS.white} strokeWidth={2.5} />
         </TouchableOpacity>
 
-        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
-          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5), textAlign: "center" }}>
+        <View style={{ alignItems: "center" }}>
+          <Text style={{ color: COLORS.white, fontSize: sw(16), fontWeight: "800", marginBottom: sw(4) }}>
             Self Attendance
           </Text>
-          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10), textAlign: "center" }}>
-            Track your daily check-in and check-out
+          <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(10) }}>
+            {formatDate()}
           </Text>
-        </View>
-
-        <View style={{
-          backgroundColor: "rgba(255,255,255,0.15)",
-          borderRadius: sw(12),
-          padding: sw(4),
-          flexDirection: "row",
-          gap: sw(4),
-        }}>
-          {["Today", "Weekly", "Monthly"].map((label) => (
-            <TouchableOpacity
-              key={label}
-              onPress={() => setActiveTab(label)}
-              style={{
-                flex: 1,
-                paddingVertical: sw(10),
-                paddingHorizontal: sw(8),
-                borderRadius: sw(10),
-                backgroundColor: activeTab === label ? "#FFFFFF" : "transparent",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{
-                color: activeTab === label ? COLORS.primary : "#FFFFFF",
-                fontWeight: activeTab === label ? "700" : "600",
-                fontSize: sw(11),
-              }}>
-                {label}
-              </Text>
-            </TouchableOpacity>
-          ))}
         </View>
       </LinearGradient>
 
-      <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(24), borderTopRightRadius: sw(24), marginTop: 0 }}>
-        <ScrollView 
-          contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(16), paddingBottom: sw(120) }} 
-          showsVerticalScrollIndicator={false}
+      {/* Employee Profile Card */}
+      <View style={{ paddingHorizontal: sw(16), paddingTop: sw(12) }}>
+        <LinearGradient
+          colors={["#E0F2FE", "#F0F9FF"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ borderRadius: sw(12), overflow: "hidden", borderWidth: 1, borderColor: "#BAE6FD", padding: sw(12), flexDirection: "row", alignItems: "center", marginBottom: sw(14) }}
         >
-          {activeTab === "Today" && (
-            <>
-              {/* Check In / Check Out Buttons */}
-              <View style={{ marginBottom: sw(16) }}>
-                <View style={{ flexDirection: "row", gap: sw(10), marginBottom: sw(12) }}>
-                  <TouchableOpacity
-                    onPress={() => setIsCheckedIn(!isCheckedIn)}
-                    style={{
-                      flex: 1,
-                      backgroundColor: isCheckedIn ? COLORS.success : COLORS.cardBg,
-                      borderRadius: sw(12),
-                      borderWidth: 2,
-                      borderColor: isCheckedIn ? COLORS.success : COLORS.border,
-                      paddingVertical: sw(14),
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: sw(6),
-                    }}
-                  >
-                    <LogIn size={sw(18)} color={isCheckedIn ? "#FFFFFF" : COLORS.success} strokeWidth={2.5} />
-                    <View>
-                      <Text style={{ fontSize: sw(12), fontWeight: "700", color: isCheckedIn ? "#FFFFFF" : COLORS.success, textAlign: "center" }}>
-                        Check In
-                      </Text>
-                      <Text style={{ fontSize: sw(9), color: isCheckedIn ? "rgba(255,255,255,0.8)" : COLORS.textLight, textAlign: "center", marginTop: sw(2) }}>
-                        09:00 AM
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => setIsCheckedOut(!isCheckedOut)}
-                    style={{
-                      flex: 1,
-                      backgroundColor: isCheckedOut ? COLORS.warning : COLORS.cardBg,
-                      borderRadius: sw(12),
-                      borderWidth: 2,
-                      borderColor: isCheckedOut ? COLORS.warning : COLORS.border,
-                      paddingVertical: sw(14),
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: sw(6),
-                    }}
-                  >
-                    <LogOut size={sw(18)} color={isCheckedOut ? "#FFFFFF" : COLORS.warning} strokeWidth={2.5} />
-                    <View>
-                      <Text style={{ fontSize: sw(12), fontWeight: "700", color: isCheckedOut ? "#FFFFFF" : COLORS.warning, textAlign: "center" }}>
-                        Check Out
-                      </Text>
-                      <Text style={{ fontSize: sw(9), color: isCheckedOut ? "rgba(255,255,255,0.8)" : COLORS.textLight, textAlign: "center", marginTop: sw(2) }}>
-                        06:00 PM
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-
-                {(isCheckedIn || isCheckedOut) && (
-                  <View style={{
-                    backgroundColor: "#DCFCE7",
-                    borderRadius: sw(10),
-                    padding: sw(10),
-                    borderLeftWidth: 4,
-                    borderLeftColor: COLORS.success,
-                  }}>
-                    <Text style={{ fontSize: sw(10), color: "#15803D", fontWeight: "600" }}>
-                      ✓ Attendance marked successfully for today
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Today's Stats */}
-              <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
-                Today's Summary
-              </Text>
-              <View style={{ flexDirection: "row", marginBottom: sw(16) }}>
-                <StatCard label="Check In" value="09:00" icon={LogIn} color={COLORS.success} sw={sw} />
-                <StatCard label="Check Out" value="06:00" icon={LogOut} color={COLORS.warning} sw={sw} />
-                <StatCard label="Duration" value="9h 0m" icon={TrendingUp} color={COLORS.info} sw={sw} />
-              </View>
-
-              {/* Today's Attendance */}
-              <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
-                Attendance History
-              </Text>
-              <AttendanceCard {...attendanceData[0]} sw={sw} />
-            </>
-          )}
-
-          {activeTab === "Weekly" && (
-            <>
-              <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
-                Weekly Attendance
-              </Text>
-              
-              {/* Weekly Stats Overview */}
-              <View style={{
-                backgroundColor: COLORS.cardBg,
-                borderRadius: sw(12),
-                borderWidth: 1,
-                borderColor: COLORS.border,
-                padding: sw(12),
-                marginBottom: sw(16),
-              }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.success, marginBottom: sw(4) }}>
-                      5
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Days Present</Text>
-                  </View>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.warning, marginBottom: sw(4) }}>
-                      1
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Absent</Text>
-                  </View>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.info, marginBottom: sw(4) }}>
-                      42h 45m
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Total Hours</Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Weekly Days */}
-              {weeklyStats.map((day, idx) => (
-                <View key={idx} style={{
-                  backgroundColor: COLORS.cardBg,
-                  borderRadius: sw(12),
-                  borderWidth: 1,
-                  borderColor: COLORS.border,
-                  padding: sw(10),
-                  marginBottom: sw(8),
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}>
-                  <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, minWidth: sw(50) }}>
-                    {day.date}
-                  </Text>
-                  <View style={{
-                    backgroundColor: day.status === "Present" ? "#DCFCE7" : day.status === "Half Day" ? "#FEF9C3" : "#FEE2E2",
-                    paddingHorizontal: sw(8),
-                    paddingVertical: sw(4),
-                    borderRadius: sw(6),
-                    marginRight: sw(8),
-                  }}>
-                    <Text style={{
-                      fontSize: sw(9),
-                      fontWeight: "700",
-                      color: day.status === "Present" ? "#15803D" : day.status === "Half Day" ? "#A16207" : "#DC2626",
-                    }}>
-                      {day.status}
-                    </Text>
-                  </View>
-                  <Text style={{ fontSize: sw(10), fontWeight: "600", color: COLORS.text }}>
-                    {day.duration}
-                  </Text>
-                </View>
-              ))}
-            </>
-          )}
-
-          {activeTab === "Monthly" && (
-            <>
-              <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
-                Monthly Attendance Report
-              </Text>
-              
-              {/* Monthly Overview */}
-              <View style={{
-                backgroundColor: COLORS.cardBg,
-                borderRadius: sw(12),
-                borderWidth: 1,
-                borderColor: COLORS.border,
-                padding: sw(12),
-                marginBottom: sw(16),
-              }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-around", marginBottom: sw(12) }}>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.success, marginBottom: sw(4) }}>
-                      22
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Days Present</Text>
-                  </View>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.warning, marginBottom: sw(4) }}>
-                      2
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Absent</Text>
-                  </View>
-                  <View style={{ alignItems: "center" }}>
-                    <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.info, marginBottom: sw(4) }}>
-                      176h 30m
-                    </Text>
-                    <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Total Hours</Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Monthly Records */}
-              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
-                Recent Days
-              </Text>
-              {attendanceData.map((item, index) => (
-                <AttendanceCard key={index} {...item} sw={sw} />
-              ))}
-            </>
-          )}
-        </ScrollView>
+          <View style={{ width: sw(44), height: sw(44), borderRadius: sw(22), backgroundColor: COLORS.info, alignItems: "center", justifyContent: "center", marginRight: sw(10) }}>
+            <Text style={{ fontSize: sw(20) }}>👤</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text }}>John Doe</Text>
+            <Text style={{ fontSize: sw(8), color: COLORS.textLight }}>EMP001 • Spa Manager Operations</Text>
+          </View>
+        </LinearGradient>
       </View>
+
+      {/* Content */}
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(12), paddingBottom: sw(40) }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Notification */}
+        {showNotification && (
+          <View style={{ backgroundColor: "#DCFCE7", borderRadius: sw(10), borderLeftWidth: 4, borderLeftColor: COLORS.success, padding: sw(10), marginBottom: sw(14), flexDirection: "row", alignItems: "center" }}>
+            <CheckCircle size={sw(14)} color={COLORS.success} strokeWidth={2.5} />
+            <Text style={{ fontSize: sw(9), color: "#15803D", fontWeight: "600", marginLeft: sw(8) }}>
+              ✓ Attendance marked successfully
+            </Text>
+          </View>
+        )}
+
+        {/* Location Card */}
+        <LocationCard location={location} sw={sw} />
+
+        {/* Attendance Buttons */}
+        <AttendanceButtons
+          isCheckedIn={isCheckedIn}
+          isCheckedOut={isCheckedOut}
+          checkInTime={checkInTime}
+          checkOutTime={checkOutTime}
+          onCheckIn={handleCheckIn}
+          onCheckOut={handleCheckOut}
+          sw={sw}
+        />
+
+        {/* Today's Attendance */}
+        {isCheckedIn && (
+          <TodaysAttendanceCard
+            isCheckedIn={isCheckedIn}
+            checkInTime={checkInTime}
+            checkOutTime={checkOutTime}
+            location={location}
+            sw={sw}
+          />
+        )}
+
+        {/* Stats */}
+        <StatsCards daysPresent={22} avgHours={8.5} sw={sw} />
+      </ScrollView>
     </View>
   );
 }
