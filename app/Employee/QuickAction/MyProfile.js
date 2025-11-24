@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, User, Mail, Phone, MapPin, Briefcase, Calendar, Award, Heart, FileText, MoreVertical, Star, TrendingUp, LogOut } from "lucide-react-native";
+import { ArrowLeft, User, Mail, Phone, MapPin, Briefcase, Calendar, Award, Heart, FileText, MoreVertical, Star, TrendingUp, LogOut, Shield } from "lucide-react-native";
 import { useState } from "react";
 import {
     Platform,
