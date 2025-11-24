@@ -10,7 +10,9 @@ import {
     View,
     TouchableOpacity,
     ScrollView,
+    TextInput,
 } from "react-native";
+import { useState } from "react";
 
 const COLORS = {
   gradient1: "#00FF87",
@@ -106,6 +108,17 @@ function StatCard({ label, value, sw }) {
 export default function MyProfile({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
+  const [isEditing, setIsEditing] = useState(false);
+  const [businessName, setBusinessName] = useState("Ombarc Spa & Wellness");
+  const [email, setEmail] = useState("vendor@ombarc.com");
+  const [phone, setPhone] = useState("+91 98765 43210");
+  const [location, setLocation] = useState("Mumbai, Maharashtra");
+  const [hours, setHours] = useState("9:00 AM - 9:00 PM");
+
+  const handleSave = () => {
+    setIsEditing(false);
+    alert("Business information updated successfully!");
+  };
 
   const isMobile = width < 480;
   const headerHeight = height * 0.333;
