@@ -111,7 +111,6 @@ export default function VendorDashboard() {
     { id: "service-management", label: "Service Management", icon: Package, tab: "Service Management", color: COLORS.primary },
     { id: "therapist-management", label: "Therapist Management", icon: Users, tab: "Therapist Management", color: COLORS.primary },
     { id: "revenue-reports", label: "Revenue Reports", icon: DollarSign, tab: "Revenue Reports", color: COLORS.primary },
-    { id: "booking-management", label: "Booking Management", icon: Calendar, tab: "Booking Management", color: COLORS.primary },
     { id: "customer-reviews", label: "Customer Reviews", icon: FileCheck, tab: "Customer Reviews", color: COLORS.primary },
     { id: "analytics-dashboard", label: "Analytics Dashboard", icon: BarChart2, tab: "Analytics Dashboard", color: COLORS.primary },
     { id: "payment-settings", label: "Payment Settings", icon: DollarSign, tab: "Payment Settings", color: COLORS.primary },
