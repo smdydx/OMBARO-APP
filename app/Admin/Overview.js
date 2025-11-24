@@ -28,6 +28,7 @@ export default function Overview() {
       style={{ flex: 1, backgroundColor: "#F0FDF4" }}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ flexGrow: 1 }}
+      scrollEnabled={!isMobile}
     >
       {/* Stats Section - Horizontal Swipe */}
       <View style={styles.statsSection}>
@@ -90,7 +91,7 @@ export default function Overview() {
           showsVerticalScrollIndicator={false}
           scrollIndicatorInsets={{ bottom: 1000, right: 1000, top: 1000, left: 1000 }}
           scrollEnabled={true}
-          nestedScrollEnabled={false}
+          nestedScrollEnabled={isMobile}
         >
           <AlertCard
             icon={<AlertCircle color="#EF4444" size={20} />}
