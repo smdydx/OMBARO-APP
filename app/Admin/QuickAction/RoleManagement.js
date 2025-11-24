@@ -145,14 +145,14 @@ function StatCard({ label, value, icon: IconComponent, color, sw }) {
       colors={color === COLORS.success ? ["#D1FAE5", "#ECFDF5"] : color === COLORS.warning ? ["#FEF3C7", "#FFFBEB"] : color === COLORS.info ? ["#DBEAFE", "#F0F9FF"] : ["#FCE7F3", "#FDF2F8"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ borderRadius: sw(14), overflow: "hidden", flex: 1, borderWidth: 1.5, borderColor: color === COLORS.success ? "#A7F3D0" : color === COLORS.warning ? "#FDE68A" : color === COLORS.info ? "#BFDBFE" : "#FBCFE8", padding: sw(14) }}
+      style={{ borderRadius: sw(14), overflow: "hidden", borderWidth: 1.5, borderColor: color === COLORS.success ? "#A7F3D0" : color === COLORS.warning ? "#FDE68A" : color === COLORS.info ? "#BFDBFE" : "#FBCFE8", padding: sw(14), width: sw(140), minHeight: sw(140), alignItems: "center", justifyContent: "center" }}
     >
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: "center", width: "100%" }}>
         <View style={{ width: sw(40), height: sw(40), borderRadius: sw(20), backgroundColor: `${color}20`, alignItems: "center", justifyContent: "center", marginBottom: sw(8) }}>
-          <IconComponent size={sw(20)} color={color} strokeWidth={2.5} />
+          <IconComponent size={sw(18)} color={color} strokeWidth={2.5} />
         </View>
         <Text style={{ fontSize: sw(16), fontWeight: "800", color: color, marginBottom: sw(4) }}>{value}</Text>
-        <Text style={{ fontSize: sw(9), color: COLORS.textLight, textAlign: "center", fontWeight: "600" }}>{label}</Text>
+        <Text style={{ fontSize: sw(8), color: COLORS.textLight, textAlign: "center", fontWeight: "600" }}>{label}</Text>
       </View>
     </LinearGradient>
   );
@@ -166,9 +166,9 @@ export default function RoleManagement({ onBack }) {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [filterType, setFilterType] = useState("All");
 
-  const totalUsers = ROLES_DATA.reduce((sum, role) => sum + role.count, 0);
-  const departmentalCount = ROLES_DATA.filter(r => r.type === "departmental").length;
-  const systemCount = ROLES_DATA.filter(r => r.type === "system").length;
+  const totalUsers = 84;
+  const departmentalCount = 17;
+  const systemCount = 4;
   const modulesCount = 8;
 
   const filteredRoles = ROLES_DATA.filter(role => {
@@ -217,17 +217,13 @@ export default function RoleManagement({ onBack }) {
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: sw(14), paddingTop: sw(16), paddingBottom: sw(20) }} showsVerticalScrollIndicator={false}>
         
-        {/* Stat Cards */}
-        <View style={{ marginBottom: sw(18) }}>
-          <View style={{ flexDirection: "row", gap: sw(10), marginBottom: sw(10) }}>
-            <StatCard label="Total Users" value={totalUsers} icon={Plus} color={COLORS.success} sw={sw} />
-            <StatCard label="Departments" value={departmentalCount} icon={Search} color={COLORS.warning} sw={sw} />
-          </View>
-          <View style={{ flexDirection: "row", gap: sw(10) }}>
-            <StatCard label="System Roles" value={systemCount} icon={Filter} color={COLORS.info} sw={sw} />
-            <StatCard label="Modules" value={modulesCount} icon={Plus} color="#EC4899" sw={sw} />
-          </View>
-        </View>
+        {/* Stat Cards - Horizontal Swipe */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: sw(10), paddingBottom: sw(12), paddingRight: sw(14) }} scrollEventThrottle={16} style={{ marginBottom: sw(18) }}>
+          <StatCard label="Total Users" value={totalUsers} icon={Plus} color={COLORS.success} sw={sw} />
+          <StatCard label="Departments" value={departmentalCount} icon={Search} color={COLORS.warning} sw={sw} />
+          <StatCard label="System Roles" value={systemCount} icon={Filter} color={COLORS.info} sw={sw} />
+          <StatCard label="Modules" value={modulesCount} icon={Plus} color="#EC4899" sw={sw} />
+        </ScrollView>
 
         {/* Filter Buttons */}
         <View style={{ marginBottom: sw(16) }}>
