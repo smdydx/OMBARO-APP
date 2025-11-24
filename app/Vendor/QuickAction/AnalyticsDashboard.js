@@ -88,7 +88,7 @@ export default function AnalyticsDashboard({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), paddingBottom: sw(32), paddingHorizontal: sw(20) }}
+        style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), paddingBottom: sw(56), paddingHorizontal: sw(20) }}
       >
         <TouchableOpacity
           onPress={onBack}
@@ -137,7 +137,7 @@ export default function AnalyticsDashboard({ onBack }) {
         backgroundColor: COLORS.bg,
         borderTopLeftRadius: sw(24),
         borderTopRightRadius: sw(24),
-        marginTop: -sw(20),
+        marginTop: -sw(2),
         paddingTop: sw(20),
       }}>
         <ScrollView
