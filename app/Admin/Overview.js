@@ -88,6 +88,7 @@ export default function Overview() {
           style={[styles.alertsBox, isMobile && styles.alertsBoxMobile]}
           contentContainerStyle={[styles.alertsScrollContent, isMobile && styles.alertsScrollContentMobile]}
           showsVerticalScrollIndicator={false}
+          scrollIndicatorInsets={{ bottom: 1000, right: 1000, top: 1000, left: 1000 }}
           scrollEnabled={true}
           nestedScrollEnabled={false}
         >
