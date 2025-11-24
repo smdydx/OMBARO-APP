@@ -125,25 +125,24 @@ export default function ServiceManagement({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(12), paddingHorizontal: sw(20) }}
+        style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), paddingBottom: sw(16), paddingHorizontal: sw(20) }}
       >
-        <View style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40) }}>
-          <TouchableOpacity
-            onPress={onBack}
-            style={{
-              width: sw(40),
-              height: sw(40),
-              borderRadius: sw(20),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={onBack}
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
 
-        <View style={{ alignItems: "center", paddingBottom: sw(8) }}>
+        <View style={{ alignItems: "center" }}>
           <View style={{
             width: sw(60),
             height: sw(60),
@@ -151,20 +150,20 @@ export default function ServiceManagement({ onBack }) {
             backgroundColor: "rgba(255,255,255,0.2)",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: sw(8),
+            marginBottom: sw(10),
           }}>
             <Package size={sw(32)} color="#FFFFFF" strokeWidth={2.5} />
           </View>
           <Text style={{ 
-            fontSize: sw(16), 
+            fontSize: sw(15), 
             fontWeight: "800", 
             color: "#FFFFFF",
-            marginBottom: sw(4),
+            marginBottom: sw(5),
             textAlign: "center",
           }} numberOfLines={1}>
             Service Management
           </Text>
-          <Text style={{ fontSize: sw(11), color: "rgba(255,255,255,0.9)", fontWeight: "500", textAlign: "center" }} numberOfLines={1}>
+          <Text style={{ fontSize: sw(10), color: "rgba(255,255,255,0.95)", fontWeight: "500", textAlign: "center" }} numberOfLines={1}>
             Manage spa services and pricing
           </Text>
         </View>

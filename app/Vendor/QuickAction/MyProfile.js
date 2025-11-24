@@ -425,25 +425,24 @@ export default function MyProfile({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(24), paddingHorizontal: sw(20) }}
+        style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), paddingBottom: sw(16), paddingHorizontal: sw(20), paddingRight: sw(20) }}
       >
-        <View style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40) }}>
-          <TouchableOpacity
-            onPress={onBack}
-            style={{
-              width: sw(40),
-              height: sw(40),
-              borderRadius: sw(20),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={onBack}
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
 
-        <View style={{ alignItems: "center", paddingBottom: sw(16) }}>
+        <View style={{ alignItems: "center" }}>
           <View style={{
             width: sw(70),
             height: sw(70),
@@ -458,10 +457,10 @@ export default function MyProfile({ onBack }) {
             <Building2 size={sw(36)} color="#FFFFFF" strokeWidth={2} />
           </View>
           <Text style={{ 
-            fontSize: sw(18), 
+            fontSize: sw(16), 
             fontWeight: "800", 
             color: "#FFFFFF",
-            marginBottom: sw(8),
+            marginBottom: sw(6),
             textAlign: "center",
           }} numberOfLines={1}>
             My Profile
@@ -471,13 +470,13 @@ export default function MyProfile({ onBack }) {
             alignItems: "center",
             backgroundColor: "rgba(255,255,255,0.25)",
             paddingHorizontal: sw(12),
-            paddingVertical: sw(6),
-            borderRadius: sw(18),
+            paddingVertical: sw(5),
+            borderRadius: sw(16),
             borderWidth: 1,
             borderColor: "rgba(255,255,255,0.3)",
           }}>
-            <Star size={sw(14)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
-            <Text style={{ color: "#FFFFFF", fontSize: sw(11), fontWeight: "700", marginLeft: sw(5) }}>
+            <Star size={sw(13)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
+            <Text style={{ color: "#FFFFFF", fontSize: sw(10), fontWeight: "700", marginLeft: sw(4) }}>
               4.8 Rating
             </Text>
           </View>
