@@ -79,6 +79,30 @@ function InfoRow({ icon: Icon, label, value, sw, isLast }) {
   );
 }
 
+function StatCard({ label, value, sw }) {
+  return (
+    <View style={{
+      flex: 1,
+      minWidth: sw(90),
+      backgroundColor: COLORS.cardBg,
+      borderRadius: sw(12),
+      borderWidth: 1,
+      borderColor: COLORS.border,
+      padding: sw(12),
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: sw(80),
+    }}>
+      <Text style={{ fontSize: sw(22), fontWeight: "800", color: COLORS.primary }}>
+        {value}
+      </Text>
+      <Text style={{ fontSize: sw(9), color: COLORS.textSecondary, marginTop: sw(4), textAlign: "center" }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
 export default function MyProfile({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
