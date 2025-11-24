@@ -138,7 +138,7 @@ export default function WelcomeScreen() {
               <TouchableOpacity
                 disabled={isNavigating}
                 activeOpacity={0.9}
-                onPress={() => navigate('/auth/phone-register')}
+                onPress={() => navigate('/(tabs)')}
               >
                 <LinearGradient
                   colors={['#00FF87', '#016B3A', '#013B1F', '#012B17']}
@@ -150,8 +150,8 @@ export default function WelcomeScreen() {
                 </LinearGradient>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={()=>navigate('/auth/login')} style={styles.secondaryBtn} activeOpacity={0.9}>
-                <Text style={styles.secondaryBtnText}>Login to Account</Text>
+              <TouchableOpacity onPress={()=>navigate('/(tabs)')} style={styles.secondaryBtn} activeOpacity={0.9}>
+                <Text style={styles.secondaryBtnText}>Go to Home</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -174,12 +174,12 @@ export default function WelcomeScreen() {
             <View style={styles.quickAccessSection}>
               <Text style={styles.quickAccessLabel}>Quick Access</Text>
               <View style={styles.pillsContainer}>
-                <PillLink label="Employee" nav="/Employee/auth/login" navigate={navigate} isNavigating={isNavigating} />
-                <PillLink label="Vendor" nav="/Vendor/auth/login" navigate={navigate} isNavigating={isNavigating}  />
-                <PillLink label="Therapist" nav="/Therapist/auth/login" navigate={navigate} isNavigating={isNavigating}  />
-                <PillLink label="Beautician" nav="/Therapist/auth/login" navigate={navigate} isNavigating={isNavigating}  />
-                <PillLink label="Admin" nav="/Admin/auth/login" navigate={navigate} isNavigating={isNavigating}  />
-                <PillLink label="Departments" nav="/Department/auth/login" navigate={navigate} isNavigating={isNavigating}  />
+                <PillLink label="Employee" nav="/Employee" navigate={navigate} isNavigating={isNavigating} />
+                <PillLink label="Vendor" nav="/Vendor" navigate={navigate} isNavigating={isNavigating}  />
+                <PillLink label="Admin" nav="/Admin" navigate={navigate} isNavigating={isNavigating}  />
+                <PillLink label="Departments" nav="/Department" navigate={navigate} isNavigating={isNavigating}  />
+                <PillLink label="Customer" nav="/(tabs)" navigate={navigate} isNavigating={isNavigating}  />
+                <PillLink label="Partner" nav="/Partner" navigate={navigate} isNavigating={isNavigating}  />
               </View>
             </View>
 
