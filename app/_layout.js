@@ -2,13 +2,16 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as Updates from 'expo-updates';
+import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from '../hooks/use-color-scheme';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-  // Optional OTA
+  // Optional OTA and Splash Screen Management
   useEffect(() => {
     (async () => {
       try {
@@ -20,6 +23,10 @@ export default function RootLayout() {
       } catch (e) {
         console.log("OTA update failed", e);
       }
+      
+      // Hide splash screen after 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await SplashScreen.hideAsync();
     })();
   }, []);
 
