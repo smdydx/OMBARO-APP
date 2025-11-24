@@ -101,7 +101,7 @@ export default function BookingsTab() {
 
             <View style={styles.actionsCol}>
               <OutlineBtn>
-                <Users size={14} color="#0ea5e9" />
+                <Users size={14} color="#016B3A" />
                 <Text style={styles.btnText}>Assign</Text>
               </OutlineBtn>
               <OutlineBtn>
@@ -164,14 +164,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#bae6fd",
+    borderColor: "#D1FAE5",
     backgroundColor: "#fff",
   },
   filterChipActive: {
-    backgroundColor: "#e0f2fe",
+    backgroundColor: "#DCFCE7",
   },
-  filterText: { color: "#0ea5e9", fontWeight: "700" },
-  filterTextActive: { color: "#0284c7" },
+  filterText: { color: "#016B3A", fontWeight: "700" },
+  filterTextActive: { color: "#014D2A" },
 
   card: {
     backgroundColor: "#f8fafc",
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   outlineBtn: {
     flexDirection: "row",
     alignItems: "center",
-    borderColor: "#7dd3fc",
+    borderColor: "#D1FAE5",
     borderWidth: 1,
     paddingVertical: 8,
     paddingHorizontal: 12,
@@ -223,5 +223,5 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: "#fff",
   },
-  btnText: { color: "#0ea5e9", fontWeight: "700", fontSize: 13 },
+  btnText: { color: "#016B3A", fontWeight: "700", fontSize: 13 },
 });

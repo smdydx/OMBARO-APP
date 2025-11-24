@@ -120,13 +120,9 @@ export default function TherapistManagement({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight }}
+        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(12), paddingHorizontal: sw(20) }}
       >
-        <View style={{ 
-          paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), 
-          paddingHorizontal: sw(20),
-          flex: 1,
-        }}>
+        <View style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40) }}>
           <TouchableOpacity
             onPress={onBack}
             style={{
@@ -136,36 +132,36 @@ export default function TherapistManagement({ onBack }) {
               backgroundColor: "rgba(255,255,255,0.2)",
               alignItems: "center",
               justifyContent: "center",
-              marginBottom: sw(20),
             }}
           >
             <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
           </TouchableOpacity>
+        </View>
 
-          <View style={{ flex: 1, justifyContent: "center" }}>
-            <View style={{
-              width: sw(80),
-              height: sw(80),
-              borderRadius: sw(20),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: sw(15),
-            }}>
-              <Users size={sw(40)} color="#FFFFFF" strokeWidth={2.5} />
-            </View>
-            <Text style={{ 
-              fontSize: sw(26), 
-              fontWeight: "800", 
-              color: "#FFFFFF",
-              marginBottom: sw(8),
-            }}>
-              Therapist Management
-            </Text>
-            <Text style={{ fontSize: sw(13), color: "rgba(255,255,255,0.9)", fontWeight: "500" }}>
-              Manage your spa staff and therapists
-            </Text>
+        <View style={{ alignItems: "center", paddingBottom: sw(8) }}>
+          <View style={{
+            width: sw(60),
+            height: sw(60),
+            borderRadius: sw(16),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(8),
+          }}>
+            <Users size={sw(32)} color="#FFFFFF" strokeWidth={2.5} />
           </View>
+          <Text style={{ 
+            fontSize: sw(16), 
+            fontWeight: "800", 
+            color: "#FFFFFF",
+            marginBottom: sw(4),
+            textAlign: "center",
+          }} numberOfLines={1}>
+            Therapist Management
+          </Text>
+          <Text style={{ fontSize: sw(11), color: "rgba(255,255,255,0.9)", fontWeight: "500", textAlign: "center" }} numberOfLines={1}>
+            Manage your staff and therapists
+          </Text>
         </View>
       </LinearGradient>
 
