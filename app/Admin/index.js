@@ -31,6 +31,7 @@ import {
   StyleSheet,
 } from "react-native";
 
+import Overview from "./Overview";
 import UserManagement from "./QuickAction/UserManagement";
 import SpaManagement from "./QuickAction/SpaManagement";
 import Approvals from "./QuickAction/Approvals";
@@ -39,6 +40,7 @@ import SecurityCenter from "./QuickAction/SecurityCenter";
 import SystemSettings from "./QuickAction/SystemSettings";
 import LocationTracking from "./QuickAction/LocationTracking";
 import VendorApproval from "./QuickAction/VendorApproval";
+import SystemAlerts from "./QuickAction/SystemAlerts";
 
 const COLORS = {
   bg: "#FFFFFF",
@@ -73,7 +75,7 @@ export default function AdminDashboard() {
 
   const coreTabMap = useMemo(
     () => ({
-      Overview: () => <OverviewContent onQuickActionPress={handleQuickActionPress} />,
+      Overview: Overview,
       "User Management": UserManagement,
       "Spa Management": SpaManagement,
       Analytics: Analytics,
@@ -92,6 +94,7 @@ export default function AdminDashboard() {
       "Security Center": SecurityCenter,
       "System Settings": SystemSettings,
       "Location Tracking": LocationTracking,
+      "System Alerts": SystemAlerts,
     }),
     []
   );
@@ -107,6 +110,7 @@ export default function AdminDashboard() {
     { id: "security", label: "Security Center", icon: Shield, tab: "Security Center", color: COLORS.primary },
     { id: "location", label: "Location Tracking", icon: MapPin, tab: "Location Tracking", color: COLORS.primary },
     { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
+    { id: "system-alerts", label: "System Alerts", icon: Bell, tab: "System Alerts", color: COLORS.primary },
   ];
 
   const bottomNavItems = [
