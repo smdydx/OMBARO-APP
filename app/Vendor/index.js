@@ -200,7 +200,7 @@ export default function VendorDashboard() {
       )}
 
       <View style={styles.mainWrapper}>
-        {isQuickActionsView || selectedTab === "Overview" ? (
+        {isQuickActionsView ? (
           <ScrollView
             style={styles.mainContent}
             contentContainerStyle={styles.mainContentContainer}
