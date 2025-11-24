@@ -67,14 +67,14 @@ export default function TherapistProfile() {
   const [unreadCount, setUnreadCount] = useState(3);
 
   const quickActions = [
-    { id: "assignments", label: "Assignments", icon: CalendarDays, subtitle: "View today's tasks", route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "schedule", label: "Schedule", icon: Clock, subtitle: "Manage your schedule", route: "/Therapist/mySchedule", color: COLORS.primary },
-    { id: "location", label: "Location", icon: MapPin, subtitle: "Update your location", route: "/Therapist/myLocation", color: COLORS.primary },
-    { id: "leaves", label: "Leaves", icon: XCircle, subtitle: "Request time off", route: "/Therapist/LeaveRequest", color: COLORS.primary },
-    { id: "earnings", label: "Earnings", icon: DollarSign, subtitle: "Track your income", route: "/Therapist/assisnements", color: COLORS.primary },
-    { id: "performance", label: "Performance", icon: BarChart2, subtitle: "View your ratings", route: "/Therapist/performance-review", color: COLORS.primary },
-    { id: "profile", label: "Profile", icon: User2, subtitle: "Edit your profile", route: "/Therapist/profile", color: COLORS.primary },
-    { id: "settings", label: "Settings", icon: Settings, subtitle: "App preferences", route: "#", color: COLORS.primary },
+    { id: "appointments", label: "Today's Appointments", icon: CalendarDays, subtitle: "View today's schedule", route: "/Therapist/QuickAction/TodayAppointments", color: COLORS.primary },
+    { id: "clients", label: "Client Management", icon: User2, subtitle: "Manage your clients", route: "/Therapist/QuickAction/ClientManagement", color: COLORS.primary },
+    { id: "schedule", label: "My Schedule", icon: Clock, subtitle: "View weekly schedule", route: "/Therapist/mySchedule", color: COLORS.primary },
+    { id: "location", label: "Location Tracking", icon: MapPin, subtitle: "Update your location", route: "/Therapist/myLocation", color: COLORS.primary },
+    { id: "earnings", label: "Earnings & Tips", icon: DollarSign, subtitle: "Track your income", route: "/Therapist/assisnements", color: COLORS.primary },
+    { id: "performance", label: "Performance Review", icon: BarChart2, subtitle: "View your ratings", route: "/Therapist/performance-review", color: COLORS.primary },
+    { id: "leaves", label: "Leave Requests", icon: XCircle, subtitle: "Request time off", route: "/Therapist/LeaveRequest", color: COLORS.primary },
+    { id: "settings", label: "Settings", icon: Settings, subtitle: "App preferences", route: "/Therapist/profile", color: COLORS.primary },
   ];
 
   const bottomNavItems = [
