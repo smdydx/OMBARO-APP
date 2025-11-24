@@ -117,52 +117,47 @@ export default function CustomerReviews({ onBack }) {
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight }}
+        style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), paddingBottom: sw(32), paddingHorizontal: sw(20) }}
       >
-        <View style={{ 
-          paddingTop: Platform.OS === "ios" ? sw(50) : sw(40), 
-          paddingHorizontal: sw(20),
-          flex: 1,
-        }}>
-          <TouchableOpacity
-            onPress={onBack}
-            style={{
-              width: sw(40),
-              height: sw(40),
-              borderRadius: sw(20),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: sw(20),
-            }}
-          >
-            <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onBack}
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
 
-          <View style={{ flex: 1, justifyContent: "center" }}>
-            <View style={{
-              width: sw(80),
-              height: sw(80),
-              borderRadius: sw(20),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-              marginBottom: sw(15),
-            }}>
-              <Star size={sw(40)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
-            </View>
-            <Text style={{ 
-              fontSize: sw(26), 
-              fontWeight: "800", 
-              color: "#FFFFFF",
-              marginBottom: sw(8),
-            }}>
-              Customer Reviews
-            </Text>
-            <Text style={{ fontSize: sw(13), color: "rgba(255,255,255,0.9)", fontWeight: "500" }}>
-              {avgRating} average rating from {totalReviews} reviews
-            </Text>
+        <View style={{ alignItems: "center" }}>
+          <View style={{
+            width: sw(65),
+            height: sw(65),
+            borderRadius: sw(18),
+            backgroundColor: "rgba(255,255,255,0.2)",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}>
+            <Star size={sw(32)} color="#FFD700" fill="#FFD700" strokeWidth={0} />
           </View>
+          <Text style={{ 
+            fontSize: sw(16), 
+            fontWeight: "800", 
+            color: "#FFFFFF",
+            marginBottom: sw(5),
+            textAlign: "center",
+          }}>
+            Customer Reviews
+          </Text>
+          <Text style={{ fontSize: sw(10), color: "rgba(255,255,255,0.95)", fontWeight: "500", textAlign: "center" }}>
+            {avgRating} avg rating from {totalReviews} reviews
+          </Text>
         </View>
       </LinearGradient>
 
