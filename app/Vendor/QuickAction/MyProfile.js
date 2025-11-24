@@ -83,8 +83,9 @@ export default function MyProfile({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
 
-  const headerHeight = height * 0.333;
-  const contentHeight = height * 0.667;
+  const isMobile = width < 480;
+  const headerHeight = isMobile ? height * 0.35 : height * 0.333;
+  const contentHeight = isMobile ? height * 0.65 : height * 0.667;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
@@ -218,7 +219,7 @@ export default function MyProfile({ onBack }) {
             <InfoRow icon={Clock} label="Working Hours" value="9:00 AM - 9:00 PM" sw={sw} isLast />
           </View>
 
-          <View style={{ marginTop: sw(20) }}>
+          <View style={{ marginTop: sw(16), marginBottom: sw(20) }}>
             <Text style={{ 
               fontSize: sw(16), 
               fontWeight: "800", 
@@ -227,55 +228,10 @@ export default function MyProfile({ onBack }) {
             }}>
               Business Stats
             </Text>
-            <View style={{ flexDirection: "row", gap: sw(12) }}>
-              <View style={{
-                flex: 1,
-                backgroundColor: COLORS.cardBg,
-                borderRadius: sw(12),
-                borderWidth: 1,
-                borderColor: COLORS.border,
-                padding: sw(12),
-                alignItems: "center",
-              }}>
-                <Text style={{ fontSize: sw(24), fontWeight: "800", color: COLORS.primary }}>
-                  250+
-                </Text>
-                <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginTop: sw(4) }}>
-                  Total Bookings
-                </Text>
-              </View>
-              <View style={{
-                flex: 1,
-                backgroundColor: COLORS.cardBg,
-                borderRadius: sw(12),
-                borderWidth: 1,
-                borderColor: COLORS.border,
-                padding: sw(12),
-                alignItems: "center",
-              }}>
-                <Text style={{ fontSize: sw(24), fontWeight: "800", color: COLORS.primary }}>
-                  15
-                </Text>
-                <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginTop: sw(4) }}>
-                  Services
-                </Text>
-              </View>
-              <View style={{
-                flex: 1,
-                backgroundColor: COLORS.cardBg,
-                borderRadius: sw(12),
-                borderWidth: 1,
-                borderColor: COLORS.border,
-                padding: sw(12),
-                alignItems: "center",
-              }}>
-                <Text style={{ fontSize: sw(24), fontWeight: "800", color: COLORS.primary }}>
-                  8
-                </Text>
-                <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, marginTop: sw(4) }}>
-                  Therapists
-                </Text>
-              </View>
+            <View style={{ flexDirection: "row", gap: sw(10), flexWrap: "wrap" }}>
+              <StatCard label="Total Bookings" value="250+" sw={sw} />
+              <StatCard label="Services" value="15" sw={sw} />
+              <StatCard label="Therapists" value="8" sw={sw} />
             </View>
           </View>
         </ScrollView>
