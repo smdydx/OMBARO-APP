@@ -10,6 +10,8 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { useState } from "react";
+import AddTherapist from "./AddTherapist";
 
 const COLORS = {
   gradient1: "#00FF87",
@@ -102,17 +104,21 @@ function TherapistCard({ name, specialty, phone, rating, bookings, sw }) {
 export default function TherapistManagement({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
-
-  const headerHeight = height * 0.333;
-  const contentHeight = height * 0.667;
-
-  const therapists = [
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [therapists, setTherapists] = useState([
     { name: "Priya Sharma", specialty: "Swedish Massage Specialist", phone: "+91 98765 11111", rating: "4.9", bookings: "45" },
     { name: "Rahul Kumar", specialty: "Deep Tissue Expert", phone: "+91 98765 22222", rating: "4.8", bookings: "38" },
     { name: "Anita Desai", specialty: "Aromatherapy Specialist", phone: "+91 98765 33333", rating: "4.7", bookings: "42" },
     { name: "Vikram Singh", specialty: "Sports Massage Therapist", phone: "+91 98765 44444", rating: "4.9", bookings: "50" },
     { name: "Meera Patel", specialty: "Ayurvedic Specialist", phone: "+91 98765 55555", rating: "4.8", bookings: "35" },
-  ];
+  ]);
+
+  const handleAddTherapist = (newTherapist) => {
+    setTherapists([newTherapist, ...therapists]);
+  };
+
+  const headerHeight = height * 0.333;
+  const contentHeight = height * 0.667;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
@@ -174,7 +180,9 @@ export default function TherapistManagement({ onBack }) {
         paddingTop: sw(20),
       }}>
         <View style={{ paddingHorizontal: sw(20), marginBottom: sw(15) }}>
-          <TouchableOpacity style={{
+          <TouchableOpacity 
+            onPress={() => setShowAddModal(true)}
+            style={{
             backgroundColor: COLORS.primary,
             flexDirection: "row",
             alignItems: "center",
@@ -206,6 +214,12 @@ export default function TherapistManagement({ onBack }) {
           ))}
         </ScrollView>
       </View>
+
+      <AddTherapist 
+        visible={showAddModal} 
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddTherapist}
+      />
     </View>
   );
 }
