@@ -24,7 +24,11 @@ export default function Overview() {
   const isMobile = width < 768;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F0FDF4" }}>
+    <ScrollView 
+      style={{ flex: 1, backgroundColor: "#F0FDF4" }}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
       {/* Stats Section - Horizontal Swipe */}
       <View style={styles.statsSection}>
         <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
@@ -75,64 +79,76 @@ export default function Overview() {
         </ScrollView>
       </View>
 
-      {/* System Alerts - Swipeable Cards */}
+      {/* System Alerts - Scrollable Messages */}
       <View style={[styles.alertsSection, isMobile && styles.alertsSectionMobile]}>
         <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
           System Alerts
         </Text>
-        <View style={[styles.alertsBox, isMobile && styles.alertsBoxMobile]}>
-          <ScrollView
-            style={styles.alertsScrollView}
-            contentContainerStyle={[styles.alertsScrollContent, isMobile && styles.alertsScrollContentMobile]}
-            showsVerticalScrollIndicator={false}
-            nestedScrollEnabled={true}
-          >
-            <AlertCard
-              icon={<AlertCircle color="#EF4444" size={20} />}
-              title="Multiple Failed Login Attempts"
-              desc="5 failed attempts from IP 192.168.1.1"
-              type="critical"
-              isMobile={isMobile}
-            />
-            <AlertCard
-              icon={<CheckCircle color="#10B981" size={20} />}
-              title="Monthly Revenue Target Achieved"
-              desc="Exceeded target by 15%, ₹10L+ earned"
-              type="success"
-              isMobile={isMobile}
-            />
-            <AlertCard
-              icon={<CheckCircle color="#10B981" size={20} />}
-              title="Database Backup Completed"
-              desc="Daily backup successful at 02:30 AM"
-              type="success"
-              isMobile={isMobile}
-            />
-            <AlertCard
-              icon={<Clock color="#F59E0B" size={20} />}
-              title="Vendor Registration Requests Pending"
-              desc="12 new vendor registrations await approval"
-              type="warning"
-              isMobile={isMobile}
-            />
-            <AlertCard
-              icon={<AlertCircle color="#EF4444" size={20} />}
-              title="Low Disk Space"
-              desc="Server disk space below 10% capacity"
-              type="critical"
-              isMobile={isMobile}
-            />
-            <AlertCard
-              icon={<Clock color="#F59E0B" size={20} />}
-              title="SSL Certificate Expiring"
-              desc="Certificate expires in 30 days"
-              type="warning"
-              isMobile={isMobile}
-            />
-          </ScrollView>
-        </View>
+        <ScrollView
+          style={[styles.alertsBox, isMobile && styles.alertsBoxMobile]}
+          contentContainerStyle={[styles.alertsScrollContent, isMobile && styles.alertsScrollContentMobile]}
+          showsVerticalScrollIndicator={true}
+          scrollIndicatorInsets={{ right: 4 }}
+        >
+          <AlertCard
+            icon={<AlertCircle color="#EF4444" size={20} />}
+            title="Multiple Failed Login Attempts"
+            desc="5 failed attempts from IP 192.168.1.1"
+            type="critical"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<CheckCircle color="#10B981" size={20} />}
+            title="Monthly Revenue Target Achieved"
+            desc="Exceeded target by 15%, ₹10L+ earned"
+            type="success"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<CheckCircle color="#10B981" size={20} />}
+            title="Database Backup Completed"
+            desc="Daily backup successful at 02:30 AM"
+            type="success"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<Clock color="#F59E0B" size={20} />}
+            title="Vendor Registration Requests Pending"
+            desc="12 new vendor registrations await approval"
+            type="warning"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<AlertCircle color="#EF4444" size={20} />}
+            title="Low Disk Space"
+            desc="Server disk space below 10% capacity"
+            type="critical"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<Clock color="#F59E0B" size={20} />}
+            title="SSL Certificate Expiring"
+            desc="Certificate expires in 30 days"
+            type="warning"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<Plus color="#10B981" size={20} />}
+            title="New Feature Deployed"
+            desc="Mobile app version 2.1 is now live"
+            type="success"
+            isMobile={isMobile}
+          />
+          <AlertCard
+            icon={<Clock color="#F59E0B" size={20} />}
+            title="Maintenance Window Scheduled"
+            desc="Scheduled maintenance on Dec 25, 2-4 AM"
+            type="warning"
+            isMobile={isMobile}
+          />
+        </ScrollView>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -236,18 +252,22 @@ const styles = StyleSheet.create({
   },
   alertsSection: {
     flex: 1,
-    paddingBottom: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 80,
+    minHeight: 300,
   },
   alertsSectionMobile: {
-    paddingBottom: 15,
+    paddingHorizontal: 14,
+    paddingBottom: 60,
+    minHeight: 250,
   },
   alertsBox: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    marginHorizontal: 16,
     borderWidth: 1,
     borderColor: "#D1FAE5",
+    maxHeight: 500,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -261,20 +281,17 @@ const styles = StyleSheet.create({
     }),
   },
   alertsBoxMobile: {
-    marginHorizontal: 14,
     borderRadius: 16,
-  },
-  alertsScrollView: {
-    flex: 1,
+    maxHeight: 400,
   },
   alertsScrollContent: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 16,
     gap: 12,
   },
   alertsScrollContentMobile: {
     paddingHorizontal: 14,
-    paddingVertical: 16,
+    paddingVertical: 14,
     gap: 10,
   },
   alertCard: {
