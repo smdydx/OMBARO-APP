@@ -170,7 +170,7 @@ function StatCard({ label, value, icon: IconComponent, color, sw }) {
       colors={["#10B981", "#016B3A"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ borderRadius: sw(14), overflow: "hidden", borderWidth: 1.5, borderColor: "#A7F3D0", padding: sw(14), width: sw(280), height: sw(90), alignItems: "center", justifyContent: "center" }}
+      style={{ borderRadius: sw(14), overflow: "hidden", borderWidth: 1.5, borderColor: "#A7F3D0", padding: sw(14), width: sw(280), height: sw(120), alignItems: "center", justifyContent: "center" }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", gap: sw(14) }}>
         <View style={{ width: sw(50), height: sw(50), borderRadius: sw(12), backgroundColor: "rgba(255,255,255,0.25)", alignItems: "center", justifyContent: "center" }}>
