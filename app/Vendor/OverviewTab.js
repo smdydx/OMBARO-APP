@@ -16,6 +16,8 @@ import {
   Clock,
   Settings,
   Wallet,
+  Check,
+  AlertCircle,
 } from "lucide-react-native";
 
 export default function OverviewTab() {
@@ -81,6 +83,17 @@ export default function OverviewTab() {
         />
       </View>
 
+      {/* Today's Schedule */}
+      <Text style={styles.subheading}>Today's Schedule</Text>
+      <View style={styles.scheduleGrid}>
+        <ScheduleCard time="9:00 AM" client="Priya Singh" service="Swedish Massage" status="Confirmed" />
+        <ScheduleCard time="11:30 AM" client="Arjun Verma" service="Deep Tissue" status="Confirmed" />
+        <ScheduleCard time="2:00 PM" client="Available" service="Break" status="Free" isFree />
+        <ScheduleCard time="3:30 PM" client="Aarav Mehta" service="Aromatherapy" status="Pending" />
+        <ScheduleCard time="5:00 PM" client="Riya Patel" service="Hot Stone" status="Confirmed" />
+        <ScheduleCard time="6:30 PM" client="Available" service="Available" status="Free" isFree />
+      </View>
+
       {/* Upcoming Bookings */}
       <Text style={styles.subheading}>Upcoming Bookings</Text>
       <View style={styles.cardList}>
@@ -132,6 +145,21 @@ const ActionBtn = ({ icon, label, bg, outline }) => (
     </View>
     <Text style={[styles.actionText, bg && { color: "#fff" }]}>{label}</Text>
   </TouchableOpacity>
+);
+
+const ScheduleCard = ({ time, client, service, status, isFree }) => (
+  <View style={[styles.scheduleCard, isFree && styles.scheduleCardFree]}>
+    <View style={styles.scheduleTimeWrap}>
+      <Text style={styles.scheduleTime}>{time}</Text>
+    </View>
+    <View style={{ flex: 1 }}>
+      <Text style={styles.scheduleClient}>{client}</Text>
+      <Text style={styles.scheduleService}>{service}</Text>
+    </View>
+    <View style={[styles.statusBadge, status === "Confirmed" && styles.statusConfirmed, status === "Pending" && styles.statusPending, isFree && styles.statusFree]}>
+      <Text style={styles.statusText}>{status}</Text>
+    </View>
+  </View>
 );
 
 const BookingItem = ({ name, service, time, note }) => (
@@ -206,6 +234,27 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   actionText: { fontWeight: "700", color: "#0f172a" },
+
+  scheduleGrid: { gap: 8, marginBottom: 8 },
+  scheduleCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+  scheduleCardFree: { backgroundColor: "#f0fdf4", borderColor: "#bbf7d0" },
+  scheduleTimeWrap: { marginRight: 12 },
+  scheduleTime: { fontSize: 13, fontWeight: "800", color: "#1e293b" },
+  scheduleClient: { fontSize: 13, fontWeight: "600", color: "#1e293b", marginBottom: 2 },
+  scheduleService: { fontSize: 12, color: "#64748b" },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: "#f1f5f9" },
+  statusConfirmed: { backgroundColor: "#dcfce7" },
+  statusPending: { backgroundColor: "#fef3c7" },
+  statusFree: { backgroundColor: "#d1fae5" },
+  statusText: { fontSize: 10, fontWeight: "600", color: "#475569" },
 
   cardList: { gap: 10 },
   bookingCard: {
