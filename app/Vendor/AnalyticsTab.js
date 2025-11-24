@@ -1,146 +1,252 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Star } from "lucide-react-native";
+import { Star, TrendingUp, Users, Zap } from "lucide-react-native";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 
 export default function AnalyticsTab() {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.heading}>Performance Analytics</Text>
-
-      {/* Revenue Trends */}
-      <GradientCard colors={["#eef2ff", "#f5faff"]}>
-        <Text style={styles.cardTitle}>Revenue Trends</Text>
-        <View style={styles.row}>
-          <Text style={styles.key}>This Month</Text>
-          <Text style={[styles.value, styles.positive]}>₹45,280</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.key}>Last Month</Text>
-          <Text style={styles.value}>₹38,420</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.key}>Growth</Text>
-          <Text style={[styles.value, styles.positive]}>+18%</Text>
-        </View>
-      </GradientCard>
-
-      {/* Service Performance */}
-      <GradientCard colors={["#ecfdf5", "#f5fff8"]}>
-        <Text style={styles.cardTitle}>Service Performance</Text>
-        <KV left="Most Popular" right={"Swedish\nMassage"} boldRight />
-        <KV left="Highest Rated" right={"Couples\nMassage"} boldRight />
-        <View style={[styles.row, { marginTop: 6 }]}>
-          <Text style={styles.key}>Avg. Rating</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={styles.value}>4.8</Text>
-            <Star size={14} color="#f59e0b" fill="#f59e0b" style={{ marginLeft: 4 }} />
-          </View>
-        </View>
-      </GradientCard>
-
-      {/* Customer Insights */}
-      <GradientCard colors={["#fff0f6", "#fff6fb"]}>
-        <Text style={styles.cardTitle}>Customer Insights</Text>
-        <KV left="Total Customers" right="89" />
-        <KV left="Repeat Customers" right="67%" />
-        <KV left="Avg. Booking Value" right="₹3,200" />
-      </GradientCard>
-
-      {/* Operational Metrics */}
-      <GradientCard colors={["#fff7ed", "#fffaf0"]}>
-        <Text style={styles.cardTitle}>Operational Metrics</Text>
-        <KV left="Booking Rate" right="92%" rightColor="#16a34a" />
-        <KV left="Cancellation Rate" right="3%" />
-        <KV left="Response Time" right="< 2 hours" />
-      </GradientCard>
-
-      {/* Actions */}
-      <View style={styles.actionsRow}>
-        <OutlineBtn label="Export Report" />
-        <OutlineBtn label="View Detailed Analytics" />
+    <View style={styles.container}>
+      {/* Swipeable Analytics Cards */}
+      <View style={styles.statsSection}>
+        <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
+          Performance Analytics
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.cardsContainer, isMobile && styles.cardsContainerMobile]}
+          style={styles.cardsScrollView}
+        >
+          <AnalyticsCard
+            icon={<TrendingUp color="#FFFFFF" size={24} />}
+            gradient={["#014D2A", "#016B3A"]}
+            title="Revenue Trends"
+            rows={[
+              { label: "This Month", value: "₹45,280", highlight: true },
+              { label: "Last Month", value: "₹38,420" },
+              { label: "Growth", value: "+18%", highlight: true },
+            ]}
+            isMobile={isMobile}
+            width={width}
+          />
+          <AnalyticsCard
+            icon={<Zap color="#FFFFFF" size={24} />}
+            gradient={["#016B3A", "#047857"]}
+            title="Service Performance"
+            rows={[
+              { label: "Most Popular", value: "Swedish Massage", bold: true },
+              { label: "Highest Rated", value: "Couples Massage", bold: true },
+              { label: "Avg. Rating", value: "4.8 ⭐" },
+            ]}
+            isMobile={isMobile}
+            width={width}
+          />
+          <AnalyticsCard
+            icon={<Users color="#FFFFFF" size={24} />}
+            gradient={["#047857", "#10B981"]}
+            title="Customer Insights"
+            rows={[
+              { label: "Total Customers", value: "89" },
+              { label: "Repeat Customers", value: "67%" },
+              { label: "Avg. Booking Value", value: "₹3,200" },
+            ]}
+            isMobile={isMobile}
+            width={width}
+          />
+          <AnalyticsCard
+            icon={<TrendingUp color="#FFFFFF" size={24} />}
+            gradient={["#10B981", "#34D399"]}
+            title="Operational Metrics"
+            rows={[
+              { label: "Booking Rate", value: "92%", highlight: true },
+              { label: "Cancellation Rate", value: "3%" },
+              { label: "Response Time", value: "< 2 hours" },
+            ]}
+            isMobile={isMobile}
+            width={width}
+          />
+        </ScrollView>
       </View>
-    </ScrollView>
+
+      {/* Action Buttons */}
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity style={[styles.actionBtn, styles.outlineBtn]}>
+          <Text style={styles.outlineBtnText}>📊 Export Report</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.actionBtn, styles.outlineBtn]}>
+          <Text style={styles.outlineBtnText}>📈 View Detailed Analytics</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
-/* --- Small building blocks --- */
-
-const GradientCard = ({ colors, children }) => (
+const AnalyticsCard = ({ icon, gradient, title, rows, isMobile, width }) => (
   <LinearGradient
-    colors={colors}
+    colors={gradient}
     start={{ x: 0, y: 0 }}
     end={{ x: 1, y: 1 }}
-    style={styles.card}
+    style={[
+      styles.card,
+      {
+        width: isMobile ? width * 0.75 : 300,
+        marginRight: 16,
+      },
+    ]}
   >
-    {children}
+    <View style={styles.cardHeader}>
+      {icon}
+      <Text style={styles.cardTitle}>{title}</Text>
+    </View>
+    <View style={styles.cardContent}>
+      {rows.map((row, idx) => (
+        <View key={idx} style={styles.row}>
+          <Text style={styles.label}>{row.label}</Text>
+          <Text
+            style={[
+              styles.value,
+              row.highlight && styles.highlightValue,
+              row.bold && styles.boldValue,
+            ]}
+          >
+            {row.value}
+          </Text>
+        </View>
+      ))}
+    </View>
   </LinearGradient>
 );
 
-const KV = ({ left, right, boldRight, rightColor }) => (
-  <View style={styles.row}>
-    <Text style={styles.key}>{left}</Text>
-    <Text
-      style={[
-        styles.value,
-        boldRight && { fontWeight: "800" },
-        rightColor && { color: rightColor },
-      ]}
-    >
-      {right}
-    </Text>
-  </View>
-);
-
-const OutlineBtn = ({ label, onPress }) => (
-  <TouchableOpacity style={styles.outlineBtn} activeOpacity={0.9} onPress={onPress}>
-    <Text style={styles.outlineBtnText}>{label}</Text>
-  </TouchableOpacity>
-);
-
-/* --- Styles --- */
 const styles = StyleSheet.create({
-  container: { backgroundColor: "#fff", padding: 16 },
-  heading: { fontSize: 18, fontWeight: "800", color: "#0f172a", marginBottom: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#F0FDF4",
+  },
+
+  statsSection: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    backgroundColor: "#F0FDF4",
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#014D2A",
+    marginBottom: 12,
+  },
+
+  sectionTitleMobile: {
+    fontSize: 16,
+  },
+
+  cardsContainerMobile: {
+    paddingRight: 8,
+  },
+
+  cardsContainer: {
+    paddingRight: 16,
+  },
+
+  cardsScrollView: {
+    marginBottom: 8,
+  },
 
   card: {
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#eef2f7",
+    borderRadius: 20,
+    padding: 16,
+    justifyContent: "space-between",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
-  cardTitle: { fontWeight: "800", color: "#111827", marginBottom: 8 },
+
+  cardHeader: {
+    marginBottom: 14,
+  },
+
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginTop: 10,
+  },
+
+  cardContent: {
+    justifyContent: "flex-end",
+  },
 
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 6,
+    marginBottom: 10,
   },
-  key: { color: "#475569", fontSize: 13 },
-  value: { color: "#0f172a", fontWeight: "700", fontSize: 14 },
-  positive: { color: "#16a34a" },
 
-  actionsRow: {
+  label: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.85)",
+    fontWeight: "500",
+  },
+
+  value: {
+    fontSize: 14,
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+
+  highlightValue: {
+    fontWeight: "800",
+    fontSize: 15,
+  },
+
+  boldValue: {
+    fontWeight: "700",
+  },
+
+  actionsContainer: {
     flexDirection: "row",
     gap: 12,
-    marginTop: 6,
-    marginBottom: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#FFFFFF",
   },
-  outlineBtn: {
+
+  actionBtn: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#7dd3fc",
-    borderRadius: 12,
     paddingVertical: 12,
+    borderRadius: 12,
     alignItems: "center",
-    backgroundColor: "#fff",
+    justifyContent: "center",
   },
-  outlineBtnText: { color: "#0ea5e9", fontWeight: "700" },
+
+  outlineBtn: {
+    borderWidth: 2,
+    borderColor: "#016B3A",
+    backgroundColor: "#FFFFFF",
+  },
+
+  outlineBtnText: {
+    color: "#016B3A",
+    fontWeight: "700",
+    fontSize: 13,
+  },
 });
