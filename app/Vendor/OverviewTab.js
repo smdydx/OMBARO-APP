@@ -1,150 +1,135 @@
-// Overview.js
 import React from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
 } from "react-native";
 import {
   CalendarDays,
   DollarSign,
   Star,
   Package,
-  Plus,
   Clock,
-  Settings,
-  Wallet,
-  Check,
-  AlertCircle,
+  TrendingUp,
 } from "lucide-react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function OverviewTab() {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Performance Overview */}
-      <Text style={styles.heading}>Performance Overview</Text>
-
-      <View style={styles.grid}>
-        <StatCard
-          icon={<Package size={18} color="#2563eb" />}
-          tint="#e0ecff"
-          label="Active Services"
-          value="24"
-          sub="+3 this month"
-        />
-        <StatCard
-          icon={<DollarSign size={18} color="#16a34a" />}
-          tint="#dcfce7"
-          label="Revenue (This Month)"
-          value="₹45,280"
-          sub="+18% growth"
-          big
-        />
-        <StatCard
-          icon={<CalendarDays size={18} color="#7c3aed" />}
-          tint="#efe2ff"
-          label="Total Bookings"
-          value="156"
-          sub="+12 this week"
-        />
-        <StatCard
-          icon={<Star size={18} color="#f59e0b" fill="#f59e0b" />}
-          tint="#fff7ed"
-          label="Avg. Rating"
-          value="4.7"
-          sub="Across 96 reviews"
-        />
+    <View style={styles.container}>
+      {/* Stats Section - Horizontal Swipe */}
+      <View style={styles.statsSection}>
+        <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
+          Performance Stats
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.statsContainer, isMobile && styles.statsContainerMobile]}
+          style={styles.statsScrollView}
+        >
+          <StatCard
+            icon={<Package color="#FFFFFF" size={24} />}
+            gradient={["#014D2A", "#016B3A"]}
+            label="Active Services"
+            value="24"
+            subtitle="+3 this month"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<DollarSign color="#FFFFFF" size={24} />}
+            gradient={["#016B3A", "#047857"]}
+            label="Revenue (This Month)"
+            value="₹45,280"
+            subtitle="+18% growth"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<CalendarDays color="#FFFFFF" size={24} />}
+            gradient={["#047857", "#10B981"]}
+            label="Total Bookings"
+            value="156"
+            subtitle="+12 this week"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<Star color="#FFFFFF" size={24} fill="#FFFFFF" />}
+            gradient={["#10B981", "#34D399"]}
+            label="Avg. Rating"
+            value="4.7"
+            subtitle="Across 96 reviews"
+            isMobile={isMobile}
+            width={width}
+          />
+          <StatCard
+            icon={<TrendingUp color="#FFFFFF" size={24} />}
+            gradient={["#34D399", "#6EE7B7"]}
+            label="Growth Rate"
+            value="+18%"
+            subtitle="vs last month"
+            isMobile={isMobile}
+            width={width}
+          />
+        </ScrollView>
       </View>
 
-      {/* Quick Actions */}
-      <Text style={styles.subheading}>Quick Actions</Text>
-      <View style={styles.actionsRow}>
-        <ActionBtn
-          icon={<Plus size={18} color="#fff" />}
-          label="Add Service"
-          bg="#0369a1"
-        />
-        <ActionBtn
-          icon={<Clock size={18} color="#0ea5e9" />}
-          label="Manage Slots"
-          outline
-        />
-        <ActionBtn
-          icon={<Wallet size={18} color="#22c55e" />}
-          label="Payouts"
-          outline
-        />
-        <ActionBtn
-          icon={<Settings size={18} color="#475569" />}
-          label="Settings"
-          outline
-        />
+      {/* Today's Schedule Section */}
+      <View style={[styles.scheduleSection, isMobile && styles.scheduleSectionMobile]}>
+        <Text style={[styles.sectionTitle, isMobile && styles.sectionTitleMobile]}>
+          Today's Schedule
+        </Text>
+        <View style={[styles.scheduleBox, isMobile && styles.scheduleBoxMobile]}>
+          <ScrollView
+            style={styles.scheduleScrollView}
+            contentContainerStyle={[styles.scheduleScrollContent, isMobile && styles.scheduleScrollContentMobile]}
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+          >
+            <ScheduleCard time="9:00 AM" client="Priya Singh" service="Swedish Massage" status="Confirmed" />
+            <ScheduleCard time="11:30 AM" client="Arjun Verma" service="Deep Tissue" status="Confirmed" />
+            <ScheduleCard time="2:00 PM" client="Break" service="—" status="Free" isFree />
+            <ScheduleCard time="3:30 PM" client="Aarav Mehta" service="Aromatherapy" status="Pending" />
+            <ScheduleCard time="5:00 PM" client="Riya Patel" service="Hot Stone" status="Confirmed" />
+            <ScheduleCard time="6:30 PM" client="Available" service="—" status="Free" isFree />
+          </ScrollView>
+        </View>
       </View>
-
-      {/* Today's Schedule */}
-      <Text style={styles.subheading}>Today's Schedule</Text>
-      <View style={styles.scheduleGrid}>
-        <ScheduleCard time="9:00 AM" client="Priya Singh" service="Swedish Massage" status="Confirmed" />
-        <ScheduleCard time="11:30 AM" client="Arjun Verma" service="Deep Tissue" status="Confirmed" />
-        <ScheduleCard time="2:00 PM" client="Available" service="Break" status="Free" isFree />
-        <ScheduleCard time="3:30 PM" client="Aarav Mehta" service="Aromatherapy" status="Pending" />
-        <ScheduleCard time="5:00 PM" client="Riya Patel" service="Hot Stone" status="Confirmed" />
-        <ScheduleCard time="6:30 PM" client="Available" service="Available" status="Free" isFree />
-      </View>
-
-      {/* Upcoming Bookings */}
-      <Text style={styles.subheading}>Upcoming Bookings</Text>
-      <View style={styles.cardList}>
-        <BookingItem
-          name="Aarav Mehta"
-          service="Aromatherapy Massage"
-          time="Today • 3:30 PM"
-          note="Room 2"
-        />
-        <BookingItem
-          name="Riya Patel"
-          service="Hot Stone Therapy"
-          time="Today • 5:00 PM"
-          note="Repeat client"
-        />
-        <BookingItem
-          name="Karan Sharma"
-          service="Deep Tissue Massage"
-          time="Tomorrow • 10:00 AM"
-        />
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
-/* --- Reusable bits --- */
-const StatCard = ({ icon, tint, label, value, sub, big }) => (
-  <View style={styles.statCard}>
-    <View style={[styles.iconWrap, { backgroundColor: tint }]}>{icon}</View>
-    <View style={{ flex: 1 }}>
-      <Text style={[styles.value, big && styles.valueBig]}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.sub}>{sub}</Text>
-    </View>
-  </View>
-);
-
-const ActionBtn = ({ icon, label, bg, outline }) => (
-  <TouchableOpacity
-    activeOpacity={0.85}
+const StatCard = ({ icon, gradient, label, value, subtitle, isMobile, width }) => (
+  <LinearGradient
+    colors={gradient}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 1 }}
     style={[
-      styles.actionBtn,
-      outline && styles.actionOutline,
-      bg && { backgroundColor: bg, borderColor: bg },
+      styles.statCard,
+      {
+        width: isMobile ? width * 0.75 : 280,
+        height: isMobile ? 130 : 150,
+        marginRight: 16,
+      },
     ]}
   >
-    <View style={[styles.actionIcon, outline && { backgroundColor: "#f1f5f9" }]}>
+    <View style={styles.statIconContainer}>
       {icon}
     </View>
-    <Text style={[styles.actionText, bg && { color: "#fff" }]}>{label}</Text>
-  </TouchableOpacity>
+    <View style={styles.statContent}>
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statSubtitle}>{subtitle}</Text>
+    </View>
+  </LinearGradient>
 );
 
 const ScheduleCard = ({ time, client, service, status, isFree }) => (
@@ -162,110 +147,185 @@ const ScheduleCard = ({ time, client, service, status, isFree }) => (
   </View>
 );
 
-const BookingItem = ({ name, service, time, note }) => (
-  <View style={styles.bookingCard}>
-    <View>
-      <Text style={styles.bookingName}>{name}</Text>
-      <Text style={styles.bookingService}>{service}</Text>
-      <Text style={styles.bookingTime}>{time}</Text>
-      {note ? <Text style={styles.bookingNote}>{note}</Text> : null}
-    </View>
-  </View>
-);
-
-/* --- Styles --- */
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: "#fff" },
-  heading: { fontSize: 18, fontWeight: "800", color: "#0f172a", marginBottom: 10 },
-
-  grid: { rowGap: 10 },
-  statCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "#eef2f7",
-    flexDirection: "row",
-    alignItems: "center",
+  container: {
+    flex: 1,
+    backgroundColor: "#F0FDF4",
   },
-  iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  value: { fontSize: 20, fontWeight: "800", color: "#0f172a" },
-  valueBig: { fontSize: 24 },
-  label: { fontSize: 14, color: "#334155" },
-  sub: { color: "#94a3b8", fontSize: 12, marginTop: 6 },
 
-  subheading: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#0f172a",
-    marginTop: 16,
+  statsSection: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    backgroundColor: "#F0FDF4",
+  },
+
+  statsContainerMobile: {
+    paddingRight: 8,
+  },
+
+  statsContainer: {
+    paddingRight: 16,
+  },
+
+  statsScrollView: {
     marginBottom: 8,
   },
 
-  actionsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
+  statCard: {
+    borderRadius: 20,
+    padding: 16,
+    justifyContent: "space-between",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
-  actionBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  actionOutline: { backgroundColor: "#fff" },
-  actionIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 8,
-  },
-  actionText: { fontWeight: "700", color: "#0f172a" },
 
-  scheduleGrid: { gap: 8, marginBottom: 8 },
+  statIconContainer: {
+    marginBottom: 12,
+  },
+
+  statContent: {
+    justifyContent: "flex-end",
+  },
+
+  statLabel: {
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.9)",
+    fontWeight: "500",
+    marginBottom: 6,
+  },
+
+  statValue: {
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#FFFFFF",
+    marginBottom: 4,
+  },
+
+  statSubtitle: {
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.8)",
+    fontWeight: "500",
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#014D2A",
+    marginBottom: 12,
+  },
+
+  sectionTitleMobile: {
+    fontSize: 16,
+  },
+
+  scheduleSection: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: "#FFFFFF",
+  },
+
+  scheduleSectionMobile: {
+    paddingHorizontal: 12,
+  },
+
+  scheduleBox: {
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    overflow: "hidden",
+  },
+
+  scheduleBoxMobile: {
+    borderRadius: 12,
+  },
+
+  scheduleScrollView: {
+    flex: 1,
+  },
+
+  scheduleScrollContent: {
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+  },
+
+  scheduleScrollContentMobile: {
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+  },
+
   scheduleCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 12,
+    marginBottom: 8,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#E5E7EB",
   },
-  scheduleCardFree: { backgroundColor: "#f0fdf4", borderColor: "#bbf7d0" },
-  scheduleTimeWrap: { marginRight: 12 },
-  scheduleTime: { fontSize: 13, fontWeight: "800", color: "#1e293b" },
-  scheduleClient: { fontSize: 13, fontWeight: "600", color: "#1e293b", marginBottom: 2 },
-  scheduleService: { fontSize: 12, color: "#64748b" },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, backgroundColor: "#f1f5f9" },
-  statusConfirmed: { backgroundColor: "#dcfce7" },
-  statusPending: { backgroundColor: "#fef3c7" },
-  statusFree: { backgroundColor: "#d1fae5" },
-  statusText: { fontSize: 10, fontWeight: "600", color: "#475569" },
 
-  cardList: { gap: 10 },
-  bookingCard: {
-    backgroundColor: "#f8fafc",
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: "#eef2f7",
+  scheduleCardFree: {
+    backgroundColor: "#F0FDF4",
+    borderColor: "#BBFCE7",
   },
-  bookingName: { fontWeight: "700", color: "#111827" },
-  bookingService: { fontSize: 12, color: "#475569", marginTop: 2 },
-  bookingTime: { fontSize: 12, color: "#64748b", marginTop: 2 },
-  bookingNote: { fontSize: 11, color: "#94a3b8", marginTop: 4 },
+
+  scheduleTimeWrap: {
+    marginRight: 12,
+    minWidth: 50,
+  },
+
+  scheduleTime: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "#1E293B",
+  },
+
+  scheduleClient: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1E293B",
+    marginBottom: 2,
+  },
+
+  scheduleService: {
+    fontSize: 12,
+    color: "#64748B",
+  },
+
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+    backgroundColor: "#F1F5F9",
+  },
+
+  statusConfirmed: {
+    backgroundColor: "#DCFCE7",
+  },
+
+  statusPending: {
+    backgroundColor: "#FEF3C7",
+  },
+
+  statusFree: {
+    backgroundColor: "#D1FAE5",
+  },
+
+  statusText: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#475569",
+  },
 });
