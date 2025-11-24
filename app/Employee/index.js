@@ -36,7 +36,6 @@ import Overview from "./Overview";
 import PendingApproval from "./pending-approval";
 import Report from "./report";
 import SpaManagement from "./spa-management";
-import Analytics from "./QuickAction/Analytics";
 import HrDocument from "./QuickAction/HrDocument";
 import LeaveManage from "./QuickAction/LeaveManage";
 import ManageSpa from "./QuickAction/manageSpa";
@@ -94,7 +93,6 @@ export default function EmployeeDashboard() {
       "My Profile": MyProfile,
       "Self Attendance": SelfAttendance,
       "Leave Management": LeaveManage,
-      "Analytics": Analytics,
       "HR Documents": HrDocument,
       "Review Approval": ReviewApproval,
       "Vendor Relations": VendorRelations,
@@ -111,7 +109,6 @@ export default function EmployeeDashboard() {
     { id: "my-profile", label: "My Profile", icon: User, tab: "My Profile", color: COLORS.primary },
     { id: "self-attendance", label: "Self Attendance", icon: UserCheck, tab: "Self Attendance", color: COLORS.primary },
     { id: "leave-management", label: "Leave Management", icon: Calendar, tab: "Leave Management", color: COLORS.primary },
-    { id: "analytics", label: "Analytics", icon: BarChart2, tab: "Analytics", color: COLORS.primary },
     { id: "hr-documents", label: "HR Documents", icon: FileSpreadsheet, tab: "HR Documents", color: COLORS.primary },
     { id: "review-approval", label: "Review Approval", icon: FileCheck, tab: "Review Approval", color: COLORS.primary },
     { id: "vendor-relations", label: "Vendor Relations", icon: Briefcase, tab: "Vendor Relations", color: COLORS.primary },

@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, Users, CheckCircle, Clock, UserPlus } from "lucide-react-native";
+import { ArrowLeft, Users, CheckCircle, Clock, UserPlus, Target, Briefcase } from "lucide-react-native";
+import { useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -25,6 +26,8 @@ const COLORS = {
   bg: "#FFFFFF",
   cardBg: "#F9FAFB",
   border: "#E5E7EB",
+  success: "#10B981",
+  warning: "#F59E0B",
 };
 
 function useScale() {
@@ -36,8 +39,8 @@ function useScale() {
 
 function OnboardingCard({ name, role, status, date, progress, sw }) {
   const statusConfig = {
-    pending: { color: "#F59E0B", icon: Clock, label: "In Progress" },
-    completed: { color: "#10B981", icon: CheckCircle, label: "Completed" },
+    pending: { color: COLORS.warning, icon: Clock, label: "In Progress" },
+    completed: { color: COLORS.success, icon: CheckCircle, label: "Completed" },
   };
 
   const config = statusConfig[status] || statusConfig.pending;
@@ -82,45 +85,82 @@ function OnboardingCard({ name, role, status, date, progress, sw }) {
         </View>
       </View>
 
-      <View style={{ gap: sw(6) }}>
-        <Text style={{ fontSize: sw(10), color: COLORS.textLight }}>Start Date: {date}</Text>
-        
-        {status === "pending" && (
-          <>
-            <View style={{
-              height: sw(5),
-              backgroundColor: "#E5E7EB",
-              borderRadius: sw(2.5),
-              overflow: "hidden",
-            }}>
-              <View style={{
-                width: `${progress}%`,
-                height: sw(5),
-                backgroundColor: COLORS.primaryLight,
-                borderRadius: sw(2.5),
-              }} />
-            </View>
-            <Text style={{ fontSize: sw(10), color: COLORS.textSecondary, fontWeight: "600" }}>
-              Progress: {progress}%
-            </Text>
-          </>
-        )}
+      <View style={{
+        height: sw(5),
+        backgroundColor: "#E5E7EB",
+        borderRadius: sw(2.5),
+        overflow: "hidden",
+        marginBottom: sw(6),
+      }}>
+        <View style={{
+          width: `${progress}%`,
+          height: sw(5),
+          backgroundColor: COLORS.primaryLight,
+          borderRadius: sw(2.5),
+        }} />
+      </View>
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <Text style={{ fontSize: sw(9), color: COLORS.textLight }}>Start: {date}</Text>
+        <Text style={{ fontSize: sw(10), fontWeight: "600", color: config.color }}>
+          {progress}% Complete
+        </Text>
       </View>
     </TouchableOpacity>
+  );
+}
+
+function TaskCard({ task, completed, sw }) {
+  return (
+    <View style={{
+      backgroundColor: COLORS.cardBg,
+      borderRadius: sw(12),
+      borderWidth: 1,
+      borderColor: completed ? COLORS.success : COLORS.border,
+      padding: sw(12),
+      marginBottom: sw(8),
+      flexDirection: "row",
+      alignItems: "center",
+      opacity: completed ? 0.6 : 1,
+    }}>
+      <TouchableOpacity style={{
+        width: sw(24),
+        height: sw(24),
+        borderRadius: sw(12),
+        borderWidth: 2,
+        borderColor: completed ? COLORS.success : COLORS.border,
+        backgroundColor: completed ? COLORS.success : "transparent",
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: sw(10),
+      }}>
+        {completed && <CheckCircle size={sw(14)} color="#FFFFFF" strokeWidth={2.5} fill={COLORS.success} />}
+      </TouchableOpacity>
+      <Text style={{ fontSize: sw(12), fontWeight: completed ? "500" : "600", color: COLORS.text, flex: 1, textDecorationLine: completed ? "line-through" : "none" }}>
+        {task}
+      </Text>
+    </View>
   );
 }
 
 export default function Onboarding({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
-
-  const headerHeight = height * 0.333;
-  const contentHeight = height * 0.667;
+  const [activeTab, setActiveTab] = useState("Employees");
 
   const employees = [
     { id: 1, name: "Anjali Desai", role: "Spa Therapist", status: "pending", date: "Jan 20, 2025", progress: 65 },
     { id: 2, name: "Vikram Singh", role: "Receptionist", status: "completed", date: "Jan 15, 2025", progress: 100 },
     { id: 3, name: "Meera Kapoor", role: "Beautician", status: "pending", date: "Jan 22, 2025", progress: 40 },
+  ];
+
+  const onboardingTasks = [
+    { task: "Document Collection", completed: true },
+    { task: "Background Verification", completed: true },
+    { task: "System Access Setup", completed: true },
+    { task: "Training Enrollment", completed: false },
+    { task: "Certification Verification", completed: false },
+    { task: "First Shift Assignment", completed: false },
   ];
 
   return (
@@ -136,66 +176,182 @@ export default function Onboarding({ onBack }) {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
-          height: headerHeight,
-          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(20),
+          paddingTop: Platform.OS === 'ios' ? sw(50) : sw(40),
+          paddingBottom: sw(24),
           paddingHorizontal: sw(20),
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
-          <TouchableOpacity 
-            onPress={() => onBack ? onBack() : nav.goBack()} 
-            style={{
-              width: sw(42),
-              height: sw(42),
-              borderRadius: sw(21),
-              backgroundColor: "rgba(255,255,255,0.2)",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <ArrowLeft size={sw(20)} color="#FFFFFF" strokeWidth={2.5} />
-          </TouchableOpacity>
-          <View style={{ flex: 1, alignItems: "center", marginRight: sw(42) }}>
-            <Text style={{ color: "#FFFFFF", fontSize: sw(20), fontWeight: "800",marginTop:sw(50)  }}>Onboarding</Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", fontSize: sw(12), marginTop: sw(2) }}>
-              New Employee Management
-            </Text>
-          </View>
-        </View>
-
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: sw(10) }}>
-          <TouchableOpacity style={{
-            flexDirection: "row",
+        <TouchableOpacity 
+          onPress={() => onBack ? onBack() : nav.goBack()} 
+          style={{
+            width: sw(40),
+            height: sw(40),
+            borderRadius: sw(20),
+            backgroundColor: "rgba(255,255,255,0.2)",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#FFFFFF",
-            borderRadius: sw(14),
-            paddingVertical: sw(12),
-            paddingHorizontal: sw(16),
-          }}>
-            <UserPlus size={sw(18)} color={COLORS.primary} strokeWidth={2.5} />
-            <Text style={{ fontSize: sw(13), color: COLORS.primary, fontWeight: "700", marginLeft: sw(8) }}>
-              Add New Employee
-            </Text>
-          </TouchableOpacity>
+            marginBottom: sw(12),
+          }}
+        >
+          <ArrowLeft size={sw(22)} color="#FFFFFF" strokeWidth={2.5} />
+        </TouchableOpacity>
+
+        <View style={{ alignItems: "center", marginBottom: sw(16) }}>
+          <Text style={{ color: "#FFFFFF", fontSize: sw(16), fontWeight: "800", marginBottom: sw(5), textAlign: "center" }}>
+            Onboarding
+          </Text>
+          <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: sw(10), textAlign: "center" }}>
+            Manage new employee onboarding process
+          </Text>
+        </View>
+
+        <View style={{
+          backgroundColor: "rgba(255,255,255,0.15)",
+          borderRadius: sw(12),
+          padding: sw(4),
+          flexDirection: "row",
+          gap: sw(4),
+        }}>
+          {["Employees", "Checklist"].map((label) => (
+            <TouchableOpacity
+              key={label}
+              onPress={() => setActiveTab(label)}
+              style={{
+                flex: 1,
+                paddingVertical: sw(10),
+                paddingHorizontal: sw(8),
+                borderRadius: sw(10),
+                backgroundColor: activeTab === label ? "#FFFFFF" : "transparent",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{
+                color: activeTab === label ? COLORS.primary : "#FFFFFF",
+                fontWeight: activeTab === label ? "700" : "600",
+                fontSize: sw(11),
+              }}>
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </LinearGradient>
 
-      <View style={{ 
-        height: contentHeight,
-        backgroundColor: COLORS.white,
-        borderTopLeftRadius: sw(28),
-        borderTopRightRadius: sw(28),
-        marginTop: -sw(1),
-      }}>
+      <View style={{ flex: 1, backgroundColor: COLORS.bg, borderTopLeftRadius: sw(24), borderTopRightRadius: sw(24), marginTop: 0 }}>
         <ScrollView 
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingTop: sw(18), paddingHorizontal: sw(16), paddingBottom: sw(120) }} 
+          contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(16), paddingBottom: sw(120) }} 
           showsVerticalScrollIndicator={false}
         >
-          {employees.map((employee) => (
-            <OnboardingCard key={employee.id} {...employee} sw={sw} />
-          ))}
+          {activeTab === "Employees" && (
+            <>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: sw(12) }}>
+                <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text }}>
+                  New Employees
+                </Text>
+                <TouchableOpacity style={{
+                  backgroundColor: COLORS.primary,
+                  borderRadius: sw(8),
+                  paddingHorizontal: sw(12),
+                  paddingVertical: sw(6),
+                  flexDirection: "row",
+                  gap: sw(4),
+                  alignItems: "center",
+                }}>
+                  <UserPlus size={sw(13)} color="#FFFFFF" strokeWidth={2.5} />
+                  <Text style={{ fontSize: sw(10), fontWeight: "700", color: "#FFFFFF" }}>
+                    Add Employee
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Stats */}
+              <View style={{
+                backgroundColor: COLORS.cardBg,
+                borderRadius: sw(12),
+                borderWidth: 1,
+                borderColor: COLORS.border,
+                padding: sw(12),
+                flexDirection: "row",
+                justifyContent: "space-around",
+                marginBottom: sw(16),
+              }}>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.warning }}>2</Text>
+                  <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginTop: sw(2) }}>In Progress</Text>
+                </View>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.success }}>1</Text>
+                  <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginTop: sw(2) }}>Completed</Text>
+                </View>
+                <View style={{ alignItems: "center" }}>
+                  <Text style={{ fontSize: sw(14), fontWeight: "800", color: COLORS.primary }}>3</Text>
+                  <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginTop: sw(2) }}>Total</Text>
+                </View>
+              </View>
+
+              {employees.map((emp, idx) => (
+                <OnboardingCard key={idx} {...emp} sw={sw} />
+              ))}
+            </>
+          )}
+
+          {activeTab === "Checklist" && (
+            <>
+              <View style={{
+                backgroundColor: COLORS.cardBg,
+                borderRadius: sw(12),
+                borderWidth: 1,
+                borderColor: COLORS.border,
+                padding: sw(12),
+                marginBottom: sw(16),
+              }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: sw(8), marginBottom: sw(10) }}>
+                  <Target size={sw(16)} color={COLORS.primary} strokeWidth={2.5} />
+                  <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>Onboarding Checklist</Text>
+                </View>
+                <View style={{
+                  height: sw(6),
+                  backgroundColor: "#E5E7EB",
+                  borderRadius: sw(3),
+                  overflow: "hidden",
+                  marginBottom: sw(6),
+                }}>
+                  <View style={{
+                    width: "50%",
+                    height: sw(6),
+                    backgroundColor: COLORS.success,
+                    borderRadius: sw(3),
+                  }} />
+                </View>
+                <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
+                  3 of 6 tasks completed (50%)
+                </Text>
+              </View>
+
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
+                Standard Tasks
+              </Text>
+              {onboardingTasks.map((item, idx) => (
+                <TaskCard key={idx} task={item.task} completed={item.completed} sw={sw} />
+              ))}
+
+              <TouchableOpacity style={{
+                backgroundColor: COLORS.primary,
+                borderRadius: sw(10),
+                paddingVertical: sw(12),
+                alignItems: "center",
+                marginTop: sw(16),
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: sw(8),
+              }}>
+                <CheckCircle size={sw(16)} color="#FFFFFF" strokeWidth={2.5} />
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: "#FFFFFF" }}>
+                  Update Checklist
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </ScrollView>
       </View>
     </View>
