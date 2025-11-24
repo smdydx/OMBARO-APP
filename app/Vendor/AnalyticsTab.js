@@ -81,10 +81,14 @@ export default function AnalyticsTab() {
       {/* Action Buttons */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={[styles.actionBtn, styles.outlineBtn]}>
-          <Text style={styles.outlineBtnText}>📊 Export Report</Text>
+          <Text style={styles.outlineBtnText} numberOfLines={1}>
+            📊 Export
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.actionBtn, styles.outlineBtn]}>
-          <Text style={styles.outlineBtnText}>📈 View Detailed Analytics</Text>
+          <Text style={styles.outlineBtnText} numberOfLines={1}>
+            📈 View Details
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -198,19 +202,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 9,
   },
 
   label: {
-    fontSize: 12,
+    fontSize: 11,
     color: "rgba(255, 255, 255, 0.85)",
     fontWeight: "500",
+    flex: 1,
+    marginRight: 8,
   },
 
   value: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#FFFFFF",
     fontWeight: "600",
+    textAlign: "right",
   },
 
   highlightValue: {
@@ -224,18 +231,20 @@ const styles = StyleSheet.create({
 
   actionsContainer: {
     flexDirection: "row",
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
     backgroundColor: "#FFFFFF",
   },
 
   actionBtn: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 44,
   },
 
   outlineBtn: {
@@ -247,6 +256,7 @@ const styles = StyleSheet.create({
   outlineBtnText: {
     color: "#016B3A",
     fontWeight: "700",
-    fontSize: 13,
+    fontSize: 11,
+    textAlign: "center",
   },
 });
