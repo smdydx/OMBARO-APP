@@ -104,7 +104,7 @@ const AnalyticsCard = ({ icon, gradient, title, rows, isMobile, width }) => (
       styles.card,
       {
         width: isMobile ? width * 0.75 : 280,
-        height: isMobile ? 130 : 150,
+        height: isMobile ? 160 : 150,
         marginRight: 16,
       },
     ]}
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
 
   card: {
     borderRadius: 20,
-    padding: 16,
+    padding: 12,
     justifyContent: "space-between",
     ...Platform.select({
       ios: {
@@ -186,14 +186,14 @@ const styles = StyleSheet.create({
   },
 
   cardHeader: {
-    marginBottom: 8,
+    marginBottom: 6,
   },
 
   cardTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "800",
     color: "#FFFFFF",
-    marginTop: 6,
+    marginTop: 4,
   },
 
   cardContent: {
@@ -205,15 +205,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: 5,
   },
 
   label: {
-    fontSize: 9,
+    fontSize: 10,
     color: "rgba(255, 255, 255, 0.85)",
     fontWeight: "500",
     flex: 1,
-    marginRight: 6,
+    marginRight: 4,
   },
 
   value: {
