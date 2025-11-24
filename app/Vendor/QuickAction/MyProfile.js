@@ -108,7 +108,7 @@ export default function MyProfile({ onBack }) {
   const nav = useNavigation();
 
   const isMobile = width < 480;
-  const headerHeight = isMobile ? height * 0.42 : height * 0.35;
+  const headerHeight = height * 0.333;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
