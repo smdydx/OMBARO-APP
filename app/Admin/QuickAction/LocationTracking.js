@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, MapPin, Navigation, Search, ChevronDown, Plus, Filter } from "lucide-react-native";
+import { ArrowLeft, MapPin, Navigation, Search, ChevronDown, Plus, Filter, Share2, Zap, Copy } from "lucide-react-native";
 import { Platform, ScrollView, StatusBar, Text, TouchableOpacity, useWindowDimensions, View, TextInput } from "react-native";
 import { useState } from "react";
 
@@ -51,7 +51,11 @@ export default function LocationTracking({ onBack }) {
   const nav = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("All");
+  const [locationEnabled, setLocationEnabled] = useState(true);
+  const [showCopied, setShowCopied] = useState(false);
   const isMobile = width < 500;
+
+  const currentLocation = { lat: "12.9716°N", lon: "77.5946°E", address: "Ombarc Beauty & Wellness Hub, Bangalore" };
 
   const allEmployees = [
     { id: 1, name: "John Doe", role: "EMP001 • Spa Manager", status: "Check in", time: "Just now", statusColor: COLORS.success, isActive: true },
@@ -90,7 +94,57 @@ export default function LocationTracking({ onBack }) {
         </View>
       </LinearGradient>
       
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(16), paddingBottom: sw(100) }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: sw(16), paddingTop: sw(14), paddingBottom: sw(100) }} showsVerticalScrollIndicator={false}>
+        {/* Share Your Location Section */}
+        <LinearGradient colors={["#00FF8715", "#016B3A10"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: sw(14), overflow: "hidden", marginBottom: sw(16) }}>
+          <View style={{ backgroundColor: "rgba(255,255,255,0.96)", borderRadius: sw(14), borderWidth: 1, borderColor: COLORS.primaryLight, padding: sw(12) }}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(10) }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sw(8) }}>
+                <View style={{ width: sw(36), height: sw(36), borderRadius: sw(18), backgroundColor: COLORS.success, alignItems: "center", justifyContent: "center" }}>
+                  <Zap size={sw(16)} color="#FFFFFF" strokeWidth={2.5} />
+                </View>
+                <Text style={{ fontSize: sw(12), fontWeight: "800", color: COLORS.text }}>Share Your Location</Text>
+              </View>
+              <TouchableOpacity onPress={() => setLocationEnabled(!locationEnabled)} style={{ width: sw(48), height: sw(24), borderRadius: sw(12), backgroundColor: locationEnabled ? COLORS.success : COLORS.inactive, alignItems: "center", justifyContent: "center", flexDirection: "row", paddingHorizontal: sw(2) }}>
+                <View style={{ width: sw(20), height: sw(20), borderRadius: sw(10), backgroundColor: "#FFFFFF", marginLeft: locationEnabled ? sw(24) : 0 }} />
+              </TouchableOpacity>
+            </View>
+            
+            {locationEnabled && (
+              <>
+                <View style={{ backgroundColor: "#E0F1FF", borderRadius: sw(10), padding: sw(10), marginBottom: sw(10) }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(8) }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: sw(6) }}>
+                      <MapPin size={sw(14)} color={COLORS.primary} strokeWidth={2.5} />
+                      <Text style={{ fontSize: sw(9), color: COLORS.textSecondary, fontWeight: "600" }}>Current Location</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => { setShowCopied(true); setTimeout(() => setShowCopied(false), 2000); }} style={{ backgroundColor: "rgba(1, 107, 58, 0.1)", paddingHorizontal: sw(8), paddingVertical: sw(4), borderRadius: sw(6), flexDirection: "row", alignItems: "center", gap: sw(4) }}>
+                      <Copy size={sw(10)} color={COLORS.primary} strokeWidth={2} />
+                      <Text style={{ fontSize: sw(8), color: COLORS.primary, fontWeight: "600" }}>{showCopied ? "Copied" : "Copy"}</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginBottom: sw(4) }}>{currentLocation.address}</Text>
+                  <View style={{ backgroundColor: "rgba(255,255,255,0.8)", borderRadius: sw(6), padding: sw(6) }}>
+                    <Text style={{ fontSize: sw(8), color: COLORS.textSecondary, fontFamily: "monospace" }}>📍 {currentLocation.lat} {currentLocation.lon}</Text>
+                  </View>
+                </View>
+                
+                <View style={{ flexDirection: "row", gap: sw(6) }}>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: `${COLORS.success}20`, borderRadius: sw(8), paddingVertical: sw(8), alignItems: "center", flexDirection: "row", justifyContent: "center", gap: sw(4) }}>
+                    <Navigation size={sw(12)} color={COLORS.success} strokeWidth={2} />
+                    <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.success }}>View Map</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: `${COLORS.primary}20`, borderRadius: sw(8), paddingVertical: sw(8), alignItems: "center", flexDirection: "row", justifyContent: "center", gap: sw(4) }}>
+                    <Share2 size={sw(12)} color={COLORS.primary} strokeWidth={2} />
+                    <Text style={{ fontSize: sw(9), fontWeight: "700", color: COLORS.primary }}>Share</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
+          </View>
+        </LinearGradient>
+
+        {/* Employees List Section */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: sw(14) }}>
           <View style={{ flexDirection: "row", backgroundColor: "#FFFFFF", borderRadius: sw(10), padding: sw(4), gap: sw(4) }}>
             {["All", "Active", "Inactive"].map((tab) => (
