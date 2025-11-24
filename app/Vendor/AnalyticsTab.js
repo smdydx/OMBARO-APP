@@ -103,25 +103,27 @@ const AnalyticsCard = ({ icon, gradient, title, rows, isMobile, width }) => (
     style={[
       styles.card,
       {
-        width: isMobile ? width * 0.75 : 300,
+        width: isMobile ? width * 0.75 : 280,
+        height: isMobile ? 130 : 150,
         marginRight: 16,
       },
     ]}
   >
     <View style={styles.cardHeader}>
       {icon}
-      <Text style={styles.cardTitle}>{title}</Text>
+      <Text style={styles.cardTitle} numberOfLines={1}>{title}</Text>
     </View>
     <View style={styles.cardContent}>
       {rows.map((row, idx) => (
         <View key={idx} style={styles.row}>
-          <Text style={styles.label}>{row.label}</Text>
+          <Text style={styles.label} numberOfLines={1}>{row.label}</Text>
           <Text
             style={[
               styles.value,
               row.highlight && styles.highlightValue,
               row.bold && styles.boldValue,
             ]}
+            numberOfLines={1}
           >
             {row.value}
           </Text>
@@ -184,37 +186,38 @@ const styles = StyleSheet.create({
   },
 
   cardHeader: {
-    marginBottom: 14,
+    marginBottom: 8,
   },
 
   cardTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "800",
     color: "#FFFFFF",
-    marginTop: 10,
+    marginTop: 6,
   },
 
   cardContent: {
     justifyContent: "flex-end",
+    flex: 1,
   },
 
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 9,
+    marginBottom: 4,
   },
 
   label: {
-    fontSize: 11,
+    fontSize: 9,
     color: "rgba(255, 255, 255, 0.85)",
     fontWeight: "500",
     flex: 1,
-    marginRight: 8,
+    marginRight: 6,
   },
 
   value: {
-    fontSize: 13,
+    fontSize: 11,
     color: "#FFFFFF",
     fontWeight: "600",
     textAlign: "right",
@@ -222,7 +225,7 @@ const styles = StyleSheet.create({
 
   highlightValue: {
     fontWeight: "800",
-    fontSize: 15,
+    fontSize: 12,
   },
 
   boldValue: {
