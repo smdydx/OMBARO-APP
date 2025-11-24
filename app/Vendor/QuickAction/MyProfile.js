@@ -1,16 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, Building2, Mail, Phone, MapPin, Clock, Star, Edit3 } from "lucide-react-native";
+import { ArrowLeft, Building2, Mail, Phone, MapPin, Clock, Star, Upload, Check } from "lucide-react-native";
 import {
-    Platform,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useWindowDimensions,
-    View,
-    TouchableOpacity,
-    ScrollView,
-    TextInput,
+  Platform,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+  ScrollView,
+  TextInput,
+  FlatList,
 } from "react-native";
 import { useState } from "react";
 
@@ -37,102 +37,395 @@ function useScale() {
   return { sw, width, height };
 }
 
-function InfoRow({ icon: Icon, label, value, sw, isLast }) {
+const TABS = [
+  { id: "info", label: "Info", icon: "📋" },
+  { id: "contact", label: "Contact Details", icon: "📞" },
+  { id: "location", label: "Location", icon: "📍" },
+  { id: "hours", label: "Operating Hours", icon: "🕒" },
+  { id: "banking", label: "Banking Details", icon: "🏦" },
+  { id: "documents", label: "Documents", icon: "📄" },
+];
+
+function TabHeader({ tabs, activeTab, onTabPress, sw }) {
+  const scrollViewRef = useState(null)[1];
+  
   return (
-    <View 
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: sw(10),
-        borderBottomWidth: isLast ? 0 : 1,
-        borderBottomColor: "#F3F4F6",
-      }}
-    >
-      <View style={{ 
-        width: sw(32), 
-        height: sw(32), 
-        borderRadius: sw(16), 
-        backgroundColor: `${COLORS.primary}10`,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: sw(10)
-      }}>
-        <Icon size={sw(15)} color={COLORS.primary} strokeWidth={2.5} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={{ 
-          color: COLORS.textLight, 
-          fontSize: sw(9), 
-          marginBottom: sw(3),
-          fontWeight: "500",
-          letterSpacing: 0.3,
-        }}>
-          {label}
-        </Text>
-        <Text style={{ 
-          color: COLORS.text, 
-          fontSize: sw(12), 
-          fontWeight: "600", 
-        }}>
-          {value}
-        </Text>
-      </View>
+    <View style={{ 
+      backgroundColor: COLORS.cardBg, 
+      borderBottomWidth: 1, 
+      borderBottomColor: COLORS.border,
+      paddingVertical: sw(8),
+      paddingHorizontal: sw(16),
+    }}>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+      >
+        <View style={{ flexDirection: "row", gap: sw(8) }}>
+          {tabs.map((tab) => (
+            <TouchableOpacity
+              key={tab.id}
+              onPress={() => onTabPress(tab.id)}
+              style={{
+                paddingHorizontal: sw(12),
+                paddingVertical: sw(8),
+                borderBottomWidth: 2,
+                borderBottomColor: activeTab === tab.id ? COLORS.primary : "transparent",
+              }}
+            >
+              <Text style={{
+                fontSize: sw(12),
+                fontWeight: activeTab === tab.id ? "800" : "600",
+                color: activeTab === tab.id ? COLORS.primary : COLORS.textSecondary,
+              }}>
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
-function StatCard({ label, value, sw }) {
+function InfoTab({ sw }) {
   return (
-    <View style={{
-      flex: 1,
-      minWidth: sw(90),
-      backgroundColor: COLORS.cardBg,
-      borderRadius: sw(12),
-      borderWidth: 1,
-      borderColor: COLORS.border,
-      padding: sw(12),
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: sw(80),
-    }}>
-      <Text style={{ fontSize: sw(22), fontWeight: "800", color: COLORS.primary }}>
-        {value}
-      </Text>
-      <Text style={{ fontSize: sw(9), color: COLORS.textSecondary, marginTop: sw(4), textAlign: "center" }}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(16) }}>
+        <View style={{
+          backgroundColor: COLORS.cardBg,
+          borderRadius: sw(12),
+          padding: sw(16),
+          alignItems: "center",
+          borderWidth: 1,
+          borderColor: COLORS.border,
+        }}>
+          <View style={{
+            width: sw(80),
+            height: sw(80),
+            borderRadius: sw(12),
+            backgroundColor: `${COLORS.primary}15`,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: sw(12),
+          }}>
+            <Building2 size={sw(40)} color={COLORS.primary} strokeWidth={2} />
+          </View>
+          <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(8) }}>
+            Upload your business logo
+          </Text>
+          <TouchableOpacity style={{
+            borderWidth: 1,
+            borderColor: COLORS.primary,
+            borderRadius: sw(8),
+            paddingHorizontal: sw(16),
+            paddingVertical: sw(8),
+          }}>
+            <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.primary }}>
+              Upload Logo
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <FormField label="Business Name" value="Ombarc Spa & Wellness" placeholder="Enter business name" sw={sw} />
+        
+        <View>
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
+            Business Type
+          </Text>
+          <View style={{
+            borderWidth: 1,
+            borderColor: COLORS.border,
+            borderRadius: sw(10),
+            paddingHorizontal: sw(12),
+            paddingVertical: sw(12),
+            backgroundColor: COLORS.bg,
+          }}>
+            <Text style={{ fontSize: sw(12), color: COLORS.text }}>Spa & Wellness</Text>
+          </View>
+        </View>
+
+        <View>
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
+            Partner Type
+          </Text>
+          <View style={{
+            borderWidth: 1,
+            borderColor: COLORS.border,
+            borderRadius: sw(10),
+            paddingHorizontal: sw(12),
+            paddingVertical: sw(12),
+            backgroundColor: COLORS.bg,
+          }}>
+            <Text style={{ fontSize: sw(12), color: COLORS.text }}>Franchise</Text>
+          </View>
+        </View>
+
+        <FormField 
+          label="Business Description" 
+          value="Premium spa and wellness center offering massage therapy, beauty treatments, and wellness services."
+          placeholder="Describe your business..."
+          multiline
+          sw={sw} 
+        />
+      </View>
+    </ScrollView>
+  );
+}
+
+function ContactDetailsTab({ sw }) {
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(12) }}>
+        <FormField label="Contact Person Name" value="Rajesh Kumar" placeholder="Enter name" sw={sw} />
+        <FormField label="Contact Mobile" value="+91 98765 43210" placeholder="Enter phone" sw={sw} />
+        <FormField label="Contact Email" value="rajesh@ombarc.com" placeholder="Enter email" sw={sw} />
+        <FormField label="Alternate Phone" value="+91 98765 43211" placeholder="Enter alternate phone" sw={sw} />
+        <FormField label="Website" value="www.ombarc.com" placeholder="Enter website" sw={sw} />
+      </View>
+    </ScrollView>
+  );
+}
+
+function LocationTab({ sw }) {
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(12) }}>
+        <FormField label="Address Line 1" value="123 Wellness Avenue" placeholder="Enter address" sw={sw} />
+        <FormField label="Address Line 2" value="Bandra West" placeholder="Enter address" sw={sw} />
+        
+        <View style={{ flexDirection: "row", gap: sw(12) }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>City</Text>
+            <View style={{
+              borderWidth: 1,
+              borderColor: COLORS.border,
+              borderRadius: sw(10),
+              paddingHorizontal: sw(12),
+              paddingVertical: sw(10),
+            }}>
+              <Text style={{ fontSize: sw(12), color: COLORS.text }}>Mumbai</Text>
+            </View>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>State</Text>
+            <View style={{
+              borderWidth: 1,
+              borderColor: COLORS.border,
+              borderRadius: sw(10),
+              paddingHorizontal: sw(12),
+              paddingVertical: sw(10),
+            }}>
+              <Text style={{ fontSize: sw(12), color: COLORS.text }}>Maharashtra</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={{ flexDirection: "row", gap: sw(12) }}>
+          <View style={{ flex: 1 }}>
+            <FormField label="PIN Code" value="400050" placeholder="Enter PIN" sw={sw} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>Country</Text>
+            <View style={{
+              borderWidth: 1,
+              borderColor: COLORS.border,
+              borderRadius: sw(10),
+              paddingHorizontal: sw(12),
+              paddingVertical: sw(10),
+            }}>
+              <Text style={{ fontSize: sw(12), color: COLORS.text }}>India</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={{
+          backgroundColor: "#E3F2FD",
+          borderRadius: sw(10),
+          padding: sw(12),
+          borderLeftWidth: 4,
+          borderLeftColor: COLORS.primary,
+        }}>
+          <Text style={{ fontSize: sw(11), color: COLORS.primary, fontWeight: "600" }}>
+            💡 Accurate location information helps customers find your business easily.
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+function OperatingHoursTab({ sw }) {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(12) }}>
+        {days.map((day) => (
+          <View key={day} style={{
+            backgroundColor: COLORS.cardBg,
+            borderRadius: sw(10),
+            padding: sw(12),
+            borderWidth: 1,
+            borderColor: COLORS.border,
+          }}>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: sw(8) }}>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text }}>{day}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{
+                  width: sw(18),
+                  height: sw(18),
+                  borderRadius: sw(3),
+                  backgroundColor: COLORS.primary,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: sw(6),
+                }}>
+                  <Check size={sw(12)} color="white" strokeWidth={3} />
+                </View>
+                <Text style={{ fontSize: sw(11), color: COLORS.textSecondary }}>Open</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: sw(8) }}>
+              <View style={{ flex: 1, borderWidth: 1, borderColor: COLORS.border, borderRadius: sw(8), paddingHorizontal: sw(8), paddingVertical: sw(6) }}>
+                <Text style={{ fontSize: sw(11), color: COLORS.text }}>09:00 AM</Text>
+              </View>
+              <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.textSecondary }}>to</Text>
+              <View style={{ flex: 1, borderWidth: 1, borderColor: COLORS.border, borderRadius: sw(8), paddingHorizontal: sw(8), paddingVertical: sw(6) }}>
+                <Text style={{ fontSize: sw(11), color: COLORS.text }}>09:00 PM</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+
+function BankingDetailsTab({ sw }) {
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(12) }}>
+        <FormField label="Bank Name" value="HDFC Bank" placeholder="Enter bank name" sw={sw} />
+        <FormField label="Account Holder Name" value="Ombarc Spa Private Ltd" placeholder="Enter account holder name" sw={sw} />
+        <FormField label="Account Number" value="1234567890123456" placeholder="Enter account number" sw={sw} />
+        <FormField label="IFSC Code" value="HDFC0000123" placeholder="Enter IFSC code" sw={sw} />
+        <FormField label="GST Number" value="27AABCT1234H2Z0" placeholder="Enter GST number" sw={sw} />
+        <FormField label="PAN Number" value="AAABP1234C" placeholder="Enter PAN number" sw={sw} />
+      </View>
+    </ScrollView>
+  );
+}
+
+function DocumentsTab({ sw }) {
+  const documents = [
+    { name: "Business Registration Certificate", formats: "PDF, DOC (Max 5MB)" },
+    { name: "GST Certificate", formats: "PDF, DOC (Max 5MB)" },
+    { name: "Trade License", formats: "PDF, DOC (Max 5MB)" },
+    { name: "PAN Card", formats: "PDF, JPG, PNG (Max 2MB)" },
+  ];
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: sw(80) }}>
+      <View style={{ padding: sw(16), gap: sw(12) }}>
+        {documents.map((doc, idx) => (
+          <View key={idx} style={{
+            backgroundColor: COLORS.cardBg,
+            borderRadius: sw(10),
+            padding: sw(12),
+            borderWidth: 1,
+            borderColor: COLORS.border,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <View>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(3) }}>
+                {doc.name}
+              </Text>
+              <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
+                {doc.formats}
+              </Text>
+            </View>
+            <TouchableOpacity style={{
+              borderWidth: 1,
+              borderColor: COLORS.primary,
+              borderRadius: sw(8),
+              paddingHorizontal: sw(14),
+              paddingVertical: sw(6),
+            }}>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.primary }}>
+                Upload
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+
+function FormField({ label, value, placeholder, multiline, sw }) {
+  return (
+    <View>
+      <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
         {label}
       </Text>
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: COLORS.border,
+          borderRadius: sw(10),
+          paddingHorizontal: sw(12),
+          paddingVertical: multiline ? sw(10) : sw(10),
+          fontSize: sw(12),
+          color: COLORS.text,
+          backgroundColor: COLORS.bg,
+          minHeight: multiline ? sw(80) : sw(40),
+        }}
+        placeholder={placeholder}
+        placeholderTextColor={COLORS.textLight}
+        defaultValue={value}
+        multiline={multiline}
+        editable
+      />
     </View>
   );
 }
 
 export default function MyProfile({ onBack }) {
   const { sw, width, height } = useScale();
-  const nav = useNavigation();
-  const [isEditing, setIsEditing] = useState(false);
-  const [businessName, setBusinessName] = useState("Ombarc Spa & Wellness");
-  const [email, setEmail] = useState("vendor@ombarc.com");
-  const [phone, setPhone] = useState("+91 98765 43210");
-  const [location, setLocation] = useState("Mumbai, Maharashtra");
-  const [hours, setHours] = useState("9:00 AM - 9:00 PM");
+  const [activeTab, setActiveTab] = useState("info");
 
-  const handleSave = () => {
-    setIsEditing(false);
-    alert("Business information updated successfully!");
+  const headerHeight = height * 0.25;
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "info":
+        return <InfoTab sw={sw} />;
+      case "contact":
+        return <ContactDetailsTab sw={sw} />;
+      case "location":
+        return <LocationTab sw={sw} />;
+      case "hours":
+        return <OperatingHoursTab sw={sw} />;
+      case "banking":
+        return <BankingDetailsTab sw={sw} />;
+      case "documents":
+        return <DocumentsTab sw={sw} />;
+      default:
+        return <InfoTab sw={sw} />;
+    }
   };
-
-  const isMobile = width < 480;
-  const headerHeight = height * 0.333;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
-      <StatusBar 
-        barStyle="light-content" 
-        backgroundColor={COLORS.gradient2}
-      />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.gradient2} />
 
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3, COLORS.gradient4]}
-        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(15), paddingHorizontal: sw(20) }}
+        style={{ height: headerHeight, justifyContent: "space-between", paddingBottom: sw(12), paddingHorizontal: sw(20) }}
       >
         <View style={{ paddingTop: Platform.OS === "ios" ? sw(50) : sw(40) }}>
           <TouchableOpacity
@@ -150,28 +443,26 @@ export default function MyProfile({ onBack }) {
           </TouchableOpacity>
         </View>
 
-        <View style={{ alignItems: "center", flex: 1, justifyContent: "flex-end", paddingBottom: sw(8) }}>
+        <View style={{ alignItems: "center", paddingBottom: sw(8) }}>
           <View style={{
-            width: sw(70),
-            height: sw(70),
-            borderRadius: sw(35),
+            width: sw(60),
+            height: sw(60),
+            borderRadius: sw(16),
             backgroundColor: "rgba(255,255,255,0.2)",
             alignItems: "center",
             justifyContent: "center",
             marginBottom: sw(8),
-            borderWidth: 2,
-            borderColor: "rgba(255,255,255,0.3)",
           }}>
-            <Building2 size={sw(34)} color="#FFFFFF" strokeWidth={2.5} />
+            <Building2 size={sw(32)} color="#FFFFFF" strokeWidth={2.5} />
           </View>
           <Text style={{ 
             fontSize: sw(16), 
             fontWeight: "800", 
             color: "#FFFFFF",
-            marginBottom: sw(5),
+            marginBottom: sw(4),
             textAlign: "center",
           }} numberOfLines={1}>
-            Ombarc Spa & Wellness
+            My Profile
           </Text>
           <View style={{ 
             flexDirection: "row", 
@@ -189,85 +480,10 @@ export default function MyProfile({ onBack }) {
         </View>
       </LinearGradient>
 
-      <View style={{
-        flex: 1,
-        backgroundColor: COLORS.bg,
-        borderTopLeftRadius: sw(24),
-        borderTopRightRadius: sw(24),
-        marginTop: -sw(12),
-        paddingTop: sw(16),
-        overflow: "hidden",
-      }}>
-        <ScrollView
-          contentContainerStyle={{ 
-            paddingHorizontal: sw(20), 
-            paddingBottom: sw(40) 
-          }}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={{ 
-            flexDirection: "row", 
-            justifyContent: "space-between", 
-            alignItems: "center",
-            marginBottom: sw(20),
-          }}>
-            <Text style={{ 
-              fontSize: sw(18), 
-              fontWeight: "800", 
-              color: COLORS.text 
-            }}>
-              Business Information
-            </Text>
-            <TouchableOpacity style={{
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: COLORS.primary,
-              paddingHorizontal: sw(16),
-              paddingVertical: sw(8),
-              borderRadius: sw(20),
-            }}>
-              <Edit3 size={sw(14)} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={{ 
-                color: "#FFFFFF", 
-                fontSize: sw(12), 
-                fontWeight: "700",
-                marginLeft: sw(6),
-              }}>
-                Edit
-              </Text>
-            </TouchableOpacity>
-          </View>
+      <TabHeader tabs={TABS} activeTab={activeTab} onTabPress={setActiveTab} sw={sw} />
 
-          <View style={{
-            backgroundColor: COLORS.cardBg,
-            borderRadius: sw(16),
-            borderWidth: 1,
-            borderColor: COLORS.border,
-            padding: sw(16),
-          }}>
-            <InfoRow icon={Building2} label="Business Name" value="Ombarc Spa & Wellness" sw={sw} />
-            <InfoRow icon={Mail} label="Email" value="vendor@ombarc.com" sw={sw} />
-            <InfoRow icon={Phone} label="Phone" value="+91 98765 43210" sw={sw} />
-            <InfoRow icon={MapPin} label="Location" value="Mumbai, Maharashtra" sw={sw} />
-            <InfoRow icon={Clock} label="Working Hours" value="9:00 AM - 9:00 PM" sw={sw} isLast />
-          </View>
-
-          <View style={{ marginTop: sw(16), marginBottom: sw(20) }}>
-            <Text style={{ 
-              fontSize: sw(16), 
-              fontWeight: "800", 
-              color: COLORS.text,
-              marginBottom: sw(12),
-            }}>
-              Business Stats
-            </Text>
-            <View style={{ flexDirection: "row", gap: sw(10), flexWrap: "wrap" }}>
-              <StatCard label="Total Bookings" value="250+" sw={sw} />
-              <StatCard label="Services" value="15" sw={sw} />
-              <StatCard label="Therapists" value="8" sw={sw} />
-            </View>
-          </View>
-        </ScrollView>
+      <View style={{ flex: 1 }}>
+        {renderTabContent()}
       </View>
     </View>
   );
