@@ -36,6 +36,16 @@ import ReviewTab from "./ReviewTab";
 import ServicesTab from "./ServicesTab";
 import TherapistTab from "./TherapistTab";
 
+import MyProfile from "./QuickAction/MyProfile";
+import ServiceManagement from "./QuickAction/ServiceManagement";
+import TherapistManagement from "./QuickAction/TherapistManagement";
+import RevenueReports from "./QuickAction/RevenueReports";
+import BookingManagement from "./QuickAction/BookingManagement";
+import CustomerReviews from "./QuickAction/CustomerReviews";
+import AnalyticsDashboard from "./QuickAction/AnalyticsDashboard";
+import PaymentSettings from "./QuickAction/PaymentSettings";
+import SystemSettings from "./QuickAction/SystemSettings";
+
 const COLORS = {
   bg: "#FFFFFF",
   surface: "#FFFFFF",
@@ -81,14 +91,15 @@ export default function VendorDashboard() {
 
   const quickActionMap = useMemo(
     () => ({
-      "Service Management": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Service Management</Text></View>,
-      "Therapist Management": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Therapist Management</Text></View>,
-      "Revenue Reports": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Revenue Reports</Text></View>,
-      "Analytics Dashboard": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Analytics Dashboard</Text></View>,
-      "Customer Reviews": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Customer Reviews</Text></View>,
-      "Booking Calendar": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Booking Calendar</Text></View>,
-      "Payment Settings": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>Payment Settings</Text></View>,
-      "System Settings": () => <View style={styles.placeholderContainer}><Text style={styles.placeholderText}>System Settings</Text></View>,
+      "My Profile": MyProfile,
+      "Service Management": ServiceManagement,
+      "Therapist Management": TherapistManagement,
+      "Revenue Reports": RevenueReports,
+      "Booking Management": BookingManagement,
+      "Customer Reviews": CustomerReviews,
+      "Analytics Dashboard": AnalyticsDashboard,
+      "Payment Settings": PaymentSettings,
+      "System Settings": SystemSettings,
     }),
     []
   );
@@ -96,12 +107,13 @@ export default function VendorDashboard() {
   const allTabMap = { ...coreTabMap, ...quickActionMap };
 
   const quickActions = [
+    { id: "my-profile", label: "My Profile", icon: Building2, tab: "My Profile", color: COLORS.primary },
     { id: "service-management", label: "Service Management", icon: Package, tab: "Service Management", color: COLORS.primary },
     { id: "therapist-management", label: "Therapist Management", icon: Users, tab: "Therapist Management", color: COLORS.primary },
     { id: "revenue-reports", label: "Revenue Reports", icon: DollarSign, tab: "Revenue Reports", color: COLORS.primary },
-    { id: "analytics-dashboard", label: "Analytics Dashboard", icon: BarChart2, tab: "Analytics Dashboard", color: COLORS.primary },
+    { id: "booking-management", label: "Booking Management", icon: Calendar, tab: "Booking Management", color: COLORS.primary },
     { id: "customer-reviews", label: "Customer Reviews", icon: FileCheck, tab: "Customer Reviews", color: COLORS.primary },
-    { id: "booking-calendar", label: "Booking Calendar", icon: Calendar, tab: "Booking Calendar", color: COLORS.primary },
+    { id: "analytics-dashboard", label: "Analytics Dashboard", icon: BarChart2, tab: "Analytics Dashboard", color: COLORS.primary },
     { id: "payment-settings", label: "Payment Settings", icon: DollarSign, tab: "Payment Settings", color: COLORS.primary },
     { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
   ];
