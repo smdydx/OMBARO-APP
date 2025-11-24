@@ -1,4 +1,3 @@
-
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
@@ -484,13 +483,24 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    minWidth: isMobile ? "47%" : "23%",
+    minWidth: isMobile ? '47%' : '23%',
     backgroundColor: COLORS.cardBg,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
     borderColor: COLORS.border,
     alignItems: "center",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   statIconContainer: {
     width: 48,
@@ -502,31 +512,32 @@ const getStyles = (width, isMobile, isTablet) => StyleSheet.create({
   },
   statValue: {
     fontSize: 24,
-    fontWeight: "800",
+    fontWeight: "900",
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: COLORS.textMuted,
-    textAlign: "center",
+    fontWeight: "600",
   },
   alertCard: {
-    backgroundColor: COLORS.dangerLight,
+    backgroundColor: "#FEF3C7",
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: COLORS.danger,
+    borderColor: "#F59E0B",
+    marginTop: 10,
   },
   alertTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "800",
-    color: COLORS.danger,
-    marginBottom: 12,
+    color: "#92400E",
+    marginBottom: 8,
   },
   alertText: {
-    fontSize: 14,
-    color: COLORS.text,
-    lineHeight: 22,
+    fontSize: 12,
+    color: "#92400E",
+    lineHeight: 20,
   },
   quickActionsContainer: {
     paddingTop: 8,
