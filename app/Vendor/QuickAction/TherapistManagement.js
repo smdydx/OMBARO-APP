@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, Users, Plus, Phone, Star, Calendar } from "lucide-react-native";
+import { ArrowLeft, Users, Plus, Phone, Star, Calendar, Search, Edit2, Trash2 } from "lucide-react-native";
 import {
   Platform,
   ScrollView,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  TextInput,
 } from "react-native";
 import { useState } from "react";
 import AddTherapist from "./AddTherapist";
@@ -36,66 +37,146 @@ function useScale() {
   return { sw, width, height };
 }
 
-function TherapistCard({ name, specialty, phone, rating, bookings, sw }) {
+function TherapistCard({ name, specialty, phone, rating, bookings, experience, status, sw }) {
+  const initials = name.split(" ").map(n => n.charAt(0)).join("");
+  const availabilityStatus = status === "Active" ? "available" : "busy";
+  
   return (
     <View style={{
       backgroundColor: COLORS.cardBg,
-      borderRadius: sw(12),
+      borderRadius: sw(14),
       borderWidth: 1,
       borderColor: COLORS.border,
       padding: sw(14),
-      marginBottom: sw(10),
+      marginBottom: sw(12),
     }}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(12) }}>
+      <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: sw(12) }}>
         <View style={{
           width: sw(50),
           height: sw(50),
           borderRadius: sw(25),
-          backgroundColor: `${COLORS.primary}15`,
+          backgroundColor: "#C026D3",
           alignItems: "center",
           justifyContent: "center",
           marginRight: sw(12),
         }}>
-          <Text style={{ fontSize: sw(18), fontWeight: "800", color: COLORS.primary }}>
-            {name.charAt(0)}
+          <Text style={{ fontSize: sw(18), fontWeight: "800", color: "#FFFFFF" }}>
+            {initials}
           </Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.text, marginBottom: sw(3) }}>
-            {name}
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(3) }}>
+            <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text }}>
+              {name}
+            </Text>
+          </View>
+          <Text style={{ fontSize: sw(11), color: COLORS.textSecondary, marginBottom: sw(6) }}>
+            {phone}
           </Text>
-          <Text style={{ fontSize: sw(11), color: COLORS.textSecondary }}>
-            {specialty}
-          </Text>
+          <View style={{ flexDirection: "row", gap: sw(6) }}>
+            <View style={{
+              backgroundColor: "#DCFCE7",
+              paddingHorizontal: sw(8),
+              paddingVertical: sw(3),
+              borderRadius: sw(6),
+            }}>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: "#166534" }}>
+                {status}
+              </Text>
+            </View>
+            <View style={{
+              backgroundColor: availabilityStatus === "available" ? "#DCFCE7" : "#FEF3C7",
+              paddingHorizontal: sw(8),
+              paddingVertical: sw(3),
+              borderRadius: sw(6),
+            }}>
+              <Text style={{ fontSize: sw(10), fontWeight: "700", color: availabilityStatus === "available" ? "#166534" : "#92400E" }}>
+                {availabilityStatus}
+              </Text>
+            </View>
+          </View>
         </View>
-        <View style={{
-          backgroundColor: "#FEF9C3",
-          paddingHorizontal: sw(8),
-          paddingVertical: sw(4),
-          borderRadius: sw(8),
-          flexDirection: "row",
-          alignItems: "center",
-        }}>
-          <Star size={sw(10)} color="#F59E0B" fill="#F59E0B" strokeWidth={0} />
-          <Text style={{ color: "#92400E", fontSize: sw(10), fontWeight: "700", marginLeft: sw(3) }}>
-            {rating}
+        <View style={{ flexDirection: "row", gap: sw(8) }}>
+          <TouchableOpacity style={{
+            width: sw(32),
+            height: sw(32),
+            borderRadius: sw(6),
+            backgroundColor: COLORS.cardBg,
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <Edit2 size={sw(14)} color={COLORS.primary} strokeWidth={2.5} />
+          </TouchableOpacity>
+          <TouchableOpacity style={{
+            width: sw(32),
+            height: sw(32),
+            borderRadius: sw(6),
+            backgroundColor: "#FEE2E2",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <Trash2 size={sw(14)} color="#EF4444" strokeWidth={2.5} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={{ flexDirection: "row", alignItems: "center", gap: sw(12), marginBottom: sw(12) }}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Star size={sw(14)} color="#F59E0B" fill="#F59E0B" strokeWidth={0} />
+          <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginLeft: sw(4) }}>
+            {rating} ({bookings} reviews)
           </Text>
         </View>
       </View>
 
-      <View style={{ flexDirection: "row", gap: sw(12) }}>
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
-          <Phone size={sw(12)} color={COLORS.textLight} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(11), color: COLORS.textSecondary, marginLeft: sw(4) }}>
-            {phone}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: sw(8), marginBottom: sw(12) }}>
+        <Calendar size={sw(12)} color={COLORS.textLight} strokeWidth={2.5} />
+        <Text style={{ fontSize: sw(11), color: COLORS.textSecondary }}>
+          {experience} years experience
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: "row", gap: sw(6), marginBottom: sw(12), flexWrap: "wrap" }}>
+        {specialty && (
+          <View style={{
+            backgroundColor: "#E9D5FF",
+            paddingHorizontal: sw(8),
+            paddingVertical: sw(4),
+            borderRadius: sw(6),
+          }}>
+            <Text style={{ fontSize: sw(10), fontWeight: "600", color: "#6B21A8" }}>
+              {specialty}
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <View style={{ flexDirection: "row", gap: sw(8) }}>
+        <TouchableOpacity style={{
+          flex: 1,
+          borderWidth: 1,
+          borderColor: COLORS.primary,
+          borderRadius: sw(10),
+          paddingVertical: sw(10),
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.primary }}>
+            View Assignments
           </Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Calendar size={sw(12)} color={COLORS.textLight} strokeWidth={2.5} />
-          <Text style={{ fontSize: sw(11), color: COLORS.textSecondary, marginLeft: sw(4) }}>
-            {bookings} bookings
+        </TouchableOpacity>
+        <TouchableOpacity style={{
+          flex: 1,
+          backgroundColor: COLORS.primary,
+          borderRadius: sw(10),
+          paddingVertical: sw(10),
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: "#FFFFFF" }}>
+            Assign Task
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -105,20 +186,32 @@ export default function TherapistManagement({ onBack }) {
   const { sw, width, height } = useScale();
   const nav = useNavigation();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
+  
   const [therapists, setTherapists] = useState([
-    { name: "Priya Sharma", specialty: "Swedish Massage Specialist", phone: "+91 98765 11111", rating: "4.9", bookings: "45" },
-    { name: "Rahul Kumar", specialty: "Deep Tissue Expert", phone: "+91 98765 22222", rating: "4.8", bookings: "38" },
-    { name: "Anita Desai", specialty: "Aromatherapy Specialist", phone: "+91 98765 33333", rating: "4.7", bookings: "42" },
-    { name: "Vikram Singh", specialty: "Sports Massage Therapist", phone: "+91 98765 44444", rating: "4.9", bookings: "50" },
-    { name: "Meera Patel", specialty: "Ayurvedic Specialist", phone: "+91 98765 55555", rating: "4.8", bookings: "35" },
+    { name: "Priya Sharma", specialty: "Swedish Massage", phone: "+91 98765 11111", rating: "4.8", bookings: "156", experience: "5", status: "Active" },
+    { name: "Rahul Kumar", specialty: "Deep Tissue", phone: "+91 98765 22222", rating: "4.6", bookings: "89", experience: "3", status: "Active" },
+    { name: "Anita Desai", specialty: "Aromatherapy", phone: "+91 98765 33333", rating: "4.7", bookings: "120", experience: "4", status: "Active" },
+    { name: "Vikram Singh", specialty: "Sports Massage", phone: "+91 98765 44444", rating: "4.9", bookings: "180", experience: "6", status: "Inactive" },
+    { name: "Meera Patel", specialty: "Ayurvedic", phone: "+91 98765 55555", rating: "4.8", bookings: "145", experience: "5", status: "On leave" },
   ]);
 
   const handleAddTherapist = (newTherapist) => {
     setTherapists([newTherapist, ...therapists]);
   };
 
-  const headerHeight = height * 0.333;
-  const contentHeight = height * 0.667;
+  const filterOptions = ["All", "Active", "Inactive", "On leave"];
+
+  const filteredTherapists = therapists.filter((t) => {
+    const matchesSearch = t.name.toLowerCase().includes(searchText.toLowerCase()) || 
+                          t.phone.includes(searchText);
+    const matchesFilter = activeFilter === "All" || t.status === activeFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const headerHeight = height * 0.25;
+  const contentHeight = height * 0.75;
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.gradient2 }}>
@@ -177,41 +270,107 @@ export default function TherapistManagement({ onBack }) {
         borderTopLeftRadius: sw(24),
         borderTopRightRadius: sw(24),
         marginTop: -sw(20),
-        paddingTop: sw(20),
+        paddingTop: sw(16),
       }}>
-        <View style={{ paddingHorizontal: sw(20), marginBottom: sw(15) }}>
+        {/* Search Bar */}
+        <View style={{ paddingHorizontal: sw(16), marginBottom: sw(12) }}>
+          <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: COLORS.border,
+            borderRadius: sw(12),
+            paddingHorizontal: sw(12),
+            paddingVertical: sw(10),
+            backgroundColor: COLORS.cardBg,
+          }}>
+            <Search size={sw(16)} color={COLORS.textLight} strokeWidth={2} />
+            <TextInput
+              style={{
+                flex: 1,
+                marginLeft: sw(8),
+                fontSize: sw(12),
+                color: COLORS.text,
+              }}
+              placeholder="Search therapists..."
+              placeholderTextColor={COLORS.textLight}
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+          </View>
+        </View>
+
+        {/* Filter Tabs */}
+        <View style={{ paddingHorizontal: sw(16), marginBottom: sw(12) }}>
+          <View style={{ flexDirection: "row", gap: sw(8) }}>
+            {filterOptions.map((filter) => (
+              <TouchableOpacity
+                key={filter}
+                onPress={() => setActiveFilter(filter)}
+                style={{
+                  paddingHorizontal: sw(14),
+                  paddingVertical: sw(8),
+                  borderRadius: sw(20),
+                  backgroundColor: activeFilter === filter ? COLORS.primary : COLORS.cardBg,
+                  borderWidth: activeFilter === filter ? 0 : 1,
+                  borderColor: COLORS.border,
+                }}
+              >
+                <Text style={{
+                  fontSize: sw(12),
+                  fontWeight: "700",
+                  color: activeFilter === filter ? "#FFFFFF" : COLORS.text,
+                }}>
+                  {filter}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: sw(16), paddingBottom: sw(100) }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Add Button */}
           <TouchableOpacity 
             onPress={() => setShowAddModal(true)}
             style={{
-            backgroundColor: COLORS.primary,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingVertical: sw(14),
-            borderRadius: sw(12),
-          }}>
-            <Plus size={sw(18)} color="#FFFFFF" strokeWidth={2.5} />
+              backgroundColor: COLORS.primary,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingVertical: sw(12),
+              borderRadius: sw(12),
+              marginBottom: sw(16),
+            }}
+          >
+            <Plus size={sw(16)} color="#FFFFFF" strokeWidth={2.5} />
             <Text style={{ 
               color: "#FFFFFF", 
-              fontSize: sw(14), 
+              fontSize: sw(12), 
               fontWeight: "700",
-              marginLeft: sw(8),
+              marginLeft: sw(6),
             }}>
               Add New Therapist
             </Text>
           </TouchableOpacity>
-        </View>
 
-        <ScrollView
-          contentContainerStyle={{ paddingHorizontal: sw(20), paddingBottom: sw(100) }}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(12) }}>
-            All Therapists ({therapists.length})
+          <Text style={{ fontSize: sw(13), fontWeight: "700", color: COLORS.text, marginBottom: sw(10) }}>
+            {activeFilter === "All" ? "All Therapists" : activeFilter} ({filteredTherapists.length})
           </Text>
-          {therapists.map((therapist, index) => (
-            <TherapistCard key={index} {...therapist} sw={sw} />
-          ))}
+          
+          {filteredTherapists.length > 0 ? (
+            filteredTherapists.map((therapist, index) => (
+              <TherapistCard key={index} {...therapist} sw={sw} />
+            ))
+          ) : (
+            <View style={{ alignItems: "center", paddingVertical: sw(40) }}>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary }}>
+                No therapists found
+              </Text>
+            </View>
+          )}
         </ScrollView>
       </View>
 
