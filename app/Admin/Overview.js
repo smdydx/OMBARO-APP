@@ -87,8 +87,9 @@ export default function Overview() {
         <ScrollView
           style={[styles.alertsBox, isMobile && styles.alertsBoxMobile]}
           contentContainerStyle={[styles.alertsScrollContent, isMobile && styles.alertsScrollContentMobile]}
-          showsVerticalScrollIndicator={true}
-          scrollIndicatorInsets={{ right: 4 }}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={true}
+          nestedScrollEnabled={false}
         >
           <AlertCard
             icon={<AlertCircle color="#EF4444" size={20} />}
