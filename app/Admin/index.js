@@ -42,6 +42,7 @@ import LocationTracking from "./QuickAction/LocationTracking";
 import VendorApproval from "./QuickAction/VendorApproval";
 import SystemAlerts from "./QuickAction/SystemAlerts";
 import PermissionMatrix from "./QuickAction/PermissionMatrix";
+import RoleManagement from "./QuickAction/RoleManagement";
 
 const COLORS = {
   bg: "#FFFFFF",
@@ -97,6 +98,7 @@ export default function AdminDashboard() {
       "Location Tracking": LocationTracking,
       "System Alerts": SystemAlerts,
       "Permission Matrix": PermissionMatrix,
+      "Role Management": RoleManagement,
     }),
     []
   );
@@ -112,6 +114,7 @@ export default function AdminDashboard() {
     { id: "security", label: "Security Center", icon: Shield, tab: "Security Center", color: COLORS.primary },
     { id: "location", label: "Location Tracking", icon: MapPin, tab: "Location Tracking", color: COLORS.primary },
     { id: "permissions", label: "Permission Matrix", icon: Grid3x3, tab: "Permission Matrix", color: COLORS.primary },
+    { id: "roles", label: "Role Management", icon: Users, tab: "Role Management", color: COLORS.primary },
     { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
     { id: "system-alerts", label: "System Alerts", icon: Bell, tab: "System Alerts", color: COLORS.primary },
   ];
