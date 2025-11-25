@@ -100,6 +100,7 @@ export default function EmployeeDashboard() {
       "System Settings": SystemSetting,
       "Onboarding": Onboarding,
       "Manage Spa": ManageSpa,
+      "Onboard New Spa": OnboardNewSpa,
     }),
     []
   );
@@ -116,6 +117,7 @@ export default function EmployeeDashboard() {
     { id: "system-settings", label: "System Settings", icon: Settings, tab: "System Settings", color: COLORS.primary },
     { id: "onboarding", label: "Onboarding", icon: Users, tab: "Onboarding", color: COLORS.primary },
     { id: "manage-spa", label: "Manage Spa", icon: Building2, tab: "Manage Spa", color: COLORS.primary },
+    { id: "onboard-new-spa", label: "Onboard New Spa", icon: Building2, tab: "Onboard New Spa", color: COLORS.primary },
   ];
 
   const bottomNavItems = [
