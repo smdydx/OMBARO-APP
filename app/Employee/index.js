@@ -45,6 +45,7 @@ import ReviewApproval from "./QuickAction/ReviewApproval";
 import SelfAttendance from "./QuickAction/SelfAttendance";
 import SystemSetting from "./QuickAction/systemSetting";
 import VendorRelations from "./QuickAction/VendorRelations";
+import OnboardNewSpa from "./QuickAction/OnboardNewSpa";
 
 const COLORS = {
   bg: "#FFFFFF",
