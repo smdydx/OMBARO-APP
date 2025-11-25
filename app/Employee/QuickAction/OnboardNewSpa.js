@@ -10,9 +10,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
-  StyleSheet,
 } from "react-native";
-import * as Location from "expo-location";
 
 const COLORS = {
   gradient1: "#00FF87",
@@ -244,13 +242,11 @@ export default function OnboardNewSpa({ onBack }) {
   const [amenities, setAmenities] = useState([]);
   const [specialities, setSpecialities] = useState("");
 
-  // Step 4: Services (placeholder)
+  // Step 4: Services
   const [mainService, setMainService] = useState("");
 
   const amenitiesList = ["Free WiFi", "Parking", "Card Payment", "Refreshments", "24/7 Security", "Air Conditioning", "Lockers", "Shower Facilities"];
-
   const descriptionOptions = ["Full Service Spa", "Day Spa", "Medical Spa", "Wellness Center", "Beauty Salon", "Massage Center"];
-
   const priceRanges = [
     "Budget (₹) - ₹500-1000",
     "Mid-range (₹₹) - ₹2000-5000",
@@ -270,16 +266,8 @@ export default function OnboardNewSpa({ onBack }) {
     }
   };
 
-  const handleGetLocation = async () => {
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
-        alert(`Location: ${location.coords.latitude}, ${location.coords.longitude}`);
-      }
-    } catch (error) {
-      alert("Could not get location");
-    }
+  const handleGetLocation = () => {
+    alert("Location feature available on mobile devices");
   };
 
   const handleSubmit = () => {
