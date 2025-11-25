@@ -297,17 +297,11 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.010,
   },
   logoCircleBorder: {
-    width: 110,            // smaller circle
-    height: 110,           // smaller circle
-    backgroundColor: '#f5f5f5ff',
+    width: 110,
+    height: 110,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
-    shadowColor: '#00FF87',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 15,
 },
   logo: {
         width: 50,        // <--- Set size smaller than parent
