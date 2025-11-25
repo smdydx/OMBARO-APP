@@ -174,7 +174,7 @@ const PremiumFormInput = ({ label, placeholder, value, onChangeText, sw, icon: I
   );
 };
 
-const PremiumDropdown = ({ label, value, options, onSelect, sw, required = false, error = null }) => {
+const PremiumDropdown = ({ label, value, options, onSelect, sw, required = false, error = null, placeholder = "Select option" }) => {
   const [open, setOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
