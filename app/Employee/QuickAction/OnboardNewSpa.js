@@ -1,8 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowLeft, Building2, MapPin, Globe, Phone, Mail, Plus, Camera } from "lucide-react-native";
-import { useState } from "react";
+import { ArrowLeft, Building2, MapPin, Globe, Phone, Mail, Plus, Camera, Star, AlertCircle, Check, Clock, Users, Utensils, Shield } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import {
-  Platform,
   ScrollView,
   StatusBar,
   Text,
@@ -10,13 +9,14 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const COLORS = {
   gradient1: "#00FF87",
   gradient2: "#016B3A",
   gradient3: "#013B1F",
-  gradient4: "#012B17",
   primary: "#016B3A",
   primaryLight: "#10B981",
   white: "#FFFFFF",
@@ -29,6 +29,7 @@ const COLORS = {
   success: "#10B981",
   warning: "#F59E0B",
   blue: "#0EA5E9",
+  error: "#EF4444",
 };
 
 function useScale() {
@@ -38,58 +39,90 @@ function useScale() {
   return { sw, width, height };
 }
 
-const StepIndicator = ({ currentStep, totalSteps, sw }) => {
-  const steps = ["Basic Information", "Operating Details", "Amenities & Specialities", "Services"];
-  
+const ProgressBar = ({ currentStep, totalSteps, sw }) => {
+  const progress = ((currentStep + 1) / totalSteps) * 100;
   return (
-    <View>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(20) }}>
-        {Array.from({ length: totalSteps }).map((_, index) => (
-          <View key={index} style={{ flex: 1, alignItems: "center" }}>
-            <View
-              style={{
-                width: sw(24),
-                height: sw(24),
-                borderRadius: sw(12),
-                backgroundColor: index < currentStep ? COLORS.primaryLight : index === currentStep ? COLORS.primaryLight : "#E5E7EB",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: sw(4),
-              }}
-            >
-              <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.white }}>
-                {index + 1}
-              </Text>
-            </View>
-            <Text style={{ fontSize: sw(8), color: COLORS.textLight, textAlign: "center" }}>
-              {steps[index]}
-            </Text>
-            {index < totalSteps - 1 && (
-              <View
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: sw(12),
-                  width: "50%",
-                  height: sw(2),
-                  backgroundColor: index < currentStep - 1 ? COLORS.primaryLight : "#E5E7EB",
-                }}
-              />
-            )}
-          </View>
-        ))}
+    <View style={{ marginBottom: sw(16) }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: sw(6) }}>
+        <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.text }}>
+          Progress
+        </Text>
+        <Text style={{ fontSize: sw(10), fontWeight: "700", color: COLORS.primaryLight }}>
+          {currentStep + 1}/{totalSteps}
+        </Text>
+      </View>
+      <View style={{ height: sw(6), backgroundColor: COLORS.border, borderRadius: sw(3), overflow: "hidden" }}>
+        <View
+          style={{
+            height: "100%",
+            width: `${progress}%`,
+            backgroundColor: COLORS.primaryLight,
+            borderRadius: sw(3),
+          }}
+        />
       </View>
     </View>
   );
 };
 
-const FormInput = ({ label, placeholder, value, onChangeText, sw, icon: Icon, multiline = false, height = sw(42) }) => {
+const StepIndicator = ({ currentStep, totalSteps, sw }) => {
+  const steps = ["Basic Info", "Operating", "Amenities", "Services", "Review"];
+  
+  return (
+    <View style={{ marginBottom: sw(16) }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: "row", gap: sw(8) }}>
+          {Array.from({ length: totalSteps }).map((_, index) => (
+            <View key={index} style={{ alignItems: "center" }}>
+              <View
+                style={{
+                  width: sw(32),
+                  height: sw(32),
+                  borderRadius: sw(16),
+                  backgroundColor: index < currentStep ? COLORS.success : index === currentStep ? COLORS.primaryLight : "#E5E7EB",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderWidth: index === currentStep ? 2 : 0,
+                  borderColor: COLORS.primaryLight,
+                }}
+              >
+                {index < currentStep ? (
+                  <Check size={sw(16)} color={COLORS.white} strokeWidth={3} />
+                ) : (
+                  <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.white }}>
+                    {index + 1}
+                  </Text>
+                )}
+              </View>
+              <Text style={{ fontSize: sw(7), color: COLORS.textLight, marginTop: sw(4), textAlign: "center", width: sw(32) }}>
+                {steps[index]}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+
+const FormInput = ({ label, placeholder, value, onChangeText, sw, icon: Icon, multiline = false, height = sw(42), required = false, error = null }) => {
   return (
     <View style={{ marginBottom: sw(14) }}>
-      <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(5) }}>
-        {label}
-      </Text>
-      <View style={{ flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: COLORS.border, borderRadius: sw(8), paddingHorizontal: sw(12), backgroundColor: COLORS.white }}>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(5) }}>
+        <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text }}>
+          {label}
+        </Text>
+        {required && <Text style={{ color: COLORS.error, marginLeft: sw(4) }}>*</Text>}
+      </View>
+      <View style={{ 
+        flexDirection: "row", 
+        alignItems: "center", 
+        borderWidth: 1, 
+        borderColor: error ? COLORS.error : COLORS.border, 
+        borderRadius: sw(8), 
+        paddingHorizontal: sw(12), 
+        backgroundColor: COLORS.white 
+      }}>
         {Icon && <Icon size={sw(16)} color={COLORS.textLight} strokeWidth={2} style={{ marginRight: sw(8) }} />}
         <TextInput
           placeholder={placeholder}
@@ -107,32 +140,40 @@ const FormInput = ({ label, placeholder, value, onChangeText, sw, icon: Icon, mu
           placeholderTextColor={COLORS.textLight}
         />
       </View>
+      {error && (
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: sw(4) }}>
+          <AlertCircle size={sw(12)} color={COLORS.error} strokeWidth={2} style={{ marginRight: sw(4) }} />
+          <Text style={{ fontSize: sw(9), color: COLORS.error }}>{error}</Text>
+        </View>
+      )}
     </View>
   );
 };
 
-const Dropdown = ({ label, value, options, onSelect, sw, icon: Icon }) => {
+const Dropdown = ({ label, value, options, onSelect, sw, required = false, error = null }) => {
   const [open, setOpen] = useState(false);
 
   return (
     <View style={{ marginBottom: sw(14) }}>
-      <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(5) }}>
-        {label}
-      </Text>
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(5) }}>
+        <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text }}>
+          {label}
+        </Text>
+        {required && <Text style={{ color: COLORS.error, marginLeft: sw(4) }}>*</Text>}
+      </View>
       <TouchableOpacity
         onPress={() => setOpen(!open)}
         style={{
           flexDirection: "row",
           alignItems: "center",
           borderWidth: 1,
-          borderColor: COLORS.border,
+          borderColor: error ? COLORS.error : COLORS.border,
           borderRadius: sw(8),
           paddingHorizontal: sw(12),
           paddingVertical: sw(10),
           backgroundColor: COLORS.white,
         }}
       >
-        {Icon && <Icon size={sw(16)} color={COLORS.textLight} strokeWidth={2} style={{ marginRight: sw(8) }} />}
         <Text style={{ flex: 1, fontSize: sw(12), color: value ? COLORS.text : COLORS.textLight }}>
           {value || "Select option"}
         </Text>
@@ -146,6 +187,7 @@ const Dropdown = ({ label, value, options, onSelect, sw, icon: Icon }) => {
           borderRadius: sw(8),
           marginTop: sw(4),
           maxHeight: sw(150),
+          zIndex: 10,
         }}>
           <ScrollView>
             {options.map((opt, idx) => (
@@ -161,138 +203,203 @@ const Dropdown = ({ label, value, options, onSelect, sw, icon: Icon }) => {
                   backgroundColor: value === opt ? COLORS.primaryLight + "20" : COLORS.white,
                 }}
               >
-                <Text style={{ fontSize: sw(11), color: COLORS.text }}>
-                  {opt}
-                </Text>
+                <Text style={{ fontSize: sw(11), color: COLORS.text }}>{opt}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
+        </View>
+      )}
+      {error && (
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: sw(4) }}>
+          <AlertCircle size={sw(12)} color={COLORS.error} strokeWidth={2} style={{ marginRight: sw(4) }} />
+          <Text style={{ fontSize: sw(9), color: COLORS.error }}>{error}</Text>
         </View>
       )}
     </View>
   );
 };
 
-const CheckboxGrid = ({ label, items, selected, onToggle, sw }) => {
+const AmenityItem = ({ icon: Icon, label, selected, onToggle, sw }) => {
   return (
-    <View style={{ marginBottom: sw(16) }}>
-      <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(8) }}>
+    <TouchableOpacity
+      onPress={onToggle}
+      style={{
+        alignItems: "center",
+        paddingVertical: sw(10),
+        paddingHorizontal: sw(8),
+        borderWidth: 1.5,
+        borderColor: selected ? COLORS.primaryLight : COLORS.border,
+        borderRadius: sw(8),
+        backgroundColor: selected ? COLORS.primaryLight + "15" : COLORS.white,
+      }}
+    >
+      <View style={{
+        width: sw(28),
+        height: sw(28),
+        borderRadius: sw(14),
+        backgroundColor: selected ? COLORS.primaryLight : COLORS.cardBg,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: sw(4),
+      }}>
+        <Icon size={sw(14)} color={selected ? COLORS.white : COLORS.primaryLight} strokeWidth={2} />
+      </View>
+      <Text style={{ fontSize: sw(8), color: COLORS.text, textAlign: "center", fontWeight: selected ? "600" : "500" }}>
         {label}
       </Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
-        {items.map((item, idx) => (
-          <TouchableOpacity
-            key={idx}
-            onPress={() => onToggle(item)}
-            style={{
-              width: "48%",
-              borderWidth: 1,
-              borderColor: selected.includes(item) ? COLORS.blue : COLORS.border,
-              borderRadius: sw(8),
-              paddingVertical: sw(8),
-              paddingHorizontal: sw(8),
-              backgroundColor: selected.includes(item) ? COLORS.blue + "15" : COLORS.white,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={{
-                width: sw(14),
-                height: sw(14),
-                borderRadius: sw(3),
-                borderWidth: 1.5,
-                borderColor: selected.includes(item) ? COLORS.blue : COLORS.border,
-                backgroundColor: selected.includes(item) ? COLORS.blue : COLORS.white,
-                marginRight: sw(6),
-              }}
-            />
-            <Text style={{ fontSize: sw(10), color: COLORS.text, flex: 1 }}>
-              {item}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
+
+const amenitiesWithIcons = [
+  { label: "Free WiFi", icon: Globe },
+  { label: "Parking", icon: MapPin },
+  { label: "Card Payment", icon: Shield },
+  { label: "Refreshments", icon: Utensils },
+  { label: "24/7 Security", icon: Shield },
+  { label: "Air Conditioning", icon: Clock },
+  { label: "Lockers", icon: Building2 },
+  { label: "Shower Facilities", icon: Utensils },
+];
 
 export default function OnboardNewSpa({ onBack }) {
   const { sw, width, height } = useScale();
   const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  // Step 1: Basic Information
-  const [spaName, setSpaName] = useState("");
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [website, setWebsite] = useState("");
-  const [description, setDescription] = useState("Full Service Spa");
+  // Form data
+  const [formData, setFormData] = useState({
+    spaName: "",
+    address: "",
+    phone: "",
+    email: "",
+    website: "",
+    description: "",
+    openingTime: "",
+    closingTime: "",
+    priceRange: "",
+    staffCount: "",
+    instagram: "",
+    facebook: "",
+    twitter: "",
+    amenities: [],
+    specialities: "",
+    mainService: "",
+  });
 
-  // Step 2: Operating Details
-  const [openingTime, setOpeningTime] = useState("");
-  const [closingTime, setClosingTime] = useState("");
-  const [priceRange, setPriceRange] = useState("Mid-range (₹₹) - ₹2000-5000");
-  const [staffCount, setStaffCount] = useState("");
-  const [instagram, setInstagram] = useState("");
-  const [facebook, setFacebook] = useState("");
-  const [twitter, setTwitter] = useState("");
+  // Errors
+  const [errors, setErrors] = useState({});
 
-  // Step 3: Amenities & Specialities
-  const [amenities, setAmenities] = useState([]);
-  const [specialities, setSpecialities] = useState("");
+  // Load saved data
+  useEffect(() => {
+    loadFormData();
+  }, []);
 
-  // Step 4: Services
-  const [mainService, setMainService] = useState("");
+  const loadFormData = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem("onboardSpaFormData");
+      if (savedData) {
+        setFormData(JSON.parse(savedData));
+      }
+    } catch (error) {
+      console.log("Error loading form data:", error);
+    }
+  };
 
-  const amenitiesList = ["Free WiFi", "Parking", "Card Payment", "Refreshments", "24/7 Security", "Air Conditioning", "Lockers", "Shower Facilities"];
-  const descriptionOptions = ["Full Service Spa", "Day Spa", "Medical Spa", "Wellness Center", "Beauty Salon", "Massage Center"];
-  const priceRanges = [
-    "Budget (₹) - ₹500-1000",
-    "Mid-range (₹₹) - ₹2000-5000",
-    "Premium (₹₹₹) - ₹5000-10000",
-    "Luxury (₹₹₹₹) - ₹10000+",
-  ];
+  const saveFormData = async () => {
+    try {
+      await AsyncStorage.setItem("onboardSpaFormData", JSON.stringify(formData));
+    } catch (error) {
+      console.log("Error saving form data:", error);
+    }
+  };
+
+  const validateStep = () => {
+    const newErrors = {};
+
+    if (currentStep === 0) {
+      if (!formData.spaName.trim()) newErrors.spaName = "Spa name is required";
+      if (!formData.address.trim()) newErrors.address = "Address is required";
+      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+      if (!formData.email.trim()) newErrors.email = "Email is required";
+      if (formData.email && !formData.email.includes("@")) newErrors.email = "Invalid email";
+    }
+
+    if (currentStep === 1) {
+      if (!formData.openingTime.trim()) newErrors.openingTime = "Opening time is required";
+      if (!formData.closingTime.trim()) newErrors.closingTime = "Closing time is required";
+      if (!formData.staffCount.trim()) newErrors.staffCount = "Staff count is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+    if (validateStep()) {
+      if (currentStep < 4) {
+        setCurrentStep(currentStep + 1);
+        saveFormData();
+      }
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+      saveFormData();
     }
   };
 
-  const handleGetLocation = () => {
-    alert("Location feature available on mobile devices");
+  const handleSubmit = () => {
+    Alert.alert(
+      "Confirm Submission",
+      "Are you sure you want to submit this spa onboarding form?",
+      [
+        { text: "Cancel", onPress: () => {}, style: "cancel" },
+        {
+          text: "Submit",
+          onPress: async () => {
+            setLoading(true);
+            console.log("Form submitted:", formData);
+            await AsyncStorage.removeItem("onboardSpaFormData");
+            Alert.alert("Success", "Spa onboarded successfully!", [
+              { text: "OK", onPress: () => {
+                setFormData({
+                  spaName: "", address: "", phone: "", email: "", website: "",
+                  description: "", openingTime: "", closingTime: "", priceRange: "",
+                  staffCount: "", instagram: "", facebook: "", twitter: "",
+                  amenities: [], specialities: "", mainService: "",
+                });
+                setCurrentStep(0);
+              }},
+            ]);
+            setLoading(false);
+          },
+        },
+      ]
+    );
   };
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", {
-      spaName, address, phone, email, website, description,
-      openingTime, closingTime, priceRange, staffCount, instagram, facebook, twitter,
-      amenities, specialities, mainService
-    });
-    alert("Spa Onboarding Complete!");
+  const updateFormData = (key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+    if (errors[key]) {
+      setErrors(prev => ({ ...prev, [key]: null }));
+    }
   };
+
+  const descriptionOptions = ["Full Service Spa", "Day Spa", "Medical Spa", "Wellness Center", "Beauty Salon", "Massage Center"];
+  const priceRanges = ["Budget (₹) - ₹500-1000", "Mid-range (₹₹) - ₹2000-5000", "Premium (₹₹₹) - ₹5000-10000", "Luxury (₹₹₹₹) - ₹10000+"];
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
-      {/* Header */}
       <LinearGradient
         colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{
-          paddingHorizontal: sw(16),
-          paddingTop: sw(12),
-          paddingBottom: sw(16),
-        }}
+        style={{ paddingHorizontal: sw(16), paddingTop: sw(12), paddingBottom: sw(16) }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(10) }}>
           <TouchableOpacity onPress={onBack} style={{ marginRight: sw(12) }}>
@@ -305,325 +412,155 @@ export default function OnboardNewSpa({ onBack }) {
         </View>
       </LinearGradient>
 
-      {/* Main Content */}
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: sw(16),
-          paddingVertical: sw(16),
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Step Indicator */}
-        <StepIndicator currentStep={currentStep} totalSteps={4} sw={sw} />
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: sw(16), paddingVertical: sw(16) }} showsVerticalScrollIndicator={false}>
+        <ProgressBar currentStep={currentStep} totalSteps={5} sw={sw} />
+        <StepIndicator currentStep={currentStep} totalSteps={5} sw={sw} />
 
-        {/* Step 1: Basic Information */}
+        {/* Step 0: Basic Information */}
         {currentStep === 0 && (
           <View>
-            <FormInput
-              label="Spa Name *"
-              placeholder="Enter spa name"
-              value={spaName}
-              onChangeText={setSpaName}
-              sw={sw}
-              icon={Building2}
-            />
-            <FormInput
-              label="Complete Address *"
-              placeholder="Enter complete address"
-              value={address}
-              onChangeText={setAddress}
-              sw={sw}
-              icon={MapPin}
-              multiline
-              height={sw(60)}
-            />
+            <FormInput label="Spa Name" placeholder="Enter spa name" value={formData.spaName} onChangeText={(v) => updateFormData("spaName", v)} sw={sw} icon={Building2} required error={errors.spaName} />
+            <FormInput label="Complete Address" placeholder="Enter address" value={formData.address} onChangeText={(v) => updateFormData("address", v)} sw={sw} icon={MapPin} multiline height={sw(60)} required error={errors.address} />
             <View style={{ flexDirection: "row", gap: sw(8) }}>
               <View style={{ flex: 1 }}>
-                <FormInput
-                  label="Contact Number *"
-                  placeholder="Phone number"
-                  value={phone}
-                  onChangeText={setPhone}
-                  sw={sw}
-                  icon={Phone}
-                />
+                <FormInput label="Contact Number" placeholder="Phone" value={formData.phone} onChangeText={(v) => updateFormData("phone", v)} sw={sw} icon={Phone} required error={errors.phone} />
               </View>
               <View style={{ flex: 1 }}>
-                <FormInput
-                  label="Email Address *"
-                  placeholder="Email"
-                  value={email}
-                  onChangeText={setEmail}
-                  sw={sw}
-                  icon={Mail}
-                />
+                <FormInput label="Email Address" placeholder="Email" value={formData.email} onChangeText={(v) => updateFormData("email", v)} sw={sw} icon={Mail} required error={errors.email} />
               </View>
             </View>
-            <FormInput
-              label="Website (Optional)"
-              placeholder="https://www.example.com"
-              value={website}
-              onChangeText={setWebsite}
-              sw={sw}
-              icon={Globe}
-            />
-            <Dropdown
-              label="Description"
-              value={description}
-              options={descriptionOptions}
-              onSelect={setDescription}
-              sw={sw}
-            />
+            <FormInput label="Website (Optional)" placeholder="https://example.com" value={formData.website} onChangeText={(v) => updateFormData("website", v)} sw={sw} icon={Globe} />
+            <Dropdown label="Description" value={formData.description} options={descriptionOptions} onSelect={(v) => updateFormData("description", v)} sw={sw} />
           </View>
         )}
 
-        {/* Step 2: Operating Details */}
+        {/* Step 1: Operating Details */}
         {currentStep === 1 && (
           <View>
             <View style={{ flexDirection: "row", gap: sw(8) }}>
               <View style={{ flex: 1 }}>
-                <FormInput
-                  label="Opening Time"
-                  placeholder="--:-- --"
-                  value={openingTime}
-                  onChangeText={setOpeningTime}
-                  sw={sw}
-                />
+                <FormInput label="Opening Time" placeholder="e.g. 09:00 AM" value={formData.openingTime} onChangeText={(v) => updateFormData("openingTime", v)} sw={sw} required error={errors.openingTime} />
               </View>
               <View style={{ flex: 1 }}>
-                <FormInput
-                  label="Closing Time"
-                  placeholder="--:-- --"
-                  value={closingTime}
-                  onChangeText={setClosingTime}
-                  sw={sw}
-                />
+                <FormInput label="Closing Time" placeholder="e.g. 09:00 PM" value={formData.closingTime} onChangeText={(v) => updateFormData("closingTime", v)} sw={sw} required error={errors.closingTime} />
               </View>
             </View>
             <View style={{ flexDirection: "row", gap: sw(8) }}>
               <View style={{ flex: 1 }}>
-                <Dropdown
-                  label="Price Range"
-                  value={priceRange}
-                  options={priceRanges}
-                  onSelect={setPriceRange}
-                  sw={sw}
-                />
+                <Dropdown label="Price Range" value={formData.priceRange} options={priceRanges} onSelect={(v) => updateFormData("priceRange", v)} sw={sw} />
               </View>
               <View style={{ flex: 1 }}>
-                <FormInput
-                  label="Staff Count"
-                  placeholder="Number of staff members"
-                  value={staffCount}
-                  onChangeText={setStaffCount}
-                  sw={sw}
-                />
+                <FormInput label="Staff Count" placeholder="e.g. 5-10" value={formData.staffCount} onChangeText={(v) => updateFormData("staffCount", v)} sw={sw} icon={Users} required error={errors.staffCount} />
               </View>
             </View>
-            <FormInput
-              label="Instagram"
-              placeholder="https://instagram.com/yourhandle"
-              value={instagram}
-              onChangeText={setInstagram}
-              sw={sw}
-            />
-            <FormInput
-              label="Facebook"
-              placeholder="https://facebook.com/yourpage"
-              value={facebook}
-              onChangeText={setFacebook}
-              sw={sw}
-            />
-            <FormInput
-              label="Twitter"
-              placeholder="https://twitter.com/yourhandle"
-              value={twitter}
-              onChangeText={setTwitter}
-              sw={sw}
-            />
+            <FormInput label="Instagram" placeholder="https://instagram.com/handle" value={formData.instagram} onChangeText={(v) => updateFormData("instagram", v)} sw={sw} />
+            <FormInput label="Facebook" placeholder="https://facebook.com/page" value={formData.facebook} onChangeText={(v) => updateFormData("facebook", v)} sw={sw} />
+            <FormInput label="Twitter" placeholder="https://twitter.com/handle" value={formData.twitter} onChangeText={(v) => updateFormData("twitter", v)} sw={sw} />
           </View>
         )}
 
-        {/* Step 3: Amenities & Specialities */}
+        {/* Step 2: Amenities */}
         {currentStep === 2 && (
           <View>
-            <CheckboxGrid
-              label="Available Amenities"
-              items={amenitiesList}
-              selected={amenities}
-              onToggle={(item) => {
-                if (amenities.includes(item)) {
-                  setAmenities(amenities.filter(a => a !== item));
-                } else {
-                  setAmenities([...amenities, item]);
-                }
-              }}
-              sw={sw}
-            />
-
-            <View style={{ marginBottom: sw(16) }}>
-              <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(6) }}>
-                Specialities
-              </Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <TextInput
-                  placeholder="e.g., Deep Tissue Massage, Aromatherapy"
-                  value={specialities}
-                  onChangeText={setSpecialities}
-                  style={{
-                    flex: 1,
-                    borderWidth: 1,
-                    borderColor: COLORS.border,
-                    borderRadius: sw(8),
-                    paddingHorizontal: sw(12),
-                    paddingVertical: sw(10),
-                    fontSize: sw(12),
-                    color: COLORS.text,
-                  }}
-                  placeholderTextColor={COLORS.textLight}
-                />
-                <TouchableOpacity style={{ marginLeft: sw(8), padding: sw(8) }}>
-                  <Plus size={sw(20)} color={COLORS.blue} strokeWidth={2} />
-                </TouchableOpacity>
-              </View>
+            <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>
+              Available Amenities
+            </Text>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(8), marginBottom: sw(20) }}>
+              {amenitiesWithIcons.map((item, idx) => (
+                <View key={idx} style={{ width: "23%" }}>
+                  <AmenityItem
+                    icon={item.icon}
+                    label={item.label}
+                    selected={formData.amenities.includes(item.label)}
+                    onToggle={() => {
+                      const amenities = formData.amenities.includes(item.label)
+                        ? formData.amenities.filter(a => a !== item.label)
+                        : [...formData.amenities, item.label];
+                      updateFormData("amenities", amenities);
+                    }}
+                    sw={sw}
+                  />
+                </View>
+              ))}
             </View>
+            <FormInput label="Specialities" placeholder="e.g., Deep Tissue, Aromatherapy" value={formData.specialities} onChangeText={(v) => updateFormData("specialities", v)} sw={sw} multiline height={sw(70)} />
+          </View>
+        )}
 
-            <View style={{ marginBottom: sw(16) }}>
-              <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(8) }}>
-                Photo Upload
+        {/* Step 3: Services */}
+        {currentStep === 3 && (
+          <View>
+            <FormInput label="Main Services" placeholder="e.g., Massage, Facial, Hair Treatment" value={formData.mainService} onChangeText={(v) => updateFormData("mainService", v)} sw={sw} multiline height={sw(80)} />
+            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginTop: sw(12) }}>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginBottom: sw(8) }}>
+                💡 Tip: Add comma-separated services
               </Text>
-              <TouchableOpacity
-                style={{
-                  borderWidth: 2,
-                  borderStyle: "dashed",
-                  borderColor: COLORS.border,
-                  borderRadius: sw(10),
-                  paddingVertical: sw(24),
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Camera size={sw(28)} color={COLORS.textLight} strokeWidth={1.5} />
-                <Text style={{ fontSize: sw(11), color: COLORS.textSecondary, marginTop: sw(6), textAlign: "center" }}>
-                  Upload spa photos
-                </Text>
-                <Text style={{ fontSize: sw(9), color: COLORS.textLight, marginTop: sw(2) }}>
-                  Drag and drop or click to browse
-                </Text>
-                <TouchableOpacity
-                  style={{
-                    marginTop: sw(10),
-                    borderWidth: 1,
-                    borderColor: COLORS.blue,
-                    borderRadius: sw(6),
-                    paddingHorizontal: sw(12),
-                    paddingVertical: sw(6),
-                  }}
-                >
-                  <Text style={{ fontSize: sw(10), color: COLORS.blue, fontWeight: "600" }}>
-                    Choose Files
-                  </Text>
-                </TouchableOpacity>
-              </TouchableOpacity>
-            </View>
-
-            <View>
-              <Text style={{ fontSize: sw(11), fontWeight: "600", color: COLORS.text, marginBottom: sw(8) }}>
-                Location Tagging
+              <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>
+                Example: Swedish Massage, Hot Stone Therapy, Facial Treatment, Hair Spa
               </Text>
-              <TouchableOpacity
-                onPress={handleGetLocation}
-                style={{
-                  borderWidth: 1,
-                  borderColor: COLORS.blue,
-                  borderRadius: sw(8),
-                  paddingVertical: sw(10),
-                  paddingHorizontal: sw(12),
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <MapPin size={sw(16)} color={COLORS.blue} strokeWidth={2} />
-                <Text style={{ fontSize: sw(11), color: COLORS.blue, fontWeight: "600", marginLeft: sw(6) }}>
-                  Get Live Location
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         )}
 
-        {/* Step 4: Services */}
-        {currentStep === 3 && (
+        {/* Step 4: Review */}
+        {currentStep === 4 && (
           <View>
-            <FormInput
-              label="Main Services"
-              placeholder="e.g., Massage, Facial, Hair Treatment"
-              value={mainService}
-              onChangeText={setMainService}
-              sw={sw}
-              multiline
-              height={sw(70)}
-            />
-            <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginTop: sw(12) }}>
-              Review all entered information before submitting the form.
+            <Text style={{ fontSize: sw(13), fontWeight: "800", color: COLORS.text, marginBottom: sw(14) }}>
+              Review Your Information
             </Text>
+
+            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Basic Information</Text>
+              <View style={{ gap: sw(6) }}>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Spa Name:</Text> {formData.spaName}</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Address:</Text> {formData.address}</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Phone:</Text> {formData.phone}</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Email:</Text> {formData.email}</Text>
+              </View>
+            </View>
+
+            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Operating Details</Text>
+              <View style={{ gap: sw(6) }}>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Hours:</Text> {formData.openingTime} - {formData.closingTime}</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Price Range:</Text> {formData.priceRange}</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Staff Count:</Text> {formData.staffCount}</Text>
+              </View>
+            </View>
+
+            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Amenities ({formData.amenities.length})</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
+                {formData.amenities.map((amenity, idx) => (
+                  <View key={idx} style={{ backgroundColor: COLORS.primaryLight + "20", paddingHorizontal: sw(8), paddingVertical: sw(4), borderRadius: sw(6) }}>
+                    <Text style={{ fontSize: sw(9), color: COLORS.primary, fontWeight: "600" }}>{amenity}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {formData.mainService && (
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12) }}>
+                <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Services</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.text }}>{formData.mainService}</Text>
+              </View>
+            )}
           </View>
         )}
       </ScrollView>
 
-      {/* Footer Buttons */}
-      <LinearGradient
-        colors={["transparent", "rgba(255,255,255,0.5)"]}
-        style={{
-          paddingHorizontal: sw(16),
-          paddingVertical: sw(14),
-          gap: sw(8),
-        }}
-      >
+      {/* Footer */}
+      <LinearGradient colors={["transparent", "rgba(255,255,255,0.5)"]} style={{ paddingHorizontal: sw(16), paddingVertical: sw(14), gap: sw(8) }}>
         <View style={{ flexDirection: "row", gap: sw(8) }}>
           {currentStep > 0 && (
-            <TouchableOpacity
-              onPress={handlePrevious}
-              style={{
-                flex: 1,
-                paddingVertical: sw(10),
-                borderRadius: sw(8),
-                borderWidth: 1.5,
-                borderColor: COLORS.blue,
-                alignItems: "center",
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.blue }}>
-                Previous
-              </Text>
+            <TouchableOpacity onPress={handlePrevious} style={{ flex: 1, paddingVertical: sw(10), borderRadius: sw(8), borderWidth: 1.5, borderColor: COLORS.blue, alignItems: "center" }} activeOpacity={0.7}>
+              <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.blue }}>Previous</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            onPress={currentStep === 3 ? handleSubmit : handleNext}
-            style={{
-              flex: 1,
-              paddingVertical: sw(10),
-              borderRadius: sw(8),
-              alignItems: "center",
-            }}
-            activeOpacity={0.7}
-          >
-            <LinearGradient
-              colors={[COLORS.blue, COLORS.blue]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                width: "100%",
-                paddingVertical: sw(10),
-                borderRadius: sw(8),
-                alignItems: "center",
-              }}
-            >
+          <TouchableOpacity onPress={currentStep === 4 ? handleSubmit : handleNext} style={{ flex: 1, paddingVertical: sw(10), borderRadius: sw(8), alignItems: "center" }} activeOpacity={0.7} disabled={loading}>
+            <LinearGradient colors={[COLORS.blue, COLORS.blue]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: "100%", paddingVertical: sw(10), borderRadius: sw(8), alignItems: "center" }}>
               <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.white }}>
-                {currentStep === 3 ? "Submit" : "Next Step"}
+                {loading ? "Submitting..." : currentStep === 4 ? "Submit" : "Next Step"}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
