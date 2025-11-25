@@ -297,9 +297,9 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.010,
   },
   logoCircleBorder: {
-    width: 140,            // bigger circle
-    height: 140,           // bigger circle
-    borderRadius: 70,      // always half of width/height
+    width: 180,            // bigger circle
+    height: 180,           // bigger circle
+    borderRadius: 90,      // always half of width/height
     backgroundColor: '#f5f5f5ff',
     alignItems: 'center',
     justifyContent: 'center',
