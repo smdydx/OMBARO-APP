@@ -22,7 +22,7 @@ const AppLogo = () => {
   return (
     <View style={styles.logoContainer}>
       <View style={styles.logoCircleBorder}>
-        <Text style={styles.logoText}>OMBARO</Text>
+        <Text style={styles.logoText} numberOfLines={1}>OMBARO</Text>
       </View>
     </View>
   );
@@ -312,10 +312,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   logoText: {
-    fontSize: Math.min(width * 0.1, 40),
+    fontSize: Math.min(width * 0.08, 32),
     color: "#00FF87",
     fontWeight: "900",
-    letterSpacing: 2,
+    letterSpacing: 1.5,
     textAlign: 'center',
     textShadowColor: "#013B1F",
     textShadowOffset: { width: 0, height: 2 },
