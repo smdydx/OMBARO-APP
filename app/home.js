@@ -304,8 +304,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
 },
   logo: {
-        width: 50,        // <--- Set size smaller than parent
-        height: 50,
+        width: 80,        // <--- Set size smaller than parent
+        height: 80,
         borderRadius: 30, // <--- makes perfect circle
         resizeMode: 'contain',
     },
