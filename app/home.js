@@ -320,9 +320,9 @@ const styles = StyleSheet.create({
     },
   
   logoGradient: {
-    width: '70%',
-    height: '70%',
-    borderRadius: 9999,
+    width: '60%',
+    height: '60%',
+    borderRadius: 20,
   },
   logoText: {
     fontSize: Math.min(width * 0.06, 24),
