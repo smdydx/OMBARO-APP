@@ -21,14 +21,9 @@ const COLORS = {
 const AppLogo = () => {
   return (
     <View style={styles.logoContainer}>
-      <LinearGradient
-        colors={['#00FF87', '#016B3A', '#013B1F', '#000000']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.logoCircleBorder}
-      >
+      <View style={styles.logoCircleBorder}>
         <Text style={styles.logoText}>OMBARO</Text>
-      </LinearGradient>
+      </View>
     </View>
   );
 };
@@ -318,10 +313,13 @@ const styles = StyleSheet.create({
   },
   logoText: {
     fontSize: Math.min(width * 0.1, 40),
-    color: "#FFFFFF",
+    color: "#00FF87",
     fontWeight: "900",
     letterSpacing: 2,
     textAlign: 'center',
+    textShadowColor: "#013B1F",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   tagline: {
     fontSize: Math.min(width * 0.032, 13),
