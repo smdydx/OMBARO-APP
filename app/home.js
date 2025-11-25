@@ -21,9 +21,14 @@ const COLORS = {
 const AppLogo = () => {
   return (
     <View style={styles.logoContainer}>
-      <View style={styles.logoCircleBorder}>
+      <LinearGradient
+        colors={['#00FF87', '#016B3A', '#013B1F', '#000000']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.logoCircleBorder}
+      >
         <Text style={styles.logoText}>OMBARO</Text>
-      </View>
+      </LinearGradient>
     </View>
   );
 };
