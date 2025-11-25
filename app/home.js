@@ -22,11 +22,7 @@ const AppLogo = () => {
   return (
     <View style={styles.logoContainer}>
       <View style={styles.logoCircleBorder}>
-        <Image
-          source={require('..//assets/Spa/logo.png')}
-          style={styles.logoGradient}
-          resizeMode="contain"
-        />
+        <Text style={styles.logoText}>OMBARO</Text>
       </View>
     </View>
   );
@@ -316,8 +312,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   logoText: {
-    fontSize: Math.min(width * 0.06, 24),
-    color: "#1e3a8a",
+    fontSize: Math.min(width * 0.1, 40),
+    color: "#FFFFFF",
+    fontWeight: "900",
+    letterSpacing: 2,
+    textAlign: 'center',
   },
   tagline: {
     fontSize: Math.min(width * 0.032, 13),
