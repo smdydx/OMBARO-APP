@@ -35,12 +35,10 @@ const COLORS = {
 function useResponsiveScale() {
   const { width, height } = useWindowDimensions();
   
-  // Determine device type
   const isMobile = width < 768;
   const isTablet = width >= 768 && width < 1024;
   const isDesktop = width >= 1024;
 
-  // Base scaling - mobile first approach
   let base = width;
   if (isMobile) {
     base = Math.min(width, 480);
@@ -89,44 +87,50 @@ const ProgressBar = ({ currentStep, totalSteps, sw }) => {
   );
 };
 
-const StepIndicator = ({ currentStep, totalSteps, sw, isMobile, isTablet }) => {
-  const steps = isMobile ? ["Info", "Op.", "Amen.", "Svc.", "Rev."] : ["Basic Info", "Operating", "Amenities", "Services", "Review"];
-  const iconSize = isMobile ? sw(28) : sw(36);
-  const textSize = isMobile ? sw(7) : sw(9);
-
+const StepCard = ({ number, title, description, isActive, isCompleted, sw }) => {
   return (
-    <View style={{ marginBottom: sw(16), alignItems: "center" }}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
-        <View style={{ flexDirection: "row", gap: isMobile ? sw(6) : sw(12), paddingHorizontal: isMobile ? 0 : sw(8) }}>
-          {Array.from({ length: totalSteps }).map((_, index) => (
-            <View key={index} style={{ alignItems: "center" }}>
-              <View
-                style={{
-                  width: iconSize,
-                  height: iconSize,
-                  borderRadius: iconSize / 2,
-                  backgroundColor: index < currentStep ? COLORS.success : index === currentStep ? COLORS.primaryLight : "#E5E7EB",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderWidth: index === currentStep ? 2 : 0,
-                  borderColor: COLORS.primaryLight,
-                }}
-              >
-                {index < currentStep ? (
-                  <Check size={Math.max(sw(14), 12)} color={COLORS.white} strokeWidth={3} />
-                ) : (
-                  <Text style={{ fontSize: Math.max(sw(12), 11), fontWeight: "700", color: COLORS.white }}>
-                    {index + 1}
-                  </Text>
-                )}
-              </View>
-              <Text style={{ fontSize: textSize, color: COLORS.textLight, marginTop: sw(4), textAlign: "center", width: iconSize, fontWeight: "500" }}>
-                {steps[index]}
-              </Text>
-            </View>
-          ))}
+    <View
+      style={{
+        paddingVertical: sw(14),
+        paddingHorizontal: sw(12),
+        marginBottom: sw(10),
+        borderRadius: sw(10),
+        backgroundColor: isActive ? COLORS.white + "20" : COLORS.white + "10",
+        borderWidth: isActive ? 2 : 1,
+        borderColor: isActive ? COLORS.white : COLORS.white + "30",
+      }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(6) }}>
+        <View
+          style={{
+            width: sw(32),
+            height: sw(32),
+            borderRadius: sw(16),
+            backgroundColor: isCompleted ? COLORS.success : COLORS.white,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: sw(10),
+          }}
+        >
+          {isCompleted ? (
+            <Check size={sw(16)} color={COLORS.primary} strokeWidth={3} />
+          ) : (
+            <Text style={{ fontSize: sw(14), fontWeight: "700", color: COLORS.primary }}>
+              {number}
+            </Text>
+          )}
         </View>
-      </ScrollView>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: Math.max(sw(12), 11), fontWeight: "700", color: COLORS.white }}>
+            {title}
+          </Text>
+          {description && (
+            <Text style={{ fontSize: Math.max(sw(9), 8), color: COLORS.white + "80", marginTop: sw(2) }}>
+              {description}
+            </Text>
+          )}
+        </View>
+      </View>
     </View>
   );
 };
@@ -414,254 +418,396 @@ export default function OnboardNewSpa({ onBack }) {
 
   const descriptionOptions = ["Full Service Spa", "Day Spa", "Medical Spa", "Wellness Center", "Beauty Salon", "Massage Center"];
   const priceRanges = ["Budget (₹) - ₹500-1000", "Mid-range (₹₹) - ₹2000-5000", "Premium (₹₹₹) - ₹5000-10000", "Luxury (₹₹₹₹) - ₹10000+"];
-
   const amenityGridCols = isMobile ? 4 : isTablet ? 6 : 8;
   const amenityWidth = `${100 / amenityGridCols}%`;
 
-  return (
-    <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
+  const steps = [
+    { title: "Basic Info", description: "Your spa details" },
+    { title: "Operating", description: "Hours & pricing" },
+    { title: "Amenities", description: "Facilities offered" },
+    { title: "Services", description: "Main services" },
+    { title: "Review", description: "Confirm details" },
+  ];
 
-      <LinearGradient
-        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ paddingHorizontal: contentPaddingHorizontal, paddingTop: sw(12), paddingBottom: sw(16) }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(8) }}>
-          <TouchableOpacity onPress={onBack} style={{ marginRight: sw(12), padding: sw(4) }}>
-            <ArrowLeft size={Math.max(sw(22), 18)} color={COLORS.white} strokeWidth={2.5} />
-          </TouchableOpacity>
-          <Building2 size={Math.max(sw(22), 18)} color={COLORS.white} strokeWidth={2.5} />
-          <Text
-            style={{
-              fontSize: Math.max(sw(13), 12),
-              fontWeight: "800",
-              color: COLORS.white,
-              marginLeft: sw(8),
-              flex: 1,
-            }}
-            numberOfLines={1}
-          >
-            Onboard New Spa
-          </Text>
-        </View>
-      </LinearGradient>
+  if (isMobile) {
+    // Mobile layout - single column
+    return (
+      <View style={{ flex: 1, backgroundColor: COLORS.bg }}>
+        <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: contentPaddingHorizontal, paddingVertical: sw(16) }}
-        showsVerticalScrollIndicator={false}
-      >
-        <ProgressBar currentStep={currentStep} totalSteps={5} sw={sw} />
-        <StepIndicator currentStep={currentStep} totalSteps={5} sw={sw} isMobile={isMobile} isTablet={isTablet} />
+        <LinearGradient
+          colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ paddingHorizontal: contentPaddingHorizontal, paddingTop: sw(12), paddingBottom: sw(16) }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: sw(8) }}>
+            <TouchableOpacity onPress={onBack} style={{ marginRight: sw(12), padding: sw(4) }}>
+              <ArrowLeft size={Math.max(sw(22), 18)} color={COLORS.white} strokeWidth={2.5} />
+            </TouchableOpacity>
+            <Building2 size={Math.max(sw(22), 18)} color={COLORS.white} strokeWidth={2.5} />
+            <Text
+              style={{
+                fontSize: Math.max(sw(13), 12),
+                fontWeight: "800",
+                color: COLORS.white,
+                marginLeft: sw(8),
+                flex: 1,
+              }}
+              numberOfLines={1}
+            >
+              Onboard New Spa
+            </Text>
+          </View>
+        </LinearGradient>
 
-        {currentStep === 0 && (
-          <View>
-            <FormInput label="Spa Name" placeholder="Enter spa name" value={formData.spaName} onChangeText={(v) => updateFormData("spaName", v)} sw={sw} icon={Building2} required error={errors.spaName} />
-            <FormInput label="Complete Address" placeholder="Enter address" value={formData.address} onChangeText={(v) => updateFormData("address", v)} sw={sw} icon={MapPin} multiline height={sw(80)} required error={errors.address} />
-            <View style={{ flexDirection: isMobile ? "column" : "row", gap: sw(8) }}>
-              <View style={{ flex: 1 }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: contentPaddingHorizontal, paddingVertical: sw(16) }}
+          showsVerticalScrollIndicator={false}
+        >
+          <ProgressBar currentStep={currentStep} totalSteps={5} sw={sw} />
+
+          {currentStep === 0 && (
+            <View>
+              <FormInput label="Spa Name" placeholder="Enter spa name" value={formData.spaName} onChangeText={(v) => updateFormData("spaName", v)} sw={sw} icon={Building2} required error={errors.spaName} />
+              <FormInput label="Complete Address" placeholder="Enter address" value={formData.address} onChangeText={(v) => updateFormData("address", v)} sw={sw} icon={MapPin} multiline height={sw(80)} required error={errors.address} />
+              <View style={{ flexDirection: "column", gap: sw(8) }}>
                 <FormInput label="Contact Number" placeholder="Phone" value={formData.phone} onChangeText={(v) => updateFormData("phone", v)} sw={sw} icon={Phone} required error={errors.phone} />
-              </View>
-              <View style={{ flex: 1 }}>
                 <FormInput label="Email Address" placeholder="Email" value={formData.email} onChangeText={(v) => updateFormData("email", v)} sw={sw} icon={Mail} required error={errors.email} />
               </View>
+              <FormInput label="Website (Optional)" placeholder="https://example.com" value={formData.website} onChangeText={(v) => updateFormData("website", v)} sw={sw} icon={Globe} />
+              <Dropdown label="Description" value={formData.description} options={descriptionOptions} onSelect={(v) => updateFormData("description", v)} sw={sw} />
             </View>
-            <FormInput label="Website (Optional)" placeholder="https://example.com" value={formData.website} onChangeText={(v) => updateFormData("website", v)} sw={sw} icon={Globe} />
-            <Dropdown label="Description" value={formData.description} options={descriptionOptions} onSelect={(v) => updateFormData("description", v)} sw={sw} />
-          </View>
-        )}
+          )}
 
-        {currentStep === 1 && (
-          <View>
-            <View style={{ flexDirection: isMobile ? "column" : "row", gap: sw(8) }}>
-              <View style={{ flex: 1 }}>
+          {currentStep === 1 && (
+            <View>
+              <View style={{ flexDirection: "column", gap: sw(8) }}>
                 <FormInput label="Opening Time" placeholder="e.g. 09:00 AM" value={formData.openingTime} onChangeText={(v) => updateFormData("openingTime", v)} sw={sw} required error={errors.openingTime} />
-              </View>
-              <View style={{ flex: 1 }}>
                 <FormInput label="Closing Time" placeholder="e.g. 09:00 PM" value={formData.closingTime} onChangeText={(v) => updateFormData("closingTime", v)} sw={sw} required error={errors.closingTime} />
               </View>
-            </View>
-            <View style={{ flexDirection: isMobile ? "column" : "row", gap: sw(8) }}>
-              <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: "column", gap: sw(8) }}>
                 <Dropdown label="Price Range" value={formData.priceRange} options={priceRanges} onSelect={(v) => updateFormData("priceRange", v)} sw={sw} />
-              </View>
-              <View style={{ flex: 1 }}>
                 <FormInput label="Staff Count" placeholder="e.g. 5-10" value={formData.staffCount} onChangeText={(v) => updateFormData("staffCount", v)} sw={sw} icon={Users} required error={errors.staffCount} />
               </View>
+              <FormInput label="Instagram" placeholder="https://instagram.com/handle" value={formData.instagram} onChangeText={(v) => updateFormData("instagram", v)} sw={sw} />
+              <FormInput label="Facebook" placeholder="https://facebook.com/page" value={formData.facebook} onChangeText={(v) => updateFormData("facebook", v)} sw={sw} />
+              <FormInput label="Twitter" placeholder="https://twitter.com/handle" value={formData.twitter} onChangeText={(v) => updateFormData("twitter", v)} sw={sw} />
             </View>
-            <FormInput label="Instagram" placeholder="https://instagram.com/handle" value={formData.instagram} onChangeText={(v) => updateFormData("instagram", v)} sw={sw} />
-            <FormInput label="Facebook" placeholder="https://facebook.com/page" value={formData.facebook} onChangeText={(v) => updateFormData("facebook", v)} sw={sw} />
-            <FormInput label="Twitter" placeholder="https://twitter.com/handle" value={formData.twitter} onChangeText={(v) => updateFormData("twitter", v)} sw={sw} />
-          </View>
-        )}
+          )}
 
-        {currentStep === 2 && (
-          <View>
-            <Text style={{ fontSize: Math.max(sw(12), 11), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>
-              Available Amenities
-            </Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(8), marginBottom: sw(20) }}>
-              {amenitiesWithIcons.map((item, idx) => (
-                <View key={idx} style={{ width: amenityWidth, paddingHorizontal: isMobile ? sw(2) : 0 }}>
-                  <AmenityItem
-                    icon={item.icon}
-                    label={item.label}
-                    selected={formData.amenities.includes(item.label)}
-                    onToggle={() => {
+          {currentStep === 2 && (
+            <View>
+              <Text style={{ fontSize: Math.max(sw(12), 11), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>Available Amenities</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(8), marginBottom: sw(20) }}>
+                {amenitiesWithIcons.map((item, idx) => (
+                  <View key={idx} style={{ width: amenityWidth, paddingHorizontal: sw(2) }}>
+                    <AmenityItem icon={item.icon} label={item.label} selected={formData.amenities.includes(item.label)} onToggle={() => {
                       const amenities = formData.amenities.includes(item.label)
                         ? formData.amenities.filter((a) => a !== item.label)
                         : [...formData.amenities, item.label];
                       updateFormData("amenities", amenities);
-                    }}
-                    sw={sw}
-                  />
-                </View>
-              ))}
-            </View>
-            <FormInput label="Specialities" placeholder="e.g., Deep Tissue, Aromatherapy" value={formData.specialities} onChangeText={(v) => updateFormData("specialities", v)} sw={sw} multiline height={sw(80)} />
-          </View>
-        )}
-
-        {currentStep === 3 && (
-          <View>
-            <FormInput label="Main Services" placeholder="e.g., Massage, Facial, Hair Treatment" value={formData.mainService} onChangeText={(v) => updateFormData("mainService", v)} sw={sw} multiline height={sw(90)} />
-            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginTop: sw(12) }}>
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>
-                💡 Tip: Add comma-separated services
-              </Text>
-              <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.textSecondary }}>
-                Example: Swedish Massage, Hot Stone Therapy, Facial Treatment, Hair Spa
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {currentStep === 4 && (
-          <View>
-            <Text style={{ fontSize: Math.max(sw(13), 12), fontWeight: "800", color: COLORS.text, marginBottom: sw(14) }}>
-              Review Your Information
-            </Text>
-
-            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Basic Information</Text>
-              <View style={{ gap: sw(6) }}>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Spa Name:</Text> {formData.spaName}
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Address:</Text> {formData.address}
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Phone:</Text> {formData.phone}
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Email:</Text> {formData.email}
-                </Text>
-              </View>
-            </View>
-
-            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Operating Details</Text>
-              <View style={{ gap: sw(6) }}>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Hours:</Text> {formData.openingTime} - {formData.closingTime}
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Price Range:</Text> {formData.priceRange}
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  <Text style={{ fontWeight: "600" }}>Staff Count:</Text> {formData.staffCount}
-                </Text>
-              </View>
-            </View>
-
-            <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>
-                Amenities ({formData.amenities.length})
-              </Text>
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
-                {formData.amenities.map((amenity, idx) => (
-                  <View key={idx} style={{ backgroundColor: COLORS.primaryLight + "20", paddingHorizontal: sw(8), paddingVertical: sw(4), borderRadius: sw(6) }}>
-                    <Text style={{ fontSize: Math.max(sw(9), 8), color: COLORS.primary, fontWeight: "600" }}>
-                      {amenity}
-                    </Text>
+                    }} sw={sw} />
                   </View>
                 ))}
               </View>
+              <FormInput label="Specialities" placeholder="e.g., Deep Tissue, Aromatherapy" value={formData.specialities} onChangeText={(v) => updateFormData("specialities", v)} sw={sw} multiline height={sw(80)} />
             </View>
+          )}
 
-            {formData.mainService && (
-              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12) }}>
-                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>
-                  Services
-                </Text>
-                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>
-                  {formData.mainService}
-                </Text>
+          {currentStep === 3 && (
+            <View>
+              <FormInput label="Main Services" placeholder="e.g., Massage, Facial, Hair Treatment" value={formData.mainService} onChangeText={(v) => updateFormData("mainService", v)} sw={sw} multiline height={sw(90)} />
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginTop: sw(12) }}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.text, marginBottom: sw(6) }}>💡 Tip: Add comma-separated services</Text>
+                <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.textSecondary }}>Example: Swedish Massage, Hot Stone Therapy, Facial Treatment, Hair Spa</Text>
               </View>
-            )}
-          </View>
-        )}
-      </ScrollView>
+            </View>
+          )}
 
-      {/* Footer Buttons */}
+          {currentStep === 4 && (
+            <View>
+              <Text style={{ fontSize: Math.max(sw(13), 12), fontWeight: "800", color: COLORS.text, marginBottom: sw(14) }}>Review Your Information</Text>
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Basic Information</Text>
+                <View style={{ gap: sw(6) }}>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Spa Name:</Text> {formData.spaName}</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Address:</Text> {formData.address}</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Phone:</Text> {formData.phone}</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Email:</Text> {formData.email}</Text>
+                </View>
+              </View>
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Operating Details</Text>
+                <View style={{ gap: sw(6) }}>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Hours:</Text> {formData.openingTime} - {formData.closingTime}</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Price Range:</Text> {formData.priceRange}</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Staff Count:</Text> {formData.staffCount}</Text>
+                </View>
+              </View>
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Amenities ({formData.amenities.length})</Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
+                  {formData.amenities.map((amenity, idx) => (
+                    <View key={idx} style={{ backgroundColor: COLORS.primaryLight + "20", paddingHorizontal: sw(8), paddingVertical: sw(4), borderRadius: sw(6) }}>
+                      <Text style={{ fontSize: Math.max(sw(9), 8), color: COLORS.primary, fontWeight: "600" }}>{amenity}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              {formData.mainService && (
+                <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(12) }}>
+                  <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Services</Text>
+                  <Text style={{ fontSize: Math.max(sw(10), 9), color: COLORS.text }}>{formData.mainService}</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+
+        <LinearGradient colors={["transparent", "rgba(255,255,255,0.5)"]} style={{ paddingHorizontal: contentPaddingHorizontal, paddingVertical: sw(14), gap: sw(8) }}>
+          <View style={{ flexDirection: "row", gap: sw(8) }}>
+            {currentStep > 0 && (
+              <TouchableOpacity onPress={handlePrevious} style={{ flex: 1, paddingVertical: Math.max(sw(12), 10), borderRadius: sw(8), borderWidth: 1.5, borderColor: COLORS.blue, alignItems: "center", justifyContent: "center" }} activeOpacity={0.7}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.blue }}>Previous</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity onPress={currentStep === 4 ? handleSubmit : handleNext} style={{ flex: 1, paddingVertical: 0, borderRadius: sw(8), overflow: "hidden", minHeight: Math.max(sw(44), 40) }} activeOpacity={0.7} disabled={loading}>
+              <LinearGradient colors={[COLORS.blue, COLORS.blue]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ width: "100%", paddingVertical: Math.max(sw(12), 10), borderRadius: sw(8), alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.white }}>{loading ? "Submitting..." : currentStep === 4 ? "Submit" : "Next Step"}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
+    );
+  }
+
+  // Desktop/Tablet layout - 2:4 split
+  const sidebarWidth = isDesktop ? "33.33%" : "40%";
+  const formWidth = isDesktop ? "66.67%" : "60%";
+
+  return (
+    <View style={{ flex: 1, backgroundColor: COLORS.bg, flexDirection: "row" }}>
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
+
+      {/* Left Sidebar - Green (2 parts) */}
       <LinearGradient
-        colors={["transparent", "rgba(255,255,255,0.5)"]}
-        style={{ paddingHorizontal: contentPaddingHorizontal, paddingVertical: sw(14), gap: sw(8) }}
+        colors={[COLORS.gradient1, COLORS.gradient2, COLORS.gradient3]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ width: sidebarWidth, paddingHorizontal: sw(16), paddingVertical: sw(20) }}
       >
-        <View style={{ flexDirection: "row", gap: sw(8) }}>
-          {currentStep > 0 && (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <TouchableOpacity onPress={onBack} style={{ marginBottom: sw(20), padding: sw(8), width: sw(40) }}>
+            <ArrowLeft size={sw(24)} color={COLORS.white} strokeWidth={2.5} />
+          </TouchableOpacity>
+
+          <View style={{ marginBottom: sw(24) }}>
+            <Building2 size={sw(40)} color={COLORS.white} strokeWidth={2} />
+            <Text style={{ fontSize: sw(18), fontWeight: "800", color: COLORS.white, marginTop: sw(12) }}>Onboard New Spa</Text>
+            <Text style={{ fontSize: sw(11), color: COLORS.white + "80", marginTop: sw(6) }}>Complete all steps to onboard your spa</Text>
+          </View>
+
+          <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.white, marginBottom: sw(12) }}>Progress: {currentStep + 1}/5</Text>
+
+          {steps.map((step, idx) => (
+            <StepCard
+              key={idx}
+              number={idx + 1}
+              title={step.title}
+              description={step.description}
+              isActive={idx === currentStep}
+              isCompleted={idx < currentStep}
+              sw={sw}
+            />
+          ))}
+        </ScrollView>
+      </LinearGradient>
+
+      {/* Right Form Area - White (4 parts) */}
+      <View style={{ width: formWidth, backgroundColor: COLORS.white, flexDirection: "column" }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingHorizontal: sw(20), paddingVertical: sw(24) }}
+          showsVerticalScrollIndicator={false}
+        >
+          {currentStep === 0 && (
+            <View>
+              <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>Basic Information</Text>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(20) }}>Tell us about your spa business</Text>
+              <FormInput label="Spa Name" placeholder="Enter spa name" value={formData.spaName} onChangeText={(v) => updateFormData("spaName", v)} sw={sw} icon={Building2} required error={errors.spaName} />
+              <FormInput label="Complete Address" placeholder="Enter address" value={formData.address} onChangeText={(v) => updateFormData("address", v)} sw={sw} icon={MapPin} multiline height={sw(80)} required error={errors.address} />
+              <View style={{ flexDirection: "row", gap: sw(12) }}>
+                <View style={{ flex: 1 }}>
+                  <FormInput label="Contact Number" placeholder="Phone" value={formData.phone} onChangeText={(v) => updateFormData("phone", v)} sw={sw} icon={Phone} required error={errors.phone} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <FormInput label="Email Address" placeholder="Email" value={formData.email} onChangeText={(v) => updateFormData("email", v)} sw={sw} icon={Mail} required error={errors.email} />
+                </View>
+              </View>
+              <FormInput label="Website (Optional)" placeholder="https://example.com" value={formData.website} onChangeText={(v) => updateFormData("website", v)} sw={sw} icon={Globe} />
+              <Dropdown label="Description" value={formData.description} options={descriptionOptions} onSelect={(v) => updateFormData("description", v)} sw={sw} />
+            </View>
+          )}
+
+          {currentStep === 1 && (
+            <View>
+              <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>Operating Details</Text>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(20) }}>Set your working hours and team info</Text>
+              <View style={{ flexDirection: "row", gap: sw(12) }}>
+                <View style={{ flex: 1 }}>
+                  <FormInput label="Opening Time" placeholder="e.g. 09:00 AM" value={formData.openingTime} onChangeText={(v) => updateFormData("openingTime", v)} sw={sw} required error={errors.openingTime} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <FormInput label="Closing Time" placeholder="e.g. 09:00 PM" value={formData.closingTime} onChangeText={(v) => updateFormData("closingTime", v)} sw={sw} required error={errors.closingTime} />
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", gap: sw(12) }}>
+                <View style={{ flex: 1 }}>
+                  <Dropdown label="Price Range" value={formData.priceRange} options={priceRanges} onSelect={(v) => updateFormData("priceRange", v)} sw={sw} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <FormInput label="Staff Count" placeholder="e.g. 5-10" value={formData.staffCount} onChangeText={(v) => updateFormData("staffCount", v)} sw={sw} icon={Users} required error={errors.staffCount} />
+                </View>
+              </View>
+              <FormInput label="Instagram" placeholder="https://instagram.com/handle" value={formData.instagram} onChangeText={(v) => updateFormData("instagram", v)} sw={sw} />
+              <FormInput label="Facebook" placeholder="https://facebook.com/page" value={formData.facebook} onChangeText={(v) => updateFormData("facebook", v)} sw={sw} />
+              <FormInput label="Twitter" placeholder="https://twitter.com/handle" value={formData.twitter} onChangeText={(v) => updateFormData("twitter", v)} sw={sw} />
+            </View>
+          )}
+
+          {currentStep === 2 && (
+            <View>
+              <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>Amenities & Specialities</Text>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(20) }}>Select available amenities and specialities</Text>
+              <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.text, marginBottom: sw(12) }}>Available Amenities</Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(8), marginBottom: sw(20) }}>
+                {amenitiesWithIcons.map((item, idx) => (
+                  <View key={idx} style={{ width: amenityWidth, paddingHorizontal: sw(2) }}>
+                    <AmenityItem icon={item.icon} label={item.label} selected={formData.amenities.includes(item.label)} onToggle={() => {
+                      const amenities = formData.amenities.includes(item.label)
+                        ? formData.amenities.filter((a) => a !== item.label)
+                        : [...formData.amenities, item.label];
+                      updateFormData("amenities", amenities);
+                    }} sw={sw} />
+                  </View>
+                ))}
+              </View>
+              <FormInput label="Specialities" placeholder="e.g., Deep Tissue, Aromatherapy" value={formData.specialities} onChangeText={(v) => updateFormData("specialities", v)} sw={sw} multiline height={sw(80)} />
+            </View>
+          )}
+
+          {currentStep === 3 && (
+            <View>
+              <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>Services</Text>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(20) }}>Describe your main services</Text>
+              <FormInput label="Main Services" placeholder="e.g., Massage, Facial, Hair Treatment" value={formData.mainService} onChangeText={(v) => updateFormData("mainService", v)} sw={sw} multiline height={sw(120)} />
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(14), marginTop: sw(16) }}>
+                <Text style={{ fontSize: sw(11), fontWeight: "700", color: COLORS.text, marginBottom: sw(8) }}>💡 Tip: Add comma-separated services</Text>
+                <Text style={{ fontSize: sw(10), color: COLORS.textSecondary }}>Example: Swedish Massage, Hot Stone Therapy, Facial Treatment, Hair Spa</Text>
+              </View>
+            </View>
+          )}
+
+          {currentStep === 4 && (
+            <View>
+              <Text style={{ fontSize: sw(16), fontWeight: "800", color: COLORS.text, marginBottom: sw(4) }}>Review Your Information</Text>
+              <Text style={{ fontSize: sw(12), color: COLORS.textSecondary, marginBottom: sw(20) }}>Confirm all details before submitting</Text>
+              
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(14), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.primary, marginBottom: sw(10) }}>Basic Information</Text>
+                <View style={{ gap: sw(6) }}>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Spa Name:</Text> {formData.spaName}</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Address:</Text> {formData.address}</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Phone:</Text> {formData.phone}</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Email:</Text> {formData.email}</Text>
+                </View>
+              </View>
+
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(14), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.primary, marginBottom: sw(10) }}>Operating Details</Text>
+                <View style={{ gap: sw(6) }}>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Hours:</Text> {formData.openingTime} - {formData.closingTime}</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Price Range:</Text> {formData.priceRange}</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}><Text style={{ fontWeight: "600" }}>Staff Count:</Text> {formData.staffCount}</Text>
+                </View>
+              </View>
+
+              <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(14), marginBottom: sw(12) }}>
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.primary, marginBottom: sw(10) }}>Amenities ({formData.amenities.length})</Text>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sw(6) }}>
+                  {formData.amenities.map((amenity, idx) => (
+                    <View key={idx} style={{ backgroundColor: COLORS.primaryLight + "20", paddingHorizontal: sw(10), paddingVertical: sw(6), borderRadius: sw(6) }}>
+                      <Text style={{ fontSize: sw(9), color: COLORS.primary, fontWeight: "600" }}>{amenity}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              {formData.mainService && (
+                <View style={{ backgroundColor: COLORS.cardBg, borderRadius: sw(10), padding: sw(14) }}>
+                  <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.primary, marginBottom: sw(8) }}>Services</Text>
+                  <Text style={{ fontSize: sw(10), color: COLORS.text }}>{formData.mainService}</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Footer */}
+        <LinearGradient colors={["transparent", "rgba(255,255,255,0.3)"]} style={{ paddingHorizontal: sw(20), paddingVertical: sw(16), gap: sw(10), borderTopWidth: 1, borderTopColor: COLORS.border }}>
+          <View style={{ flexDirection: "row", gap: sw(12) }}>
+            {currentStep > 0 && (
+              <TouchableOpacity
+                onPress={handlePrevious}
+                style={{
+                  flex: 1,
+                  paddingVertical: Math.max(sw(12), 10),
+                  borderRadius: sw(8),
+                  borderWidth: 1.5,
+                  borderColor: COLORS.blue,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.blue }}>Previous</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
-              onPress={handlePrevious}
+              onPress={currentStep === 4 ? handleSubmit : handleNext}
               style={{
                 flex: 1,
-                paddingVertical: Math.max(sw(12), 10),
+                paddingVertical: 0,
                 borderRadius: sw(8),
-                borderWidth: 1.5,
-                borderColor: COLORS.blue,
-                alignItems: "center",
-                justifyContent: "center",
+                overflow: "hidden",
+                minHeight: Math.max(sw(44), 40),
               }}
               activeOpacity={0.7}
+              disabled={loading}
             >
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.blue }}>
-                Previous
-              </Text>
+              <LinearGradient
+                colors={[COLORS.blue, COLORS.blue]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  width: "100%",
+                  paddingVertical: Math.max(sw(12), 10),
+                  borderRadius: sw(8),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ fontSize: sw(12), fontWeight: "700", color: COLORS.white }}>
+                  {loading ? "Submitting..." : currentStep === 4 ? "Submit" : "Next Step"}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={currentStep === 4 ? handleSubmit : handleNext}
-            style={{
-              flex: 1,
-              paddingVertical: 0,
-              borderRadius: sw(8),
-              overflow: "hidden",
-              minHeight: Math.max(sw(44), 40),
-            }}
-            activeOpacity={0.7}
-            disabled={loading}
-          >
-            <LinearGradient
-              colors={[COLORS.blue, COLORS.blue]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                width: "100%",
-                paddingVertical: Math.max(sw(12), 10),
-                borderRadius: sw(8),
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ fontSize: Math.max(sw(11), 10), fontWeight: "700", color: COLORS.white }}>
-                {loading ? "Submitting..." : currentStep === 4 ? "Submit" : "Next Step"}
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
+          </View>
+        </LinearGradient>
+      </View>
     </View>
   );
 }
