@@ -312,15 +312,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   logoText: {
-    fontSize: Math.min(width * 0.065, 24),
+    fontSize: Math.min(width * 0.05, 18),
     color: "#00FF87",
     fontWeight: "900",
-    letterSpacing: 1,
+    letterSpacing: 0.5,
     textAlign: 'center',
     textShadowColor: "#013B1F",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
-    maxWidth: '90%',
   },
   tagline: {
     fontSize: Math.min(width * 0.032, 13),
